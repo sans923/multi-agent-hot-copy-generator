@@ -1,0 +1,34 @@
+# 环境变量（含密钥，绝对不能提交）
+.env
+
+# Python 编译缓存
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 数据目录（SQLite文件和ChromaDB文件）
+data/
+
+# 日志文件
+logs/
+
+# IDE配置
+.idea/
+.vscode/
+*.swp
+
+# 测试覆盖率报告
+.coverage
+htmlcov/
+
+# 打包文件
+dist/
+build/
+*.egg-info/
