@@ -59,12 +59,17 @@ async def lifespan(app: FastAPI):
     # 注意：生产环境应该用 Alembic 迁移，而不是 create_all
     create_tables()
 
+    # 启动 APScheduler 定时任务调度器
+    from app.scheduler import start_scheduler, stop_scheduler
+    start_scheduler()
+
     logger.info("应用启动完成，开始处理请求")
 
     yield  # 应用正常运行中...
 
     # ---- 关闭阶段 ----
     logger.info("应用正在关闭，清理资源...")
+    stop_scheduler()
     logger.info("应用已安全关闭")
 
 
@@ -210,7 +215,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # 注册路由
 # ====================================================
 
-from app.api.v1 import auth, users  # noqa: E402
+from app.api.v1 import auth, users, hotlist  # noqa: E402
 
 # include_router 将路由注册到应用
 # prefix="/api/v1"：所有 v1 接口都以这个开头
@@ -218,6 +223,7 @@ from app.api.v1 import auth, users  # noqa: E402
 # 例如：/api/v1/auth/login
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
+app.include_router(hotlist.router, prefix="/api/v1")
 
 
 # ====================================================
