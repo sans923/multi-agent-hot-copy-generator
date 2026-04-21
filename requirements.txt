@@ -1,8 +1,8 @@
 # ===========================
 # Web 框架
 # ===========================
-fastapi==0.111.0          # 主框架：高性能异步API框架，类比Django但更快更轻
-uvicorn[standard]==0.30.1  # ASGI服务器：负责接收HTTP请求并转给FastAPI处理
+fastapi>=0.115.0          # 主框架：高性能异步API框架，0.115+兼容pydantic 2.10+
+uvicorn[standard]>=0.30.1  # ASGI服务器：负责接收HTTP请求并转给FastAPI处理
 python-multipart==0.0.9   # 支持表单上传文件
 
 # ===========================
