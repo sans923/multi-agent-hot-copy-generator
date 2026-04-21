@@ -24,7 +24,7 @@
 """
 
 from typing import TypeVar, Generic, Optional, Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # TypeVar 用于泛型，让 data 字段可以是任意类型
@@ -83,5 +83,3 @@ class PaginationParams(BaseModel):
         return (self.page - 1) * self.page_size
 
 
-# 解决 PaginationParams 中 Field 未导入的问题
-from pydantic import Field  # noqa: E402

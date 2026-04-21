@@ -18,15 +18,17 @@
 
 ## 技术栈
 
-| 层次 | 技术 |
-|------|------|
-| Web 框架 | FastAPI |
-| 大模型 | DeepSeek API |
-| 向量数据库 | ChromaDB |
-| 关系数据库 | SQLite（开发）/ MySQL（生产）|
-| 热榜数据 | 韩小韩免费 API |
-| 定时任务 | APScheduler |
-| 部署 | 火山引擎 ECS + Nginx |
+
+| 层次     | 技术                    |
+| ------ | --------------------- |
+| Web 框架 | FastAPI               |
+| 大模型    | DeepSeek API          |
+| 向量数据库  | ChromaDB              |
+| 关系数据库  | SQLite（开发）/ MySQL（生产） |
+| 热榜数据   | 韩小韩免费 API             |
+| 定时任务   | APScheduler           |
+| 部署     | 火山引擎 ECS + Nginx      |
+
 
 ## 快速开始
 
@@ -59,7 +61,7 @@ copy .env.example .env
 python run.py
 ```
 
-访问 http://localhost:8000/docs 查看 API 文档
+访问 [http://localhost:8000/docs](http://localhost:8000/docs) 查看 API 文档
 
 ### 4. 运行测试
 
@@ -103,22 +105,25 @@ multi-agent-hot-copy-generator/
 
 ## 开发进度
 
-- [x] Phase 1（Day 1-3）：项目初始化 + 数据库建表 + FastAPI框架 + 用户鉴权
-- [ ] Phase 2（Day 4-5）：热榜API对接 + ChromaDB向量化
-- [ ] Phase 3（Day 6-9）：10个Skill + Function Calling
-- [ ] Phase 4（Day 10-12）：3个Agent编排联调
-- [ ] Phase 5（Day 13-14）：任务接口 + 日志模块
-- [ ] Phase 6（Day 15-16）：部署脚本 + Nginx配置
+- Phase 1（Day 1-3）：项目初始化 + 数据库建表 + FastAPI框架 + 用户鉴权
+- Phase 2（Day 4-5）：热榜API对接 + ChromaDB向量化
+- Phase 3（Day 6-9）：10个Skill + Function Calling
+- Phase 4（Day 10-12）：3个Agent编排联调
+- Phase 5（Day 13-14）：任务接口 + 日志模块
+- Phase 6（Day 15-16）：部署脚本 + Nginx配置
 
 ## API 接口
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | /api/v1/auth/register | 用户注册 |
-| POST | /api/v1/auth/login | 用户登录 |
-| GET  | /api/v1/auth/me | 获取当前用户 |
-| POST | /api/v1/auth/logout | 登出 |
-| GET  | /api/v1/users/me | 用户详情 |
-| PUT  | /api/v1/users/me | 更新用户信息 |
-| GET  | /health | 健康检查 |
-| GET  | /docs | Swagger 文档 |
+
+| 方法   | 路径                    | 说明         |
+| ---- | --------------------- | ---------- |
+| POST | /api/v1/auth/register | 用户注册       |
+| POST | /api/v1/auth/login    | 用户登录       |
+| GET  | /api/v1/auth/me       | 获取当前用户     |
+| POST | /api/v1/auth/logout   | 登出         |
+| GET  | /api/v1/users/me      | 用户详情       |
+| PUT  | /api/v1/users/me      | 更新用户信息     |
+| GET  | /health               | 健康检查       |
+| GET  | /docs                 | Swagger 文档 |
+
+
