@@ -13,6 +13,7 @@ from app.models.document import Document
 from app.models.copy import Copy
 from app.models.agent_log import AgentLog
 from app.models.hotlist_sync import HotlistSync
+from app.models.system_log import SystemLog
 
 __all__ = [
     "User",
@@ -21,4 +22,5 @@ __all__ = [
     "Copy",
     "AgentLog",
     "HotlistSync",
+    "SystemLog",
 ]

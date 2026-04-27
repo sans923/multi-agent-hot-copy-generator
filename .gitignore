@@ -1,5 +1,6 @@
 # 环境变量（含密钥，绝对不能提交）
 .env
+.env.production
 
 # Python 编译缓存
 __pycache__/
