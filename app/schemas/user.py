@@ -46,8 +46,8 @@ class UserCreate(BaseModel):
     )
     password: str = Field(
         min_length=6,
-        max_length=50,
-        description="密码，至少6位",
+        max_length=72,
+        description="密码，6-72位（bcrypt算法最大支持72字节）",
         examples=["Abc123456"]
     )
     nickname: Optional[str] = Field(
@@ -62,10 +62,12 @@ class UserCreate(BaseModel):
         """
         密码强度校验
         实际项目可以加更严格的规则（大小写混合、包含数字等）
-        这里简单校验不含空格
+        这里校验不含空格，并检查 bcrypt 的字节长度上限
         """
         if " " in v:
             raise ValueError("密码不能包含空格")
+        if len(v.encode("utf-8")) > 72:
+            raise ValueError("密码不能超过72字节（中文等多字节字符每个占2-4字节，请缩短密码）")
         return v
 
     @field_validator("username")
@@ -118,7 +120,7 @@ class UserUpdate(BaseModel):
     """更新用户信息（所有字段都是可选的，只更新传了的字段）"""
     nickname: Optional[str] = Field(default=None, max_length=50)
     avatar_url: Optional[str] = None
-    password: Optional[str] = Field(default=None, min_length=6, max_length=50)
+    password: Optional[str] = Field(default=None, min_length=6, max_length=72)
 
 
 class TokenResponse(BaseModel):

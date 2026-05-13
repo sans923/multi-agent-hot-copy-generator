@@ -54,6 +54,7 @@ def hash_password(plain_password: str) -> str:
     示例：
         hash_password("123456") -> "$2b$12$K0Q...（60位随机字符）"
     """
+    plain_password = plain_password[:72]  # bcrypt 72字节限制
     return pwd_context.hash(plain_password)
 
 
