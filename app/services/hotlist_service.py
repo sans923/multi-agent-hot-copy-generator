@@ -117,7 +117,7 @@ async def fetch_platform_hotlist(
     params = {"type": config["api_type"]}
 
     try:
-        logger.debug(f"开始抓取 {config['display_name']} 热榜...")
+        logger.debug(f"开始抓取 {config['display_name']} 热榜，请求URL: {url}?type={config['api_type']}")
         response = await client.get(url, params=params, timeout=10.0)
         response.raise_for_status()  # 非2xx状态码抛出异常
 
@@ -135,14 +135,19 @@ async def fetch_platform_hotlist(
         cleaned = _clean_hotlist_items(items, platform_key, config)
         return cleaned[:config["max_items"]]  # 只取前N条
 
-    except httpx.TimeoutException:
-        logger.error(f"{config['display_name']} 抓取超时")
+    except httpx.TimeoutException as e:
+        logger.error(f"{config['display_name']} 抓取超时: {type(e).__name__}: {repr(e)}")
         return []
     except httpx.HTTPStatusError as e:
-        logger.error(f"{config['display_name']} HTTP错误: {e.response.status_code}")
+        logger.error(
+            f"{config['display_name']} HTTP错误: 状态码={e.response.status_code}, "
+            f"URL={e.request.url}, 详情: {repr(e)}"
+        )
         return []
     except Exception as e:
-        logger.error(f"{config['display_name']} 抓取异常: {e}")
+        logger.error(
+            f"{config['display_name']} 抓取异常: {type(e).__name__}: {repr(e)}"
+        )
         return []
 
 
@@ -286,7 +291,9 @@ async def sync_all_hotlists() -> dict:
     try:
         for platform_key, items in zip(PLATFORM_CONFIG.keys(), results):
             if isinstance(items, Exception):
-                logger.error(f"{platform_key} 抓取异常: {items}")
+                logger.error(
+                    f"{platform_key} gather捕获异常: {type(items).__name__}: {repr(items)}"
+                )
                 stats[platform_key] = 0
                 continue
 
@@ -302,7 +309,7 @@ async def sync_all_hotlists() -> dict:
 
     except Exception as e:
         db.rollback()
-        logger.error(f"热榜写库失败: {e}")
+        logger.error(f"热榜写库失败: {type(e).__name__}: {repr(e)}")
     finally:
         db.close()
 
@@ -391,7 +398,7 @@ async def sync_single_platform(platform_key: str) -> int:
         return count
     except Exception as e:
         db.rollback()
-        logger.error(f"单平台同步写库失败: {e}")
+        logger.error(f"单平台同步写库失败: {type(e).__name__}: {repr(e)}")
         return 0
     finally:
         db.close()
