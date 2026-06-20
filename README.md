@@ -63,7 +63,17 @@ python run.py
 
 访问 [http://localhost:8000/docs](http://localhost:8000/docs) 查看 API 文档
 
-### 4. 运行测试
+### 4. 启动前端（可选）
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+浏览器打开 [http://localhost:5173](http://localhost:5173)，通过 Vite 代理访问后端 API。
+
+### 5. 运行测试
 
 ```bash
 pip install pytest httpx
@@ -74,6 +84,8 @@ pytest tests/ -v
 
 ```
 multi-agent-hot-copy-generator/
+├── frontend/              # React + Vite 前端
+│   └── src/               # 页面、API 封装、鉴权
 ├── app/
 │   ├── main.py            # FastAPI 应用入口
 │   ├── config.py          # 配置管理

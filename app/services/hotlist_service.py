@@ -1,38 +1,29 @@
 """
 热榜抓取与同步服务
 ==================
-负责从韩小韩 API 抓取各平台热榜数据，清洗后写入数据库
+负责从聚合数据 API 抓取网络热点数据，清洗后写入数据库
 
 【数据流转图】
-韩小韩API (HTTP)
+聚合数据API (HTTP)
     → 原始JSON数据
     → 数据清洗（去重/去空/截断）
     → 写入 hotlist_sync 表
     → 触发向量化（存入ChromaDB）
 
-【韩小韩 API 说明】
-接口：https://api.vvhan.com/api/hotlist?type=XXX
-无需 API Key，免费使用，每小时更新
-支持平台参数 type：
-  - wbHot      微博热搜
-  - douyinHot  抖音热榜
-  - bili        B站热门
-  - zhihuHot   知乎热榜
-  - toutiaoHot 今日头条
+【聚合数据热榜 API 说明】
+接口：https://apis.juhe.cn/fapigx/networkhot/query
+请求方式：GET
+需要 API Key（在 .env 中配置 JUHE_API_KEY）
 
 典型响应：
 {
-  "success": true,
-  "title": "微博热搜",
-  "update_time": "2024-01-01 12:00:00",
-  "data": [
+  "resultcode": "200",
+  "reason": "Success",
+  "result": [
     {
-      "order": 1,
+      "hotnum": 123456,
       "title": "话题标题",
-      "desc": "话题描述",
-      "hot": "1234567",
-      "url": "https://...",
-      "pic": "https://..."
+      "digest": "话题简介"
     }
   ]
 }
@@ -49,200 +40,124 @@ from app.database import SessionLocal
 from app.models.hotlist_sync import HotlistSync
 from app.utils.logger import logger
 
-
-# ====================================================
-# 平台配置表
-# ====================================================
-
-# 每个平台的配置信息
-# key = 内部平台标识（存数据库）
-# value = dict 包含 API 参数和显示名称
-PLATFORM_CONFIG = {
-    "weibo": {
-        "api_type": "wbHot",          # 韩小韩API的type参数
-        "display_name": "微博热搜",
-        "max_items": 30,              # 最多保存前N条
-    },
-    "douyin": {
-        "api_type": "douyinHot",
-        "display_name": "抖音热榜",
-        "max_items": 20,
-    },
-    "bilibili": {
-        "api_type": "bili",
-        "display_name": "B站热门",
-        "max_items": 20,
-    },
-    "zhihu": {
-        "api_type": "zhihuHot",
-        "display_name": "知乎热榜",
-        "max_items": 20,
-    },
-    "toutiao": {
-        "api_type": "toutiaoHot",
-        "display_name": "今日头条",
-        "max_items": 20,
-    },
-}
+# 聚合数据平台标识（存数据库用）
+JUHE_PLATFORM_KEY = "juhe"
+JUHE_MAX_ITEMS = 50  # 最多保存前50条
 
 
 # ====================================================
-# 单平台抓取函数
+# 热榜抓取函数
 # ====================================================
 
-async def fetch_platform_hotlist(
-    platform_key: str,
-    client: httpx.AsyncClient
-) -> list[dict]:
+async def fetch_juhe_hotlist(client: httpx.AsyncClient) -> list[dict]:
     """
-    抓取单个平台的热榜数据
+    从聚合数据 API 抓取综合热榜数据
 
     参数：
-        platform_key: 平台标识（如 "weibo"）
-        client: 复用的 httpx 异步客户端（避免重复创建连接）
+        client: 复用的 httpx 异步客户端
 
     返回：
         list[dict]：清洗后的热榜条目列表，失败时返回空列表
-
-    为什么用 async？
-    - 抓取5个平台如果逐个等待，共需 5 × (网络延迟) 秒
-    - 用 asyncio.gather 并发抓取，总耗时 ≈ 最慢那个平台的耗时
     """
-    config = PLATFORM_CONFIG.get(platform_key)
-    if not config:
-        logger.warning(f"未知平台: {platform_key}")
+    if not settings.JUHE_API_KEY:
+        logger.warning("JUHE_API_KEY 未配置，跳过热榜同步。请在 .env 中设置 JUHE_API_KEY")
         return []
 
-    url = f"{settings.HAN_API_BASE_URL}/hotlist"
-    params = {"type": config["api_type"]}
+    url = settings.JUHE_HOTLIST_URL
+    params = {"key": settings.JUHE_API_KEY}
 
     try:
-        logger.debug(f"开始抓取 {config['display_name']} 热榜，请求URL: {url}?type={config['api_type']}")
+        logger.debug(f"开始抓取聚合数据热榜，URL: {url}")
         response = await client.get(url, params=params, timeout=10.0)
-        response.raise_for_status()  # 非2xx状态码抛出异常
+        response.raise_for_status()
 
         raw_data = response.json()
+        logger.info(f"聚合数据热榜原始响应: {raw_data}")
 
-        # 韩小韩API返回 success 字段表示是否成功
-        if not raw_data.get("success", False):
-            logger.warning(f"{config['display_name']} API返回失败: {raw_data}")
+        # 聚合数据成功标志：error_code == 0
+        # （部分错误响应也会带 resultcode 字段，但成功时只用 error_code 判断）
+        error_code = raw_data.get("error_code")
+        if error_code != 0:
+            logger.warning(
+                f"聚合数据热榜 API 返回失败: "
+                f"error_code={error_code}, "
+                f"reason={raw_data.get('reason')}, "
+                f"完整响应={raw_data}"
+            )
             return []
 
-        items = raw_data.get("data", [])
-        logger.info(f"{config['display_name']} 抓取成功，共 {len(items)} 条")
+        result = raw_data.get("result")
 
-        # 数据清洗 + 格式标准化
-        cleaned = _clean_hotlist_items(items, platform_key, config)
-        return cleaned[:config["max_items"]]  # 只取前N条
+        # 兼容聚合数据三种返回格式：
+        # - 直接列表：[{"title": ..., "hotnum": ..., "digest": ...}, ...]
+        # - 带list键的对象：{"list": [...]}   ← 实际返回的是这种
+        # - 单个对象：{"title": ..., "hotnum": ..., "digest": ...}
+        if isinstance(result, list):
+            items = result
+        elif isinstance(result, dict):
+            if "list" in result:
+                items = result["list"]   # 真实格式：result.list 才是数组
+            else:
+                items = [result]
+        else:
+            logger.warning(f"聚合数据热榜 result 格式未知: {type(result).__name__}，值={result}")
+            return []
+
+        if not items:
+            logger.warning("聚合数据热榜返回空结果")
+            return []
+
+        logger.info(f"聚合数据热榜抓取成功，共 {len(items)} 条")
+        cleaned = _clean_juhe_items(items)
+        return cleaned[:JUHE_MAX_ITEMS]
 
     except httpx.TimeoutException as e:
-        logger.error(f"{config['display_name']} 抓取超时: {type(e).__name__}: {repr(e)}")
+        logger.error(f"聚合数据热榜抓取超时: {type(e).__name__}: {repr(e)}")
         return []
     except httpx.HTTPStatusError as e:
         logger.error(
-            f"{config['display_name']} HTTP错误: 状态码={e.response.status_code}, "
-            f"URL={e.request.url}, 详情: {repr(e)}"
+            f"聚合数据热榜 HTTP 错误: 状态码={e.response.status_code}, 详情: {repr(e)}"
         )
         return []
     except Exception as e:
-        logger.error(
-            f"{config['display_name']} 抓取异常: {type(e).__name__}: {repr(e)}"
-        )
+        logger.error(f"聚合数据热榜抓取异常: {type(e).__name__}: {repr(e)}")
         return []
 
 
-def _clean_hotlist_items(
-    raw_items: list[dict],
-    platform_key: str,
-    config: dict
-) -> list[dict]:
+def _clean_juhe_items(raw_items: list[dict]) -> list[dict]:
     """
-    数据清洗函数：把韩小韩API的原始格式统一化
+    数据清洗：把聚合数据 API 的原始格式转换为统一的内部格式
 
-    清洗规则：
-    1. 过滤空标题
-    2. 截断超长文本（防止数据库字段溢出）
-    3. 统一字段名（不同平台返回字段名不一致）
-    4. 去掉广告条目（热度值为0的通常是广告）
-
-    韩小韩API不同平台返回字段略有差异，这里做统一映射：
-    - order/index/rank -> rank（排名）
-    - title/name -> title（标题）
-    - desc/description -> description（描述）
-    - hot/hotScore/num -> hot_value（热度值）
-    - url/link/mobileUrl -> url（链接）
-    - pic/cover/img -> image_url（图片）
+    聚合数据字段映射：
+    - title   -> title（话题标题）
+    - digest  -> description（话题简介，可能为空）
+    - hotnum  -> hot_value（热搜指数）
     """
     cleaned = []
 
-    for item in raw_items:
-        # 提取标题（不同平台字段名不同）
-        title = (
-            item.get("title") or
-            item.get("name") or
-            item.get("word") or
-            ""
-        ).strip()
-
-        # 过滤空标题
+    for idx, item in enumerate(raw_items):
+        title = (item.get("title") or "").strip()
         if not title:
             continue
 
-        # 截断过长标题（数据库字段 VARCHAR(300)）
         if len(title) > 280:
             title = title[:280] + "..."
 
-        # 提取排名
-        rank = item.get("order") or item.get("index") or item.get("rank") or 0
-        try:
-            rank = int(rank)
-        except (ValueError, TypeError):
-            rank = 0
-
-        # 提取热度值（转为字符串，因为有些是"1.2万"这样的格式）
-        hot_value = str(
-            item.get("hot") or
-            item.get("hotScore") or
-            item.get("num") or
-            item.get("readNum") or
-            ""
-        )
-
-        # 提取描述
-        description = (
-            item.get("desc") or
-            item.get("description") or
-            item.get("abstract") or
-            None
-        )
+        description = item.get("digest") or None
         if description and len(description) > 500:
             description = description[:500] + "..."
 
-        # 提取URL
-        url = (
-            item.get("url") or
-            item.get("link") or
-            item.get("mobileUrl") or
-            None
-        )
-
-        # 提取图片
-        image_url = (
-            item.get("pic") or
-            item.get("cover") or
-            item.get("img") or
-            None
-        )
+        hot_value = str(item.get("hotnum") or "")
 
         cleaned.append({
-            "source_platform": platform_key,
-            "rank": rank,
+            "source_platform": JUHE_PLATFORM_KEY,
+            "rank": idx + 1,          # 聚合数据没有排名字段，用顺序代替
             "title": title,
             "description": description,
             "hot_value": hot_value,
-            "url": url,
-            "image_url": image_url,
-            "extra_data": item,  # 保留原始数据
+            "url": None,
+            "image_url": None,
+            "extra_data": item,
         })
 
     return cleaned
@@ -254,55 +169,31 @@ def _clean_hotlist_items(
 
 async def sync_all_hotlists() -> dict:
     """
-    并发抓取所有平台热榜，写入数据库
+    抓取聚合数据热榜，写入数据库
 
     这是 APScheduler 定时调用的核心函数
-    
+
     返回：
-        dict: 各平台同步结果统计
-        如 {"weibo": 30, "douyin": 20, "failed": ["bilibili"]}
-    
-    执行流程：
-    1. 并发调用5个平台的抓取函数（asyncio.gather）
-    2. 写入数据库前，先标记同平台的旧数据为过期
-    3. 批量插入新数据
-    4. 触发向量化（异步，不阻塞主流程）
+        dict: 同步结果统计，如 {"juhe": 50}
     """
     logger.info("=" * 40)
     logger.info("开始全量热榜同步...")
     start_time = datetime.utcnow()
 
-    # 创建一个复用的 HTTP 客户端（提高性能，避免重复握手）
     async with httpx.AsyncClient(
         headers={"User-Agent": "Mozilla/5.0 (HotCopyGenerator/1.0)"},
         follow_redirects=True,
     ) as client:
-        # asyncio.gather 并发执行多个协程
-        # 就像同时打开5个浏览器标签抓取，而不是一个个等
-        tasks = [
-            fetch_platform_hotlist(platform_key, client)
-            for platform_key in PLATFORM_CONFIG.keys()
-        ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        items = await fetch_juhe_hotlist(client)
 
-    # 写入数据库
     stats = {}
     db: Session = SessionLocal()
     try:
-        for platform_key, items in zip(PLATFORM_CONFIG.keys(), results):
-            if isinstance(items, Exception):
-                logger.error(
-                    f"{platform_key} gather捕获异常: {type(items).__name__}: {repr(items)}"
-                )
-                stats[platform_key] = 0
-                continue
-
-            if not items:
-                stats[platform_key] = 0
-                continue
-
-            count = _save_hotlist_to_db(db, platform_key, items)
-            stats[platform_key] = count
+        if items:
+            count = _save_hotlist_to_db(db, JUHE_PLATFORM_KEY, items)
+            stats[JUHE_PLATFORM_KEY] = count
+        else:
+            stats[JUHE_PLATFORM_KEY] = 0
 
         db.commit()
         logger.info(f"热榜写库完成: {stats}")
@@ -329,20 +220,17 @@ def _save_hotlist_to_db(
     将热榜数据写入数据库
 
     策略：
-    - 先把该平台24小时以内的旧记录标记为过期（is_expired=1）
+    - 先把该平台旧记录标记为过期（is_expired=1）
     - 再批量插入新记录
     - 不直接删除旧数据，保留历史记录供分析用
 
     返回：成功写入的条数
     """
-    # 标记该平台近期数据为过期（软删除）
-    expire_before = datetime.utcnow() - timedelta(hours=24)
     db.query(HotlistSync).filter(
         HotlistSync.source_platform == platform_key,
         HotlistSync.is_expired == 0,
     ).update({"is_expired": 1})
 
-    # 批量插入新数据
     new_records = []
     for item in items:
         record = HotlistSync(
@@ -354,51 +242,46 @@ def _save_hotlist_to_db(
             url=item.get("url"),
             image_url=item.get("image_url"),
             extra_data=item.get("extra_data"),
-            embedding_status="pending",  # 等待向量化
+            embedding_status="pending",
             fetched_at=datetime.utcnow(),
             is_expired=0,
         )
         new_records.append(record)
         db.add(record)
 
-    # flush 让数据库分配 id（但还没 commit）
-    # 这样 new_records 里的对象有 id 了，可以用于后续操作
     db.flush()
-
     logger.debug(f"{platform_key} 写入 {len(new_records)} 条新记录")
     return len(new_records)
 
 
 # ====================================================
-# 单平台手动同步（供 API 接口触发）
+# 手动同步（供 API 接口触发）
 # ====================================================
 
 async def sync_single_platform(platform_key: str) -> int:
     """
-    手动触发单个平台同步（管理员接口或测试用）
+    手动触发热榜同步（管理员接口或测试用）
+    platform_key 参数保留以兼容旧接口，现在只支持 juhe
 
     返回：同步的条数
     """
-    if platform_key not in PLATFORM_CONFIG:
-        raise ValueError(f"不支持的平台: {platform_key}，支持: {list(PLATFORM_CONFIG.keys())}")
-
     async with httpx.AsyncClient(
         headers={"User-Agent": "Mozilla/5.0 (HotCopyGenerator/1.0)"},
         follow_redirects=True,
     ) as client:
-        items = await fetch_platform_hotlist(platform_key, client)
+        items = await fetch_juhe_hotlist(client)
 
     if not items:
         return 0
 
     db: Session = SessionLocal()
     try:
-        count = _save_hotlist_to_db(db, platform_key, items)
+        count = _save_hotlist_to_db(db, JUHE_PLATFORM_KEY, items)
         db.commit()
         return count
     except Exception as e:
         db.rollback()
-        logger.error(f"单平台同步写库失败: {type(e).__name__}: {repr(e)}")
+        logger.error(f"手动同步写库失败: {type(e).__name__}: {repr(e)}")
         return 0
     finally:
         db.close()

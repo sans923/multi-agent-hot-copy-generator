@@ -28,8 +28,8 @@ Token 结构（三段用.分隔）：
 from datetime import datetime, timedelta
 from typing import Optional
 
+import bcrypt as _bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.config import settings
 
@@ -37,39 +37,38 @@ from app.config import settings
 # ====================================================
 # 密码哈希工具
 # ====================================================
-
-# CryptContext 是密码哈希的"上下文管理器"
-# schemes=["bcrypt"]：使用 bcrypt 算法
-# deprecated="auto"：如果用了旧算法，自动标记为需要升级
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# 直接使用 bcrypt 原生库，绕开 passlib 1.7.4 与 bcrypt>=4.0 的兼容性问题。
+# passlib 在初始化时会用超长测试密码做内部检测，在 bcrypt>=4.0 下会直接崩溃。
 
 
 def hash_password(plain_password: str) -> str:
     """
     将明文密码哈希化
-    
+
     每次调用结果都不同（因为 bcrypt 每次生成不同的随机盐），
     但 verify_password 依然能验证正确性
-    
+
     示例：
         hash_password("123456") -> "$2b$12$K0Q...（60位随机字符）"
     """
-    plain_password = plain_password[:72]  # bcrypt 72字节限制
-    return pwd_context.hash(plain_password)
+    password_bytes = plain_password.encode("utf-8")[:72]
+    salt = _bcrypt.gensalt()
+    return _bcrypt.hashpw(password_bytes, salt).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     验证密码是否正确
-    
+
     原理：bcrypt 把"盐"存在了哈希值里，
     所以能从 hashed_password 提取盐重新计算，再比对结果
-    
+
     示例：
         verify_password("123456", "$2b$12$K0Q...") -> True
         verify_password("wrong", "$2b$12$K0Q...") -> False
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    password_bytes = plain_password.encode("utf-8")[:72]
+    return _bcrypt.checkpw(password_bytes, hashed_password.encode("utf-8"))
 
 
 # ====================================================

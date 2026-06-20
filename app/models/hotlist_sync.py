@@ -4,7 +4,7 @@
 存储从韩小韩 API 抓取的热榜数据
 每1小时 APScheduler 自动更新一次
 
-数据来源：https://api.vvhan.com/api/hotlist
+数据来源：https://apis.juhe.cn/fapigx/networkhot/query（聚合数据热榜API）
 支持平台：微博热搜 / 微信热点 / 抖音热搜 / B站热门 / 知乎热榜 等
 
 这些热榜话题会被向量化存入 ChromaDB，

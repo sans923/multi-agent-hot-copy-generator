@@ -25,7 +25,7 @@ from app.services.hotlist_service import (
     sync_all_hotlists,
     sync_single_platform,
     get_recent_hotlist,
-    PLATFORM_CONFIG,
+    JUHE_PLATFORM_KEY,
 )
 from app.utils.logger import logger
 
@@ -81,11 +81,10 @@ def get_platforms():
     """返回所有支持的热榜平台配置信息"""
     platforms = [
         {
-            "key": key,
-            "display_name": config["display_name"],
-            "max_items": config["max_items"],
+            "key": JUHE_PLATFORM_KEY,
+            "display_name": "综合热搜（聚合数据）",
+            "max_items": 50,
         }
-        for key, config in PLATFORM_CONFIG.items()
     ]
     return ApiResponse(success=True, message="获取成功", data=platforms)
 
@@ -99,7 +98,7 @@ def get_platforms():
 def list_hotlist(
     platform: Optional[str] = Query(
         default=None,
-        description="平台过滤：weibo/douyin/bilibili/zhihu/toutiao"
+        description=f"平台过滤：当前仅支持 {JUHE_PLATFORM_KEY}"
     ),
     page: int = Query(default=1, ge=1, description="页码"),
     page_size: int = Query(default=20, ge=1, le=100, description="每页条数"),
@@ -114,10 +113,10 @@ def list_hotlist(
     - 也可以不选择，让 Agent 自动匹配相关热点
     """
     # 验证平台参数
-    if platform and platform not in PLATFORM_CONFIG:
+    if platform and platform != JUHE_PLATFORM_KEY:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"不支持的平台: {platform}，支持: {list(PLATFORM_CONFIG.keys())}"
+            detail=f"不支持的平台: {platform}，当前支持: [{JUHE_PLATFORM_KEY}]"
         )
 
     query = db.query(HotlistSync).filter(HotlistSync.is_expired == 0)
@@ -244,19 +243,13 @@ async def trigger_platform_sync(
     platform: str,
     current_admin: User = Depends(get_current_admin_user),
 ):
-    """同步单个平台（测试或补偿用）"""
-    if platform not in PLATFORM_CONFIG:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"不支持的平台: {platform}"
-        )
-
+    """同步热榜（测试或补偿用，platform 参数保留以兼容旧接口）"""
     try:
         count = await sync_single_platform(platform)
         return ApiResponse(
             success=True,
-            message=f"{PLATFORM_CONFIG[platform]['display_name']} 同步完成",
-            data={"platform": platform, "synced_count": count}
+            message=f"聚合数据热榜同步完成",
+            data={"platform": JUHE_PLATFORM_KEY, "synced_count": count}
         )
     except Exception as e:
         raise HTTPException(

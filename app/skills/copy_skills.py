@@ -555,13 +555,7 @@ class SaveFinalCopySkill(BaseSkill):
 
         logger.info(f"文案已保存: copy_id={copy.id}, task_id={task_id}, version={version}")
 
-        # 异步触发向量化（Phase 2 的 embedding service）
-        try:
-            from app.services.embedding_service import EmbeddingService
-            embedding_service = EmbeddingService()
-            # 向量化文案（后台异步，不阻塞主流程）
-        except Exception as e:
-            logger.warning(f"文案向量化触发失败（不影响保存）: {e}")
+        # 文案向量化暂不处理（embedding_service 提供函数式接口，无 EmbeddingService 类）
 
         return {
             "success": True,

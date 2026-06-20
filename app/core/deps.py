@@ -24,7 +24,7 @@ FastAPI 依赖注入模块
 
 from typing import Optional
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -32,44 +32,38 @@ from app.core.security import decode_access_token
 from app.models.user import User
 
 
-# OAuth2PasswordBearer 是 FastAPI 内置的"从请求头提取 Bearer Token"的工具
-# tokenUrl: 告诉 Swagger UI 在哪个接口获取 Token（用于API文档测试）
-# 它的作用：从请求头 "Authorization: Bearer <token>" 中提取 <token>
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+# HTTPBearer：从请求头 "Authorization: Bearer <token>" 中提取 token
+# 比 OAuth2PasswordBearer 更简单，Swagger UI 里只显示一个直接粘贴 token 的输入框
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db)
 ) -> User:
     """
     从 JWT Token 中提取当前登录用户
-    
-    这是最常用的依赖，保护需要登录才能访问的接口
-    
+
     工作流程：
-    1. oauth2_scheme 从 HTTP 请求头提取 token 字符串
+    1. bearer_scheme 从请求头提取 token 字符串
     2. decode_access_token 验证并解码 token，得到用户ID
     3. 用用户ID查数据库得到 User 对象
     4. 返回 User 对象给路由函数使用
-    
-    如果任何一步失败，直接返回 401 错误（未授权）
     """
-    # 定义一个通用的认证失败异常
-    # 401 Unauthorized 是 HTTP 标准状态码，表示"未登录"
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="无效的身份凭证，请重新登录",
         headers={"WWW-Authenticate": "Bearer"},
-        # WWW-Authenticate: Bearer 告诉客户端应该用 Bearer Token 认证
     )
 
-    # 解码 JWT，得到用户 ID
+    if credentials is None:
+        raise credentials_exception
+
+    token = credentials.credentials
     user_id = decode_access_token(token)
     if user_id is None:
         raise credentials_exception
 
-    # 用 ID 查数据库
     user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
         raise credentials_exception

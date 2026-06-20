@@ -100,6 +100,9 @@ app = FastAPI(
     docs_url="/docs",                     # Swagger UI 地址
     redoc_url="/redoc",                   # ReDoc 文档地址（更适合阅读）
     lifespan=lifespan,                    # 绑定生命周期管理
+    swagger_ui_parameters={
+        "persistAuthorization": True,     # 刷新页面后保留 Token，不用重新授权
+    },
 )
 
 

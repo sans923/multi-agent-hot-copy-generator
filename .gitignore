@@ -33,3 +33,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# 前端
+frontend/node_modules/
