@@ -11,8 +11,9 @@
 """
 
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from functools import lru_cache
+from urllib.parse import quote_plus
 
 
 class Settings(BaseSettings):
@@ -29,8 +30,19 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     PORT: int = 8000
 
-    # --- 数据库配置 ---
-    DATABASE_URL: str = "sqlite:///./data/app.db"
+    # --- 智能体编排引擎选择 ---
+    # native   = 自研顺序流水线编排（AgentOrchestrator，默认，行为与历史版本完全一致）
+    # langgraph = 基于 LangGraph 的 DeerFlow 2.0 风格编排引擎（后续阶段接入）
+    # 双引擎通过此开关切换、运行时隔离；切回 native 即恢复现状
+    ORCHESTRATION_ENGINE: str = "native"
+
+    # --- 数据库配置（默认 MySQL；设置 DATABASE_URL 可覆盖）---
+    DATABASE_URL: str = ""
+    MYSQL_HOST: str = "127.0.0.1"
+    MYSQL_PORT: int = 3306
+    MYSQL_USER: str = "copygen"
+    MYSQL_PASSWORD: str = "copygen123"
+    MYSQL_DATABASE: str = "copy_generator"
 
     # --- JWT 鉴权配置 ---
     SECRET_KEY: str
@@ -42,35 +54,50 @@ class Settings(BaseSettings):
     DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
     DEEPSEEK_CHAT_MODEL: str = "deepseek-chat"
     DEEPSEEK_EMBEDDING_MODEL: str = "deepseek-embedding"
+    DEEPSEEK_TIMEOUT_SECONDS: float = 120.0
+    DEEPSEEK_CONNECT_TIMEOUT: float = 15.0
+    DEEPSEEK_MAX_RETRIES: int = 2
+    DEEPSEEK_MAX_TOKENS: int = 4096
 
     # --- ChromaDB 配置 ---
     CHROMA_PERSIST_PATH: str = "./data/chroma"
 
+    # --- 头条长文 RAG（LangChain + LangGraph）---
+    TOUTIAO_RAG_COLLECTION: str = "toutiao_references"
+    RAG_EMBEDDING_MODEL: str = "paraphrase-multilingual-MiniLM-L12-v2"
+    RAG_CHUNK_SIZE: int = 600
+    RAG_CHUNK_OVERLAP: int = 80
+    RAG_TOP_K: int = 3
+
     # --- 热榜 API 配置 ---
-    HAN_API_BASE_URL: str = "https://api.vvhan.com/api"
+    JUHE_API_KEY: str = ""
+    JUHE_HOTLIST_URL: str = "https://apis.juhe.cn/fapigx/networkhot/query"
     HOTLIST_SYNC_INTERVAL: int = 3600
 
     # --- 日志配置 ---
     LOG_LEVEL: str = "INFO"
     LOG_FILE_PATH: str = "./logs/app.log"
 
+    @model_validator(mode="after")
+    def assemble_database_url(self) -> "Settings":
+        """未设置 DATABASE_URL 时，用 MYSQL_* 拼装 MySQL 连接串"""
+        if not self.DATABASE_URL.strip():
+            user = quote_plus(self.MYSQL_USER)
+            password = quote_plus(self.MYSQL_PASSWORD)
+            self.DATABASE_URL = (
+                f"mysql+pymysql://{user}:{password}@{self.MYSQL_HOST}:"
+                f"{self.MYSQL_PORT}/{self.MYSQL_DATABASE}?charset=utf8mb4"
+            )
+        return self
+
     @field_validator("SECRET_KEY")
     @classmethod
     def secret_key_must_be_long_enough(cls, v: str) -> str:
-        """
-        安全校验：SECRET_KEY 至少 32 个字符
-        JWT 签名密钥太短容易被暴力破解
-        """
         if len(v) < 32:
             raise ValueError("SECRET_KEY 必须至少 32 个字符，请修改 .env 文件")
         return v
 
     class Config:
-        """
-        pydantic-settings 配置类
-        env_file: 指定从哪个文件读取环境变量
-        case_sensitive: 区分大小写（推荐开启，防止混淆）
-        """
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
@@ -78,17 +105,7 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    """
-    获取配置单例
-    
-    @lru_cache() 装饰器让这个函数只执行一次：
-    - 第一次调用时读取 .env 文件，创建 Settings 对象
-    - 之后每次调用直接返回缓存的对象（不重复读文件）
-    
-    这种模式叫"单例模式"，确保整个应用共享同一份配置
-    """
     return Settings()
 
 
-# 全局配置对象，其他模块直接导入使用
 settings = get_settings()

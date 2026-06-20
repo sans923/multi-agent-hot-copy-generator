@@ -23,7 +23,13 @@ from app.database import get_db, SessionLocal
 from app.models.task import Task, TaskStatus, TaskPlatform
 from app.models.copy import Copy
 from app.models.user import User
-from app.schemas.task import TaskCreate, TaskResponse, TaskDetailResponse, CopyResponse
+from app.schemas.task import (
+    TaskCreate,
+    TaskResponse,
+    TaskDetailResponse,
+    TaskCopySummary,
+    CopyResponse,
+)
 from app.schemas.common import ApiResponse, PaginationResponse
 from app.core.deps import get_current_active_user
 from app.utils.logger import logger
@@ -42,9 +48,13 @@ def _run_agents_background(task_id: int) -> None:
     """
     db = SessionLocal()
     try:
-        from app.agents.orchestrator import AgentOrchestrator
-        orchestrator = AgentOrchestrator()
-        result = orchestrator.run(db=db, task_id=task_id)
+        # 双引擎切换的唯一接缝：按配置 settings.ORCHESTRATION_ENGINE 取编排引擎并调用。
+        # 默认 "native"（自研 AgentOrchestrator），切换为 "langgraph" 即用 LangGraph 引擎；
+        # 统一接口 run(db, task_id) -> dict 与历史保持一致，API/前端/事务管理均无需改动。
+        from app.config import settings
+        from app.orchestration import get_orchestration_engine
+        engine = get_orchestration_engine(settings.ORCHESTRATION_ENGINE)
+        result = engine.run(db=db, task_id=task_id)
         logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
     except Exception as e:
         logger.exception(f"后台任务执行异常: task_id={task_id}")
@@ -193,19 +203,12 @@ def get_task(
         .all()
     )
 
-    task_detail = TaskDetailResponse.model_validate(task)
-    task_detail.copies = [
-        {
-            "id": c.id,
-            "version": c.version,
-            "title": c.title,
-            "content": c.content,
-            "hashtags": c.hashtags,
-            "review_score": c.review_score,
-            "is_final": c.is_final,
-        }
-        for c in copies
-    ]
+    # 不能 TaskDetailResponse.model_validate(task)：Task.copies 关系是 ORM 对象，会触发校验失败
+    task_base = TaskResponse.model_validate(task)
+    task_detail = TaskDetailResponse(
+        **task_base.model_dump(),
+        copies=[TaskCopySummary.model_validate(c) for c in copies],
+    )
 
     return ApiResponse(
         success=True,
