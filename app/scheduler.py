@@ -95,7 +95,7 @@ async def job_embed_new_hotlist():
     
     执行逻辑：
     1. 查询 embedding_status='pending' 的热榜记录
-    2. 批量调用 DeepSeek Embedding API
+    2. 批量调用 Embedding API
     3. 存入 ChromaDB
     4. 更新数据库记录状态为 'completed'
     """
@@ -137,7 +137,7 @@ async def job_embed_new_hotlist():
             for item in pending_items
         ]
 
-        # 执行向量化（可能耗时较长，DeepSeek API 调用）
+        # 执行向量化（可能耗时较长，Embedding API 调用）
         count = upsert_hotlist_to_chroma(items_dict)
 
         # 更新状态

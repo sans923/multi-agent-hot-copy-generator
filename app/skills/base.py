@@ -4,7 +4,7 @@ Skill 基础设施 - Function Calling 注册与调用机制
 这是整个多智能体系统的"工具箱"核心。
 
 【什么是 Function Calling？】
-DeepSeek/OpenAI 的大模型不仅能聊天，还能"调用函数"：
+兼容 OpenAI 协议的大模型不仅能聊天，还能"调用函数"：
 1. 你告诉模型"有哪些工具可以用"（提供 tools 列表）
 2. 模型根据用户需求，自主决定"是否调用工具"以及"调用哪个"
 3. 模型返回 tool_call 请求（包含函数名+参数）
@@ -14,7 +14,7 @@ DeepSeek/OpenAI 的大模型不仅能聊天，还能"调用函数"：
 【架构图】
 Agent（大脑）
     ↓ 发送 prompt + tools 列表
-DeepSeek API
+OpenAI 兼容 API
     ↓ 返回 tool_call（决定调用哪个Skill）
 SkillExecutor（执行器）
     ↓ 根据函数名找到对应 Skill
@@ -111,7 +111,7 @@ class BaseSkill(ABC):
 
     def to_openai_tool(self) -> dict:
         """
-        转换为 OpenAI/DeepSeek Function Calling 的 tool 格式
+        转换为 OpenAI Function Calling 兼容的 tool 格式
         
         这个格式是固定的，发给模型时必须是这个结构：
         {

@@ -57,7 +57,7 @@ class BaseAgent(ABC):
     - run(): 业务入口（接收任务参数，组织message，调用 _run_loop）
     """
 
-    # DeepSeek 客户端（类级别共享，节省资源）
+    # 大模型客户端（类级别共享，节省资源）
     _client: OpenAI | None = None
 
     def __init__(self):
@@ -94,22 +94,22 @@ class BaseAgent(ABC):
     @property
     def model(self) -> str:
         """使用的模型，默认使用配置中的 chat 模型"""
-        return settings.DEEPSEEK_CHAT_MODEL
+        return settings.LLM_CHAT_MODEL
 
     @classmethod
     def _get_client(cls) -> OpenAI:
         """
-        获取 DeepSeek API 客户端（单例，懒加载）
+        获取大模型 API 客户端（单例，懒加载）
         
-        DeepSeek 兼容 OpenAI SDK，只需改 base_url 和 api_key：
-        - base_url 指向 DeepSeek 的 API 地址
-        - model 用 deepseek-chat 而不是 gpt-4
-        其余用法完全和 OpenAI SDK 一样
+        火山方舟 Coding Plan 兼容 OpenAI SDK，只需改 base_url 和 api_key：
+        - base_url 默认指向火山方舟 OpenAI 兼容 API
+        - model 默认使用 glm-5.2
+        其余用法和 OpenAI SDK 一样
         """
         if cls._client is None:
             cls._client = OpenAI(
-                api_key=settings.DEEPSEEK_API_KEY,
-                base_url=settings.DEEPSEEK_BASE_URL,
+                api_key=settings.LLM_API_KEY,
+                base_url=settings.LLM_BASE_URL,
             )
         return cls._client
 
