@@ -1,8 +1,8 @@
 """
-向量化服务（ChromaDB + Embedding API）
-=====================================
+向量化服务（ChromaDB + DeepSeek Embedding）
+============================================
 负责：
-1. 把文本转换为向量（Embedding API）
+1. 把文本转换为向量（DeepSeek Embedding API）
 2. 将热榜话题向量存入 ChromaDB（用于语义搜索）
 3. 将用户文档向量存入 ChromaDB（用于 RAG）
 4. 提供语义搜索接口（供 Agent Skill 调用）
@@ -37,7 +37,7 @@
 import hashlib
 from typing import Optional
 import chromadb
-from openai import OpenAI  # 兼容 OpenAI 协议的 Embedding SDK
+from openai import OpenAI  # DeepSeek 兼容 OpenAI SDK
 
 from app.config import settings
 from app.utils.logger import logger
@@ -47,16 +47,16 @@ from app.utils.logger import logger
 # 客户端初始化
 # ====================================================
 
-def _create_embedding_client() -> OpenAI:
+def _create_deepseek_client() -> OpenAI:
     """
-    创建 Embedding API 客户端
+    创建 DeepSeek API 客户端
     
-    聊天模型和向量模型分开配置，避免把 glm-5.2 这样的聊天/编程模型
-    错用于 Embedding 接口。
+    DeepSeek 完全兼容 OpenAI API 协议，只需要修改 base_url 和 api_key
+    所以直接用 openai 库就能调用 DeepSeek
     """
     return OpenAI(
-        api_key=settings.EMBEDDING_API_KEY,
-        base_url=settings.EMBEDDING_BASE_URL,
+        api_key=settings.DEEPSEEK_API_KEY,
+        base_url=settings.DEEPSEEK_BASE_URL,
     )
 
 
@@ -73,16 +73,16 @@ def _create_chroma_client() -> chromadb.PersistentClient:
 
 
 # 模块级别的单例（整个应用共享一个连接）
-_embedding_client: Optional[OpenAI] = None
+_deepseek_client: Optional[OpenAI] = None
 _chroma_client: Optional[chromadb.PersistentClient] = None
 
 
-def get_embedding_client() -> OpenAI:
-    """获取 Embedding 客户端单例"""
-    global _embedding_client
-    if _embedding_client is None:
-        _embedding_client = _create_embedding_client()
-    return _embedding_client
+def get_deepseek_client() -> OpenAI:
+    """获取 DeepSeek 客户端单例"""
+    global _deepseek_client
+    if _deepseek_client is None:
+        _deepseek_client = _create_deepseek_client()
+    return _deepseek_client
 
 
 def get_chroma_client() -> chromadb.PersistentClient:
@@ -115,23 +115,23 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         list[list[float]]：每个文本对应的向量（1536维浮点数组）
 
     注意：
-    - Embedding API 单次最多处理的文本数量取决于服务商限制
+    - DeepSeek Embedding API 单次最多处理 ~2048 个文本
     - 每个文本建议不超过 8000 tokens
-    - 向量维度取决于配置的 EMBEDDING_MODEL
+    - 向量维度取决于模型（deepseek-embedding 是1024维）
     
-    如果当前 Embedding API 不可用的降级方案：
+    如果 DeepSeek Embedding 不可用的降级方案：
     - 改用 OpenAI text-embedding-3-small
     - 或本地模型 sentence-transformers（离线，无需API费用）
     """
     if not texts:
         return []
 
-    client = get_embedding_client()
+    client = get_deepseek_client()
 
     try:
         # 调用 Embedding API（和 OpenAI 接口完全一致）
         response = client.embeddings.create(
-            model=settings.EMBEDDING_MODEL,
+            model=settings.DEEPSEEK_EMBEDDING_MODEL,
             input=texts,
             encoding_format="float",  # 返回浮点数数组（vs base64）
         )
@@ -143,7 +143,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         return vectors
 
     except Exception as e:
-        logger.error(f"Embedding API 调用失败: {e}")
+        logger.error(f"DeepSeek Embedding API 调用失败: {e}")
         raise
 
 

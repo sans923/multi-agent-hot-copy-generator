@@ -93,19 +93,18 @@ info "Step 3: 检查环境变量..."
 if [ ! -f "$APP_DIR/.env" ]; then
     warning ".env 文件不存在，从模板创建..."
     cp .env.example .env
-    warning "请编辑 $APP_DIR/.env 填入真实配置（尤其是 SECRET_KEY 和 LLM_API_KEY）"
+    warning "请编辑 $APP_DIR/.env 填入真实配置（尤其是 SECRET_KEY 和 DEEPSEEK_API_KEY）"
     warning "执行: nano $APP_DIR/.env"
     exit 1
 fi
 
 # 验证必填配置
-source <(grep -E "^(SECRET_KEY|LLM_API_KEY|DEEPSEEK_API_KEY)=" .env)
-LLM_API_KEY="${LLM_API_KEY:-${DEEPSEEK_API_KEY:-}}"
+source <(grep -E "^(SECRET_KEY|DEEPSEEK_API_KEY)=" .env)
 if [ "$SECRET_KEY" = "dev-secret-key-change-this-before-production-use-32chars" ]; then
     error "请修改 .env 中的 SECRET_KEY！不能使用默认值"
 fi
-if [ -z "$LLM_API_KEY" ] || [ "$LLM_API_KEY" = "your-ark-api-key-here" ] || [ "$LLM_API_KEY" = "your-deepseek-api-key-here" ]; then
-    error "请在 .env 中填入真实的 LLM_API_KEY"
+if [ -z "$DEEPSEEK_API_KEY" ] || [ "$DEEPSEEK_API_KEY" = "your-deepseek-api-key-here" ]; then
+    error "请在 .env 中填入真实的 DEEPSEEK_API_KEY"
 fi
 
 info "环境变量检查通过"

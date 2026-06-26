@@ -1,6 +1,6 @@
 # 多智能体热点爆款文案生成系统
 
-> 基于 FastAPI + 火山方舟/OpenAI 兼容大模型 + ChromaDB 的多智能体协作系统，自动抓取热榜话题，生成高质量营销文案
+> 基于 FastAPI + DeepSeek + ChromaDB 的多智能体协作系统，自动抓取热榜话题，生成高质量营销文案
 
 ## 系统架构
 
@@ -22,7 +22,7 @@
 | 层次     | 技术                    |
 | ------ | --------------------- |
 | Web 框架 | FastAPI               |
-| 大模型    | 火山方舟/OpenAI 兼容 API |
+| 大模型    | DeepSeek API          |
 | 向量数据库  | ChromaDB              |
 | 关系数据库  | SQLite（开发）/ MySQL（生产） |
 | 热榜数据   | 韩小韩免费 API             |
@@ -52,59 +52,8 @@ copy .env.example .env
 
 # 编辑 .env，填入：
 # - SECRET_KEY（必须修改！）
-# - LLM_API_KEY（你的火山方舟 API Key）
+# - DEEPSEEK_API_KEY（你的 API Key）
 ```
-
-默认大模型配置如下，适配火山方舟 Coding Plan 的 OpenAI 兼容协议：
-
-```dotenv
-LLM_BASE_URL=https://ark.cn-beijing.volces.com/api/coding/v3
-LLM_CHAT_MODEL=glm-5.2
-LLM_API_KEY=your-ark-api-key-here
-```
-
-> 注意：`glm-5.2` 是聊天/编程模型，不要用于 Embedding。向量化请单独配置 `EMBEDDING_API_KEY`、`EMBEDDING_BASE_URL`、`EMBEDDING_MODEL`。
-
-### Codex 客户端使用火山方舟 glm-5.2
-
-Codex 官方文档要求 provider/auth 这类配置放在用户级 `~/.codex/config.toml`，项目内 `.codex/config.toml` 会忽略 `model_provider`、`model_providers` 等键。
-
-1. 设置 API Key 环境变量：
-
-```bash
-export ARK_API_KEY="your-ark-api-key-here"
-```
-
-2. 在 `~/.codex/config.toml` 增加火山方舟 provider：
-
-```toml
-[model_providers.volcengine_ark]
-name = "Volcengine Ark Coding Plan"
-base_url = "https://ark.cn-beijing.volces.com/api/coding/v3"
-env_key = "ARK_API_KEY"
-wire_api = "responses"
-request_max_retries = 4
-stream_max_retries = 10
-stream_idle_timeout_ms = 600000
-```
-
-3. 新建 `~/.codex/ark-glm52.config.toml`：
-
-```toml
-model_provider = "volcengine_ark"
-model = "glm-5.2"
-model_reasoning_effort = "high"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-```
-
-4. 启动 Codex：
-
-```bash
-codex --profile ark-glm52
-```
-
-如果你的火山方舟套餐控制台使用 `ark-code-latest` 统一切换模型，也可以把 profile 里的 `model` 改为 `ark-code-latest`。
 
 ### 3. 启动服务
 

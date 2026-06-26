@@ -11,7 +11,7 @@
 """
 
 from pydantic_settings import BaseSettings
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import field_validator
 from functools import lru_cache
 
 
@@ -37,45 +37,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 默认 24 小时
     ALGORITHM: str = "HS256"
 
-    # --- 大模型 API 配置 ---
-    # 默认按火山方舟 Coding Plan 的 OpenAI 兼容协议配置，API Key 请放到 .env 的 LLM_API_KEY。
-    # 兼容旧的 DEEPSEEK_* 环境变量，便于已有部署平滑迁移。
-    LLM_API_KEY: str = Field(
-        default="",
-        validation_alias=AliasChoices("LLM_API_KEY", "DEEPSEEK_API_KEY"),
-    )
-    LLM_BASE_URL: str = Field(
-        default="https://ark.cn-beijing.volces.com/api/coding/v3",
-        validation_alias=AliasChoices("LLM_BASE_URL", "DEEPSEEK_BASE_URL"),
-    )
-    LLM_CHAT_MODEL: str = Field(
-        default="glm-5.2",
-        validation_alias=AliasChoices("LLM_CHAT_MODEL", "DEEPSEEK_CHAT_MODEL"),
-    )
-
-    # --- 向量化 API 配置 ---
-    # glm-5.2 是聊天/编程模型，不能当作 embedding 模型使用；向量化单独配置。
-    EMBEDDING_API_KEY: str = Field(
-        default="",
-        validation_alias=AliasChoices(
-            "EMBEDDING_API_KEY",
-            "DEEPSEEK_EMBEDDING_API_KEY",
-            "LLM_API_KEY",
-            "DEEPSEEK_API_KEY",
-        ),
-    )
-    EMBEDDING_BASE_URL: str = Field(
-        default="https://api.deepseek.com/v1",
-        validation_alias=AliasChoices(
-            "EMBEDDING_BASE_URL",
-            "DEEPSEEK_EMBEDDING_BASE_URL",
-            "DEEPSEEK_BASE_URL",
-        ),
-    )
-    EMBEDDING_MODEL: str = Field(
-        default="deepseek-embedding",
-        validation_alias=AliasChoices("EMBEDDING_MODEL", "DEEPSEEK_EMBEDDING_MODEL"),
-    )
+    # --- DeepSeek API 配置 ---
+    DEEPSEEK_API_KEY: str = ""
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
+    DEEPSEEK_CHAT_MODEL: str = "deepseek-chat"
+    DEEPSEEK_EMBEDDING_MODEL: str = "deepseek-embedding"
 
     # --- ChromaDB 配置 ---
     CHROMA_PERSIST_PATH: str = "./data/chroma"
