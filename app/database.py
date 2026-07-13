@@ -42,20 +42,26 @@ def _get_engine_kwargs() -> dict:
     """
     if settings.DATABASE_URL.startswith("sqlite"):
         # SQLite 特殊配置
-        # check_same_thread=False：允许多个线程共用同一个连接
-        # （FastAPI 是多线程的，SQLite 默认只允许创建它的线程使用）
         return {
             "connect_args": {"check_same_thread": False},
-            "echo": settings.DEBUG,  # DEBUG模式下打印所有SQL语句
-        }
-    else:
-        # MySQL / PostgreSQL 配置
-        return {
-            "pool_size": 10,          # 连接池维持的最小连接数
-            "max_overflow": 20,       # 超出 pool_size 后最多额外创建的连接数
-            "pool_pre_ping": True,    # 每次使用连接前 ping 一下，自动重连断开的连接
             "echo": settings.DEBUG,
         }
+    if settings.DATABASE_URL.startswith("mysql"):
+        # MySQL 连接池（pool_recycle 避免 MySQL 8h 断连）
+        return {
+            "pool_size": 10,
+            "max_overflow": 20,
+            "pool_pre_ping": True,
+            "pool_recycle": 3600,
+            "echo": settings.DEBUG,
+        }
+    # PostgreSQL 等
+    return {
+        "pool_size": 10,
+        "max_overflow": 20,
+        "pool_pre_ping": True,
+        "echo": settings.DEBUG,
+    }
 
 
 def _prepare_sqlite_dir() -> None:
@@ -144,7 +150,7 @@ def create_tables() -> None:
     注意：这里必须先 import 所有模型，否则 Base.metadata 不知道有哪些表
     顺序很重要：被外键引用的表要先建（users 先于 tasks）
     """
-    from app.models import user, task, document, copy, agent_log, hotlist_sync  # noqa: F401
+    from app.models import user, task, document, copy, agent_log, hotlist_sync, toutiao_reference, orchestration_audit_log, system_log  # noqa: F401
 
     logger.info("开始创建数据库表...")
     Base.metadata.create_all(bind=engine)

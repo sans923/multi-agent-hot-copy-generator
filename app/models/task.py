@@ -30,6 +30,7 @@ class TaskStatus(str, enum.Enum):
     """
     PENDING = "pending"        # 已创建，等待Agent处理
     PROCESSING = "processing"  # Agent正在处理中
+    AWAITING_HUMAN = "awaiting_human"  # 需人工介入（Agentic 编排暂停）
     COMPLETED = "completed"    # 处理完成，有结果
     FAILED = "failed"          # 处理失败
 
@@ -103,6 +104,13 @@ class Task(Base):
     # 错误信息（失败时记录原因）
     error_message = Column(Text, nullable=True, comment="失败原因")
 
+    # Agentic 编排元数据（task_mode / plan / checkpoint / verification 等）
+    orchestration_meta = Column(
+        JSON,
+        nullable=True,
+        comment="编排元数据：task_mode、plan_source、checkpoint 等",
+    )
+
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, comment="创建时间")
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False, comment="更新时间")
 
@@ -110,6 +118,7 @@ class Task(Base):
     user = relationship("User", back_populates="tasks")
     copies = relationship("Copy", back_populates="task", lazy="dynamic")
     agent_logs = relationship("AgentLog", back_populates="task", lazy="dynamic")
+    audit_logs = relationship("OrchestrationAuditLog", back_populates="task", lazy="dynamic")
     hotlist = relationship("HotlistSync", back_populates="tasks")
 
     def __repr__(self) -> str:

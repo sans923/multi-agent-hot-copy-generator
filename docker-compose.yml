@@ -1,84 +1,83 @@
 # ======================================================
-# Docker Compose 配置
+# Docker Compose：FastAPI + MySQL + Nginx
 # ======================================================
-# 用途：本地开发/测试时一键启动完整环境
-# 
-# 使用方法：
-#   docker-compose up -d         启动所有服务（后台运行）
-#   docker-compose logs -f app   实时查看日志
-#   docker-compose down          停止并删除容器
-#   docker-compose down -v       停止并删除容器+数据卷（慎用！会清空数据）
-#
-# 服务说明：
-#   app：FastAPI 应用（主服务）
-#   nginx：反向代理（生产环境用，开发时可以不启动）
+#   docker-compose up -d
+#   docker-compose logs -f app
+#   docker-compose down
 
 version: "3.9"
 
 services:
-  # ====================================================
-  # FastAPI 应用服务
-  # ====================================================
+  mysql:
+    image: mysql:8.0
+    container_name: copy_generator_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: copy_generator
+      MYSQL_USER: copygen
+      MYSQL_PASSWORD: copygen123
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ucopygen", "-pcopygen123"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      target: runtime  # 使用多阶段构建的 runtime 阶段
+      target: runtime
     container_name: copy_generator_app
-    restart: unless-stopped  # 崩溃后自动重启，除非手动停止
-    
-    # 从 .env 文件读取环境变量（不要把敏感信息写在这里！）
+    restart: unless-stopped
     env_file:
       - .env
-    
-    # 覆盖部分环境变量（Docker 环境下数据路径不同）
     environment:
-      - DATABASE_URL=sqlite:////app/data/app.db
-      - CHROMA_PERSIST_PATH=/app/data/chroma
-      - LOG_FILE_PATH=/app/logs/app.log
-    
-    # 端口映射：宿主机:容器（不对外暴露，由Nginx代理）
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: copygen
+      MYSQL_PASSWORD: copygen123
+      MYSQL_DATABASE: copy_generator
+      DATABASE_URL: ""
+      CHROMA_PERSIST_PATH: /app/data/chroma
+      LOG_FILE_PATH: /app/logs/app.log
     expose:
       - "8000"
-    
-    # 数据卷：把容器内的数据目录映射到宿主机
-    # 这样容器删除后数据不会丢失
     volumes:
-      - app_data:/app/data    # SQLite 数据库 + ChromaDB
-      - app_logs:/app/logs    # 日志文件
-    
-    # 健康检查（等待服务真正就绪再让 Nginx 转发流量）
+      - app_data:/app/data
+      - app_logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
 
-  # ====================================================
-  # Nginx 反向代理
-  # ====================================================
   nginx:
     image: nginx:alpine
     container_name: copy_generator_nginx
     restart: unless-stopped
-    
     ports:
-      - "80:80"    # HTTP
-      - "443:443"  # HTTPS（需要先配置SSL证书）
-    
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Nginx配置文件（只读）
-      - ./ssl:/etc/nginx/ssl:ro                # SSL证书目录
-      - app_logs:/var/log/nginx                # Nginx日志
-    
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - app_logs:/var/log/nginx
     depends_on:
       app:
-        condition: service_healthy  # 等 app 健康检查通过再启动
+        condition: service_healthy
 
-# ====================================================
-# 数据卷定义
-# ====================================================
 volumes:
-  app_data:    # 持久化数据（SQLite + ChromaDB）
-  app_logs:    # 应用日志
+  mysql_data:
+  app_data:
+  app_logs:

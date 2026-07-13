@@ -12,8 +12,11 @@ from app.models.task import Task
 from app.models.document import Document
 from app.models.copy import Copy
 from app.models.agent_log import AgentLog
+from app.models.orchestration_audit_log import OrchestrationAuditLog
 from app.models.hotlist_sync import HotlistSync
 from app.models.system_log import SystemLog
+from app.models.toutiao_reference import ToutiaoReference
+from app.models.style_card import StyleCard
 
 __all__ = [
     "User",
@@ -21,6 +24,9 @@ __all__ = [
     "Document",
     "Copy",
     "AgentLog",
+    "OrchestrationAuditLog",
     "HotlistSync",
     "SystemLog",
+    "ToutiaoReference",
+    "StyleCard",
 ]

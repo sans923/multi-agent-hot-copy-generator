@@ -1,11 +1,13 @@
 import { FormEvent, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ApiError } from "../api/client";
 
 export function Login() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
   const [email, setEmail] = useState("zhangsan@example.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,7 +21,7 @@ export function Login() {
     setSubmitting(true);
     try {
       await login(email, password);
-      navigate("/");
+      navigate(redirect.startsWith("/") ? redirect : "/");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "登录失败");
     } finally {

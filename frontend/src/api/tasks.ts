@@ -34,3 +34,13 @@ export async function getTask(taskId: number) {
 export async function getTaskCopies(taskId: number) {
   return request<Copy[]>(`/api/v1/tasks/${taskId}/copies`);
 }
+
+export async function resumeTask(
+  taskId: number,
+  action: "retry" | "accept_draft" | "cancel"
+) {
+  return request<Task>(`/api/v1/tasks/${taskId}/resume`, {
+    method: "POST",
+    body: JSON.stringify({ action }),
+  });
+}

@@ -31,10 +31,15 @@ class Settings(BaseSettings):
     PORT: int = 8000
 
     # --- 智能体编排引擎选择 ---
-    # native   = 自研顺序流水线编排（AgentOrchestrator，默认，行为与历史版本完全一致）
-    # langgraph = 基于 LangGraph 的 DeerFlow 2.0 风格编排引擎（后续阶段接入）
-    # 双引擎通过此开关切换、运行时隔离；切回 native 即恢复现状
+    # native   = 自研顺序流水线编排（AgentOrchestrator，默认）
+    # langgraph = LangGraph StateGraph 主流程图
     ORCHESTRATION_ENGINE: str = "native"
+
+    # --- 编排模式（fixed / lead / agentic）---
+    # fixed   = 固定三阶段顺序（默认，与历史行为一致）
+    # lead    = Lead Agent 总控 + SubAgent 委派（DeerFlow 风格）
+    # agentic = 任务分级 + Plan&Execute（简单走 fixed，复杂走规划执行）
+    ORCHESTRATION_MODE: str = "fixed"
 
     # --- 数据库配置（默认 MySQL；设置 DATABASE_URL 可覆盖）---
     DATABASE_URL: str = ""
@@ -59,6 +64,21 @@ class Settings(BaseSettings):
     DEEPSEEK_MAX_RETRIES: int = 2
     DEEPSEEK_MAX_TOKENS: int = 4096
 
+    # --- 多模型路由（默认均为 deepseek-chat，可按角色单独升级）---
+    PLANNER_MODEL: str = ""       # 空则回退 DEEPSEEK_CHAT_MODEL
+    EXECUTOR_MODEL: str = ""      # SubAgent ReAct 执行
+    PATTERN_MODEL: str = ""       # extract_writing_pattern
+    JUDGE_MODEL: str = ""         # 目标对齐 Judge（规则不确定时）
+
+    # --- Agentic 编排（ORCHESTRATION_MODE=agentic）---
+    TASK_SIMPLE_MAX_WORDS: int = 300       # 超过视为复杂任务
+    TASK_COMPLEX_MIN_CHARS: int = 80       # 需求描述过长
+    AGENT_MAX_STEPS: int = 20              # 硬性步数上限
+    AGENT_TIMEOUT_SEC: int = 300           # 硬性超时（秒）
+    MAX_RETRY_PER_STEP: int = 2            # L1：单步重试上限
+    MAX_REFLECT_ROUNDS: int = 2            # 反思轮次上限（Phase 1 预留）
+    ENABLE_JUDGE_VERIFY: bool = True       # 规则不确定时启用 Judge 模型
+
     # --- ChromaDB 配置 ---
     CHROMA_PERSIST_PATH: str = "./data/chroma"
 
@@ -77,6 +97,20 @@ class Settings(BaseSettings):
     # --- 日志配置 ---
     LOG_LEVEL: str = "INFO"
     LOG_FILE_PATH: str = "./logs/app.log"
+
+    @model_validator(mode="after")
+    def fill_model_defaults(self) -> "Settings":
+        """空字符串的模型配置回退到 DEEPSEEK_CHAT_MODEL。"""
+        chat = self.DEEPSEEK_CHAT_MODEL
+        if not self.PLANNER_MODEL.strip():
+            self.PLANNER_MODEL = chat
+        if not self.EXECUTOR_MODEL.strip():
+            self.EXECUTOR_MODEL = chat
+        if not self.PATTERN_MODEL.strip():
+            self.PATTERN_MODEL = chat
+        if not self.JUDGE_MODEL.strip():
+            self.JUDGE_MODEL = chat
+        return self
 
     @model_validator(mode="after")
     def assemble_database_url(self) -> "Settings":

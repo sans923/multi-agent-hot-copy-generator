@@ -27,6 +27,7 @@ RAG检索类（供文案创作Agent使用）：
 """
 
 from app.skills.base import BaseSkill, SkillRegistry, SkillExecutor
+from app.skills.skill_response import skill_ok, skill_fail, normalize_skill_result
 from app.skills.requirement_skills import ParseRequirementSkill, SearchHotlistSkill
 from app.skills.platform_skills import GetPlatformRulesSkill
 from app.skills.rag_skills import SearchSimilarCopiesSkill
@@ -37,6 +38,17 @@ from app.skills.copy_skills import (
     SaveFinalCopySkill,
 )
 from app.skills.review_skills import ReviewCopyQualitySkill, OptimizeCopySkill
+from app.skills.toutiao_rag_skills import SearchToutiaoReferencesSkill
+from app.skills.style_skills import (
+    SearchHotArticlesByTopicSkill,
+    ExtractWritingPatternSkill,
+    GetStyleCardSkill,
+    SaveStyleCardSkill,
+)
+from app.skills.compliance_skills import (
+    CheckSensitiveWordsSkill,
+    CheckPlagiarismOverlapSkill,
+)
 
 
 def create_skill_registry() -> SkillRegistry:
@@ -50,7 +62,14 @@ def create_skill_registry() -> SkillRegistry:
     """
     registry = SkillRegistry()
 
-    # 注册全部 10 个 Skill
+    from app.skills.delegation_skills import (
+        DelegateToRequirementSkill,
+        DelegateToCopywriterSkill,
+        DelegateToReviewerSkill,
+        FinishTaskSkill,
+    )
+
+    # 注册全部 Skill
     (registry
         .register(ParseRequirementSkill())
         .register(SearchHotlistSkill())
@@ -62,6 +81,17 @@ def create_skill_registry() -> SkillRegistry:
         .register(SaveFinalCopySkill())
         .register(ReviewCopyQualitySkill())
         .register(OptimizeCopySkill())
+        .register(SearchToutiaoReferencesSkill())
+        .register(SearchHotArticlesByTopicSkill())
+        .register(ExtractWritingPatternSkill())
+        .register(GetStyleCardSkill())
+        .register(SaveStyleCardSkill())
+        .register(CheckSensitiveWordsSkill())
+        .register(CheckPlagiarismOverlapSkill())
+        .register(DelegateToRequirementSkill())
+        .register(DelegateToCopywriterSkill())
+        .register(DelegateToReviewerSkill())
+        .register(FinishTaskSkill())
     )
 
     from app.utils.logger import logger
@@ -78,6 +108,10 @@ REQUIREMENT_AGENT_SKILLS = [
 
 COPYWRITER_AGENT_SKILLS = [
     "get_platform_rules",
+    "get_style_card",
+    "search_hot_articles_by_topic",
+    "extract_writing_pattern",
+    "search_toutiao_references",
     "search_similar_copies",
     "generate_outline",
     "write_copy_draft",
@@ -86,9 +120,18 @@ COPYWRITER_AGENT_SKILLS = [
 ]
 
 REVIEWER_AGENT_SKILLS = [
+    "check_sensitive_words",
+    "check_plagiarism_overlap",
     "review_copy_quality",
     "optimize_copy",
     "save_final_copy",
+]
+
+LEAD_AGENT_SKILLS = [
+    "delegate_to_requirement",
+    "delegate_to_copywriter",
+    "delegate_to_reviewer",
+    "finish_task",
 ]
 
 
@@ -116,7 +159,11 @@ __all__ = [
     "create_skill_registry",
     "get_skill_registry",
     "get_skill_executor",
+    "skill_ok",
+    "skill_fail",
+    "normalize_skill_result",
     "REQUIREMENT_AGENT_SKILLS",
     "COPYWRITER_AGENT_SKILLS",
     "REVIEWER_AGENT_SKILLS",
+    "LEAD_AGENT_SKILLS",
 ]

@@ -19,11 +19,13 @@ from app.orchestration.factory import (
     get_orchestration_engine,
     register_engine,
 )
+from app.orchestration.langgraph_engine import LangGraphOrchestrationEngine
 from app.orchestration.native_engine import NativeOrchestrationEngine
 
 __all__ = [
     "OrchestrationEngine",
     "NativeOrchestrationEngine",
+    "LangGraphOrchestrationEngine",
     "get_orchestration_engine",
     "register_engine",
     "DEFAULT_ENGINE",

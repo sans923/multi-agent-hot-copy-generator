@@ -24,7 +24,7 @@
 | Web 框架 | FastAPI               |
 | 大模型    | DeepSeek API          |
 | 向量数据库  | ChromaDB              |
-| 关系数据库  | SQLite（开发）/ MySQL（生产） |
+| 关系数据库  | MySQL 8（PyMySQL 驱动） |
 | 热榜数据   | 韩小韩免费 API             |
 | 定时任务   | APScheduler           |
 | 部署     | 火山引擎 ECS + Nginx      |
@@ -47,15 +47,39 @@ pip install -r requirements.txt
 ### 2. 配置环境变量
 
 ```bash
-# 复制模板
 copy .env.example .env
-
-# 编辑 .env，填入：
-# - SECRET_KEY（必须修改！）
-# - DEEPSEEK_API_KEY（你的 API Key）
 ```
 
-### 3. 启动服务
+编辑 `.env`，至少配置：
+- `SECRET_KEY`
+- `DEEPSEEK_API_KEY`
+- `MYSQL_*`（MySQL 连接信息，见下方）
+
+### 3. 初始化 MySQL
+
+**方式 A：本机已安装 MySQL**
+
+```powershell
+# 1. 创建数据库和用户（按提示输入 root 密码）
+mysql -u root -p < scripts/init_mysql.sql
+
+# 2. 安装 Python 依赖并建表
+pip install -r requirements.txt
+python scripts/setup_mysql.py
+
+# 3. （可选）写入测试用户
+python scripts/seed_users.py
+```
+
+**方式 B：Docker 一键启动 MySQL + 应用**
+
+```bash
+docker-compose up -d
+docker-compose exec app python scripts/setup_mysql.py
+docker-compose exec app python scripts/seed_users.py
+```
+
+### 4. 启动服务
 
 ```bash
 python run.py
@@ -63,7 +87,7 @@ python run.py
 
 访问 [http://localhost:8000/docs](http://localhost:8000/docs) 查看 API 文档
 
-### 4. 启动前端（可选）
+### 5. 启动前端（可选）
 
 ```bash
 cd frontend
@@ -73,7 +97,7 @@ npm run dev
 
 浏览器打开 [http://localhost:5173](http://localhost:5173)，通过 Vite 代理访问后端 API。
 
-### 5. 运行测试
+### 6. 运行测试
 
 ```bash
 pip install pytest httpx

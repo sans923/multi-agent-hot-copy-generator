@@ -38,11 +38,13 @@ import time
 from abc import ABC, abstractmethod
 from typing import Any
 
-from openai import OpenAI
 from sqlalchemy.orm import Session
 
+from app.utils.model_roles import get_model_for_role
 from app.config import settings
 from app.skills import SkillRegistry, SkillExecutor, get_skill_registry
+from app.services.audit_service import write_audit_log
+from app.utils.llm_client import get_deepseek_client, format_llm_error
 from app.utils.logger import logger
 
 
@@ -56,9 +58,6 @@ class BaseAgent(ABC):
     - skill_names: 这个Agent有权使用的Skill列表
     - run(): 业务入口（接收任务参数，组织message，调用 _run_loop）
     """
-
-    # DeepSeek 客户端（类级别共享，节省资源）
-    _client: OpenAI | None = None
 
     def __init__(self):
         self.registry: SkillRegistry = get_skill_registry()
@@ -92,26 +91,19 @@ class BaseAgent(ABC):
         return 8
 
     @property
+    def model_role(self) -> str:
+        """子类可覆盖为 planner / pattern / judge；默认 executor。"""
+        return "executor"
+
+    @property
     def model(self) -> str:
-        """使用的模型，默认使用配置中的 chat 模型"""
-        return settings.DEEPSEEK_CHAT_MODEL
+        """使用的模型，按 model_role 从配置路由。"""
+        return get_model_for_role(self.model_role)
 
     @classmethod
-    def _get_client(cls) -> OpenAI:
-        """
-        获取 DeepSeek API 客户端（单例，懒加载）
-        
-        DeepSeek 兼容 OpenAI SDK，只需改 base_url 和 api_key：
-        - base_url 指向 DeepSeek 的 API 地址
-        - model 用 deepseek-chat 而不是 gpt-4
-        其余用法完全和 OpenAI SDK 一样
-        """
-        if cls._client is None:
-            cls._client = OpenAI(
-                api_key=settings.DEEPSEEK_API_KEY,
-                base_url=settings.DEEPSEEK_BASE_URL,
-            )
-        return cls._client
+    def _get_client(cls):
+        """获取 DeepSeek API 客户端（见 app.utils.llm_client）"""
+        return get_deepseek_client()
 
     @abstractmethod
     def run(self, db: Session, task_id: int, **kwargs) -> dict:
@@ -171,7 +163,9 @@ class BaseAgent(ABC):
 
         tool_calls_count = 0
         total_tokens = 0
+        llm_round = 0
         tool_results = []
+        length_continue_used = 0  # 因输出截断而「请继续」的次数
         start_time = time.time()
 
         logger.info(
@@ -192,13 +186,26 @@ class BaseAgent(ABC):
                     tools=tools if tools else None,
                     tool_choice="auto",  # auto: 让模型自己决定是否调用工具
                     temperature=0.7,     # 0=确定性，1=创造性，0.7适合文案创作
-                    max_tokens=2000,
+                    max_tokens=settings.DEEPSEEK_MAX_TOKENS,
                 )
             except Exception as e:
-                logger.error(f"Agent [{self.name}] API 调用失败: {e}")
+                err_msg = format_llm_error(e)
+                write_audit_log(
+                    db,
+                    task_id,
+                    "llm",
+                    f"{self.name}_api_error",
+                    agent_name=self.name,
+                    status="failed",
+                    error_message=err_msg,
+                )
+                logger.error(
+                    f"Agent [{self.name}] API 调用失败: "
+                    f"{type(e).__name__}: {repr(e)}"
+                )
                 return {
                     "success": False,
-                    "error": f"大模型 API 调用失败: {str(e)}",
+                    "error": f"大模型 API 调用失败: {err_msg}",
                     "final_response": "",
                     "tool_calls_count": tool_calls_count,
                     "tokens_used": total_tokens,
@@ -206,11 +213,36 @@ class BaseAgent(ABC):
                 }
 
             # 统计 token 消耗
+            round_tokens = 0
             if response.usage:
-                total_tokens += response.usage.total_tokens
+                round_tokens = response.usage.total_tokens
+                total_tokens += round_tokens
 
             choice = response.choices[0]
             message = choice.message
+            llm_round += 1
+
+            write_audit_log(
+                db,
+                task_id,
+                "llm",
+                f"{self.name}_round_{llm_round}",
+                agent_name=self.name,
+                input_summary={
+                    "model": self.model,
+                    "finish_reason": choice.finish_reason,
+                    "tool_calls_count": len(message.tool_calls or []),
+                },
+                output_summary={
+                    "content_preview": (message.content or "")[:300] or None,
+                    "tool_names": [
+                        tc.function.name for tc in (message.tool_calls or [])
+                    ],
+                    "tokens": round_tokens,
+                },
+                status="success",
+                duration_ms=None,
+            )
 
             # 把模型的回复加入消息历史（重要！模型需要看到自己之前说了什么）
             messages.append(message.model_dump(exclude_unset=False))
@@ -275,7 +307,49 @@ class BaseAgent(ABC):
                     "messages": messages,  # 完整消息历史（传递给下一个Agent用）
                 }
 
-            # 情况3：其他终止原因（如 length 超出 max_tokens）
+            # 情况3：输出被 max_tokens 截断（finish_reason == "length"）
+            elif choice.finish_reason == "length":
+                partial = (message.content or "").strip()
+                if partial and not message.tool_calls:
+                    logger.warning(
+                        f"Agent [{self.name}] 输出因长度截断，使用已生成内容继续流程"
+                    )
+                    return {
+                        "success": True,
+                        "final_response": partial,
+                        "tool_calls_count": tool_calls_count,
+                        "tokens_used": total_tokens,
+                        "tool_results": tool_results,
+                        "messages": messages,
+                        "truncated": True,
+                    }
+                if length_continue_used < 1:
+                    length_continue_used += 1
+                    logger.warning(
+                        f"Agent [{self.name}] 输出截断，请求模型继续 "
+                        f"(max_tokens={settings.DEEPSEEK_MAX_TOKENS})"
+                    )
+                    messages.append({
+                        "role": "user",
+                        "content": "你的上一次回复因长度限制被截断，请从断点继续完成未说完的内容或工具调用。",
+                    })
+                    continue
+                logger.warning(
+                    f"Agent [{self.name}] 多次截断仍无法完成: finish_reason=length"
+                )
+                return {
+                    "success": False,
+                    "error": (
+                        f"模型输出过长被截断，请在 .env 增大 DEEPSEEK_MAX_TOKENS"
+                        f"（当前 {settings.DEEPSEEK_MAX_TOKENS}）"
+                    ),
+                    "final_response": partial,
+                    "tool_calls_count": tool_calls_count,
+                    "tokens_used": total_tokens,
+                    "tool_results": tool_results,
+                }
+
+            # 其他未知终止原因
             else:
                 logger.warning(
                     f"Agent [{self.name}] 非正常终止: finish_reason={choice.finish_reason}"

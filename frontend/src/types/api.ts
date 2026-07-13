@@ -30,13 +30,60 @@ export interface TokenData {
   user: User;
 }
 
-export type TaskStatus = "pending" | "processing" | "completed" | "failed";
+export type TaskStatus =
+  | "pending"
+  | "processing"
+  | "awaiting_human"
+  | "completed"
+  | "failed";
 export type TaskPlatform =
   | "weibo"
   | "wechat"
   | "douyin"
   | "xiaohongshu"
   | "zhihu";
+
+export interface OrchestrationMeta {
+  task_mode?: string;
+  plan_source?: string;
+  plan_reasoning?: string;
+  plan_steps?: Array<{
+    step_id?: string;
+    stage?: string;
+    description?: string;
+  }>;
+  current_step?: number;
+  step_count?: number;
+  failure_level?: string;
+  classify_reasons?: string[];
+  verification?: Record<string, unknown>;
+  awaiting_human?: boolean;
+  human_prompt?: string;
+  human_action?: string;
+}
+
+export interface AuditLogItem {
+  id: number;
+  task_id: number;
+  sequence_no: number;
+  step_type: string;
+  step_name: string;
+  agent_name: string | null;
+  input_summary: Record<string, unknown> | null;
+  output_summary: Record<string, unknown> | null;
+  status: string;
+  failure_level: string | null;
+  duration_ms: number | null;
+  error_message: string | null;
+  created_at: string | null;
+}
+
+export interface AuditTrailResponse {
+  task_id: number;
+  total: number;
+  type_statistics: Record<string, number>;
+  items: AuditLogItem[];
+}
 
 export interface Task {
   id: number;
@@ -45,6 +92,7 @@ export interface Task {
   platform: string;
   status: TaskStatus;
   parsed_requirement?: Record<string, unknown> | null;
+  orchestration_meta?: OrchestrationMeta | null;
   error_message?: string | null;
   created_at: string;
   updated_at: string;
@@ -113,6 +161,7 @@ export const PLATFORM_LABELS: Record<TaskPlatform, string> = {
 export const STATUS_LABELS: Record<TaskStatus, string> = {
   pending: "等待中",
   processing: "生成中",
+  awaiting_human: "待人工处理",
   completed: "已完成",
   failed: "失败",
 };

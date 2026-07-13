@@ -1,28 +1,7 @@
 """
 审核优化 Agent（Agent 3）
 ==========================
-职责：
-  接收文案创作 Agent 生成的初稿，
-  进行多维度质量评审（0-100分），
-  如果分数 < 70，进行一次优化，
-  最终保存终稿（version=2）
-
-可用 Skill（3个）：
-  - review_copy_quality：评审文案质量并打分
-  - optimize_copy：根据审核意见优化文案
-  - save_final_copy：保存终稿
-
-【最多迭代 1 次的设计】
-为什么最多迭代 1 次？
-- 避免"永远觉得不够好"的死循环
-- 实践证明：1次针对性优化足以把文案提升10-15分
-- 过度打磨反而让文案失去自然感
-- 节省 API 调用成本
-
-迭代逻辑：
-  score >= 70: 直接保存初稿为终稿
-  score < 70: 优化一次 -> 保存为 version=2 的终稿
-  不管score多少：都只优化1次，不再循环
+职责：合规检测 → 洗稿检测 → 质量评审 → 优化 → 保存终稿
 """
 
 from sqlalchemy.orm import Session
@@ -35,11 +14,7 @@ from app.utils.logger import logger
 
 
 class ReviewerAgent(BaseAgent):
-    """
-    审核优化 Agent
-    
-    是整个 Agent 链的最后一环，确保输出质量
-    """
+    """审核优化 Agent"""
 
     @property
     def name(self) -> str:
@@ -51,66 +26,36 @@ class ReviewerAgent(BaseAgent):
 
     @property
     def max_tool_calls(self) -> int:
-        return 6  # 审核+优化+保存，最多6次
+        return 8
 
     @property
     def system_prompt(self) -> str:
         return """你是一位严格而专业的内容质量审核官，负责把控文案的最终质量。
 
 你的审核标准：
-- 标题吸引力（20分）：能否引发点击/阅读
-- 内容相关性（20分）：是否切中主题和热点  
-- 平台适配性（20分）：是否符合平台特性和规范
-- 情感共鸣度（20分）：能否引发读者共鸣
-- 行动引导力（20分）：是否有效引导互动/转发
+- 合规性：无敏感词/违禁表达
+- 原创性：与参考长文无高度重叠（洗稿风险）
+- 标题吸引力（20分）、内容相关性（20分）、平台适配性（20分）
+- 情感共鸣度（20分）、行动引导力（20分）
 
-工作流程：
-1. 调用 review_copy_quality 进行评审打分（必须给出5个维度的分数）
-2. 如果总分 < 70，调用 optimize_copy 获取优化指令，然后输出优化后的文案
-3. 调用 save_final_copy 保存终稿
-   - 如果分数 >= 70：直接保存初稿（version=2, is_final=True）
-   - 如果优化过：保存优化后版本（version=2, is_final=True）
-4. 输出最终审核报告
+工作流程（必须按顺序）：
+1. 调用 check_sensitive_words 检测敏感词；未通过则 optimize_copy 修改违禁表达
+2. 调用 check_plagiarism_overlap 检测洗稿风险；need_rewrite=true 时必须重写而非微调
+3. 调用 review_copy_quality 进行五维度评分（每项0-20分）
+4. 若总分 < 70，调用 optimize_copy 优化一次，输出优化后完整文案
+5. 调用 save_final_copy 保存终稿（version=2, is_final=True）
+6. 输出简洁审核报告（含合规与重叠检测结果）
 
 重要规则：
-- 只优化 1 次，不管优化后得分如何都直接保存
-- 评分要客观，不能因为是AI生成就一律给高分
-- 优化要针对具体问题，不是重写整篇
-- 保存时必须设置 is_final=True"""
+- 只优化 1 次；合规/洗稿未通过时优先处理，再谈质量分
+- 评分客观；保存时必须 is_final=True"""
 
-    def run(
-        self,
-        db: Session,
-        task_id: int,
-        **kwargs
-    ) -> dict:
-        """
-        执行审核优化
-        
-        参数：
-            task_id: 任务ID
-            copy_id: 要审核的文案ID（来自文案创作Agent）
-            copy_content: 文案内容（可选，不传则从数据库读）
-            parsed_requirement: 原始需求（用于评审时对照需求）
-            hot_topics: 热榜话题（检查是否融入）
-        
-        返回：
-            {
-                "success": bool,
-                "final_copy_id": int,    # 最终文案ID
-                "review_score": float,   # 审核得分
-                "need_optimization": bool,
-                "final_content": str,    # 最终文案内容
-                "review_report": str,    # 审核报告
-                "tokens_used": int,
-            }
-        """
+    def run(self, db: Session, task_id: int, **kwargs) -> dict:
         copy_id = kwargs.get("copy_id")
         copy_content = kwargs.get("copy_content", "")
         parsed_requirement = kwargs.get("parsed_requirement", {})
         hot_topics = kwargs.get("hot_topics", [])
 
-        # 从数据库读取文案
         if not copy_content and copy_id:
             copy = db.query(Copy).filter(Copy.id == copy_id).first()
             if copy:
@@ -122,7 +67,6 @@ class ReviewerAgent(BaseAgent):
             copy_title = kwargs.get("copy_title", "")
 
         if not copy_content:
-            # 尝试从任务中读取最新文案
             task = db.query(Task).filter(Task.id == task_id).first()
             if task:
                 latest_copy = (
@@ -139,12 +83,10 @@ class ReviewerAgent(BaseAgent):
         if not copy_content:
             return {"success": False, "error": "找不到要审核的文案内容"}
 
-        # 提取参数
         platform = parsed_requirement.get("platform", "weibo")
         topic = parsed_requirement.get("topic", "")
         hot_titles = [ht.get("title", "") for ht in hot_topics if ht.get("title")]
 
-        # 构建审核指令
         user_message = f"""请对以下{platform}文案进行专业审核：
 
 【待审核文案】
@@ -155,15 +97,15 @@ class ReviewerAgent(BaseAgent):
 【审核背景】
 - 主题：{topic}
 - 目标平台：{platform}
-- 融入的热榜话题：{', '.join(hot_titles[:3]) if hot_titles else '无'}
-- 任务ID：{task_id}（保存时使用）
-- 原始文案ID：{copy_id}
+- 热榜话题：{', '.join(hot_titles[:3]) if hot_titles else '无'}
+- 任务ID：{task_id}
+- 文案ID：{copy_id}
 
-请执行：
-1. 调用 review_copy_quality 对5个维度逐一评分（每项0-20分）
-2. 如果总分 < 70，调用 optimize_copy 获取优化方向，然后输出优化后的完整文案
-3. 调用 save_final_copy 保存最终版本（version=2, is_final=True）
-4. 输出简洁的审核报告"""
+请严格按工作流程：
+1) check_sensitive_words(text=正文, platform="{platform}")
+2) check_plagiarism_overlap(text=正文, topic="{topic}")
+3) review_copy_quality → 必要时 optimize_copy → save_final_copy
+4) 输出审核报告"""
 
         result = self._run_loop(
             db=db,
@@ -176,40 +118,42 @@ class ReviewerAgent(BaseAgent):
             logger.error(f"审核优化Agent失败: task_id={task_id}, error={result.get('error')}")
             return result
 
-        # 从工具调用结果提取信息
         review_score = 0
         need_optimization = False
-        final_copy_id = copy_id  # 默认用初稿ID
+        final_copy_id = copy_id
+        compliance_passed = True
+        plagiarism_passed = True
 
         for tool_result in result.get("tool_results", []):
-            if tool_result["skill_name"] == "review_copy_quality":
-                review_score = tool_result["result"].get("total_score", 0)
-                need_optimization = tool_result["result"].get("need_optimization", False)
+            skill = tool_result["skill_name"]
+            res = tool_result["result"]
 
-                # 把审核分数写回数据库
+            if skill == "check_sensitive_words":
+                compliance_passed = res.get("passed", True)
+            elif skill == "check_plagiarism_overlap":
+                plagiarism_passed = res.get("passed", True)
+            elif skill == "review_copy_quality":
+                review_score = res.get("total_score", 0)
+                need_optimization = res.get("need_optimization", False)
                 if copy_id:
                     copy = db.query(Copy).filter(Copy.id == copy_id).first()
                     if copy:
                         copy.review_score = review_score
-                        copy.review_comment = tool_result["result"].get("verdict", "")
+                        copy.review_comment = res.get("verdict", "")
                         db.commit()
-
-            elif tool_result["skill_name"] == "save_final_copy":
-                # 如果有新保存的文案，更新 final_copy_id
-                new_id = tool_result["result"].get("copy_id")
+            elif skill == "save_final_copy":
+                new_id = res.get("copy_id")
                 if new_id:
                     final_copy_id = new_id
 
-        # 更新任务状态为完成
         task = db.query(Task).filter(Task.id == task_id).first()
         if task:
             task.status = TaskStatus.COMPLETED
             db.commit()
 
         logger.info(
-            f"审核优化完成: task_id={task_id}, "
-            f"review_score={review_score}, "
-            f"need_optimization={need_optimization}, "
+            f"审核优化完成: task_id={task_id}, score={review_score}, "
+            f"compliance={compliance_passed}, plagiarism={plagiarism_passed}, "
             f"final_copy_id={final_copy_id}"
         )
 
@@ -218,6 +162,8 @@ class ReviewerAgent(BaseAgent):
             "final_copy_id": final_copy_id,
             "review_score": review_score,
             "need_optimization": need_optimization,
+            "compliance_passed": compliance_passed,
+            "plagiarism_passed": plagiarism_passed,
             "final_content": result["final_response"],
             "review_report": result["final_response"],
             "tokens_used": result["tokens_used"],

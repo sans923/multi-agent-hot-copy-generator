@@ -31,6 +31,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, and_
 
 from app.database import get_db
+from app.models.orchestration_audit_log import OrchestrationAuditLog
 from app.models.agent_log import AgentLog
 from app.models.task import Task, TaskStatus
 from app.models.copy import Copy
@@ -42,6 +43,76 @@ from app.utils.logger import logger
 
 
 router = APIRouter(prefix="/logs", tags=["日志查询"])
+
+
+# ====================================================
+# 接口 0：全链路编排审计时间线
+# ====================================================
+
+@router.get(
+    "/audit",
+    response_model=ApiResponse,
+    summary="查询任务全链路审计时间线",
+    description="按 sequence_no 排序，覆盖编排/Skill/LLM/验证/Judge/人工介入等每一步。",
+)
+def get_audit_trail(
+    task_id: int = Query(..., description="任务ID"),
+    step_type: Optional[str] = Query(None, description="步骤类型过滤"),
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> ApiResponse:
+    """查询 orchestration_audit_logs，构建可展示的执行轨迹。"""
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        return ApiResponse(success=False, message=f"任务 {task_id} 不存在", data=None)
+
+    if not current_user.is_admin and task.user_id != current_user.id:
+        return ApiResponse(success=False, message="无权查看该任务审计日志", data=None)
+
+    query = db.query(OrchestrationAuditLog).filter(
+        OrchestrationAuditLog.task_id == task_id
+    )
+    if step_type:
+        query = query.filter(OrchestrationAuditLog.step_type == step_type)
+
+    logs = query.order_by(OrchestrationAuditLog.sequence_no.asc()).all()
+
+    items = [
+        {
+            "id": log.id,
+            "task_id": log.task_id,
+            "sequence_no": log.sequence_no,
+            "step_type": log.step_type,
+            "step_name": log.step_name,
+            "agent_name": log.agent_name,
+            "input_summary": log.input_summary,
+            "output_summary": log.output_summary,
+            "status": log.status,
+            "failure_level": log.failure_level,
+            "duration_ms": log.duration_ms,
+            "error_message": log.error_message,
+            "created_at": log.created_at.isoformat() if log.created_at else None,
+        }
+        for log in logs
+    ]
+
+    type_stats = (
+        db.query(OrchestrationAuditLog.step_type, func.count(OrchestrationAuditLog.id))
+        .filter(OrchestrationAuditLog.task_id == task_id)
+        .group_by(OrchestrationAuditLog.step_type)
+        .all()
+    )
+
+    return ApiResponse(
+        success=True,
+        message=f"共 {len(items)} 条审计记录",
+        data={
+            "task_id": task_id,
+            "total": len(items),
+            "type_statistics": {t: c for t, c in type_stats},
+            "items": items,
+        },
+    )
 
 
 # ====================================================

@@ -52,6 +52,13 @@ export async function request<T>(
     throw new ApiError("服务器响应异常", res.status);
   }
 
+  if (res.status === 401 && !path.includes("/auth/login")) {
+    setToken(null);
+    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    }
+  }
+
   if (!res.ok) {
     const detail =
       typeof (body as { detail?: unknown }).detail === "string"

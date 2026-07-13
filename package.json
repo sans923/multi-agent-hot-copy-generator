@@ -1,0 +1,10 @@
+{
+  "name": "multi-agent-hot-copy-generator",
+  "private": true,
+  "description": "根目录便捷脚本，前端在 frontend/ 子目录",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "install:frontend": "npm install --prefix frontend"
+  }
+}

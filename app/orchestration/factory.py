@@ -20,6 +20,7 @@ from typing import Callable
 
 from app.config import settings
 from app.orchestration.base import OrchestrationEngine
+from app.orchestration.langgraph_engine import LangGraphOrchestrationEngine
 from app.orchestration.native_engine import NativeOrchestrationEngine
 from app.utils.logger import logger
 
@@ -28,6 +29,7 @@ from app.utils.logger import logger
 # 用工厂函数（而非直接放实例）以便惰性构造，避免模块加载期产生副作用。
 _ENGINE_REGISTRY: dict[str, Callable[[], OrchestrationEngine]] = {
     "native": NativeOrchestrationEngine,
+    "langgraph": LangGraphOrchestrationEngine,
 }
 
 #: 兜底引擎名称（任何异常情况都回退到它）

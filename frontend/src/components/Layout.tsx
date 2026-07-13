@@ -17,9 +17,14 @@ export function Layout() {
           </NavLink>
           <NavLink to="/create">生成文案</NavLink>
           <NavLink to="/hotlist">热榜</NavLink>
+          {user?.is_admin && (
+            <NavLink to="/admin/users">用户管理</NavLink>
+          )}
         </nav>
         <div className="header-user">
-          <span className="user-name">{user?.nickname || user?.username}</span>
+          <Link to="/profile" className="user-link">
+            {user?.nickname || user?.username}
+          </Link>
           {user?.is_admin && <span className="badge-admin">管理员</span>}
           <button type="button" className="btn-ghost" onClick={logout}>
             退出

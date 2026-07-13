@@ -35,6 +35,8 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable
 from sqlalchemy.orm import Session
 
+from app.skills.skill_response import normalize_skill_result, skill_fail
+from app.services.audit_service import write_audit_log
 from app.utils.logger import logger
 
 
@@ -242,10 +244,7 @@ class SkillExecutor:
         # 1. 找到对应的 Skill
         skill = self.registry.get(function_name)
         if not skill:
-            error_result = {
-                "success": False,
-                "error": f"未知的函数: {function_name}，请检查函数名是否正确"
-            }
+            error_result = skill_fail(f"未知的函数: {function_name}，请检查函数名是否正确")
             logger.error(f"Skill 未找到: {function_name}")
             return json.dumps(error_result, ensure_ascii=False)
 
@@ -253,21 +252,21 @@ class SkillExecutor:
         try:
             args = json.loads(function_args_json) if function_args_json else {}
         except json.JSONDecodeError as e:
-            error_result = {
-                "success": False,
-                "error": f"参数解析失败: {str(e)}，原始参数: {function_args_json}"
-            }
+            error_result = skill_fail(
+                f"参数解析失败: {str(e)}，原始参数: {function_args_json}"
+            )
             logger.error(f"Skill 参数解析失败: {function_name}, args: {function_args_json}")
             return json.dumps(error_result, ensure_ascii=False)
 
         # 3. 执行 Skill
         try:
             logger.info(f"执行 Skill: {function_name}, args: {args}")
-            result = skill.execute(db=db, **args)
-            duration = round(time.time() - start_time, 3)
-            logger.info(f"Skill 执行完成: {function_name}, 耗时: {duration}s")
+            raw_result = skill.execute(db=db, **args)
+            duration_ms = (time.time() - start_time) * 1000
+            result = normalize_skill_result(raw_result, function_name, duration_ms)
+            logger.info(f"Skill 执行完成: {function_name}, 耗时: {duration_ms:.0f}ms")
 
-            # 4. 写 Agent 执行日志（如果有 task_id）
+            skill_status = "success" if result.get("success") else "failed"
             if task_id and agent_name:
                 _save_agent_log(
                     db=db,
@@ -276,8 +275,26 @@ class SkillExecutor:
                     skill_name=function_name,
                     skill_input=args,
                     skill_output=result,
-                    status="success",
-                    duration_seconds=duration,
+                    status=skill_status,
+                    duration_seconds=round(duration_ms / 1000, 3),
+                    error_message=result.get("error") if not result.get("success") else None,
+                )
+                write_audit_log(
+                    db,
+                    task_id,
+                    "skill",
+                    function_name,
+                    agent_name=agent_name,
+                    input_summary=_truncate_dict(args),
+                    output_summary=_truncate_dict({
+                        "success": result.get("success"),
+                        "error": result.get("error"),
+                        "meta": result.get("meta"),
+                        "passed": result.get("passed"),
+                    }),
+                    status=skill_status,
+                    duration_ms=duration_ms,
+                    error_message=result.get("error") if not result.get("success") else None,
                 )
 
             return json.dumps(result, ensure_ascii=False)
@@ -300,12 +317,35 @@ class SkillExecutor:
                     duration_seconds=duration,
                     error_message=error_msg,
                 )
+                write_audit_log(
+                    db,
+                    task_id,
+                    "skill",
+                    function_name,
+                    agent_name=agent_name,
+                    input_summary=_truncate_dict(args),
+                    status="failed",
+                    duration_ms=duration * 1000,
+                    error_message=error_msg,
+                )
 
-            error_result = {
-                "success": False,
-                "error": f"Skill 执行失败: {error_msg}"
-            }
+            error_result = skill_fail(f"Skill 执行失败: {error_msg}")
             return json.dumps(error_result, ensure_ascii=False)
+
+
+def _truncate_dict(data: dict | None, max_str: int = 500) -> dict | None:
+    """审计日志用：截断过长字符串，避免单条过大。"""
+    if not data:
+        return data
+    out: dict = {}
+    for key, value in data.items():
+        if isinstance(value, str) and len(value) > max_str:
+            out[key] = value[:max_str] + "…"
+        elif isinstance(value, dict):
+            out[key] = _truncate_dict(value, max_str)
+        else:
+            out[key] = value
+    return out
 
 
 def _save_agent_log(

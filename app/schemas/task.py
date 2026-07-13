@@ -3,7 +3,7 @@
 """
 
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional, Any, Literal
 from pydantic import BaseModel, Field, field_validator
 from app.models.task import TaskStatus, TaskPlatform
 
@@ -42,6 +42,7 @@ class TaskResponse(BaseModel):
     platform: str
     status: str
     parsed_requirement: Optional[Any] = None
+    orchestration_meta: Optional[Any] = None
     error_message: Optional[str] = None
     created_at: datetime
     updated_at: datetime
@@ -50,9 +51,30 @@ class TaskResponse(BaseModel):
         from_attributes = True
 
 
+class TaskResumeRequest(BaseModel):
+    """人工介入后恢复任务"""
+    action: Literal["retry", "accept_draft", "cancel"] = Field(
+        description="retry=继续执行 | accept_draft=接受初稿 | cancel=取消",
+    )
+
+
+class TaskCopySummary(BaseModel):
+    """任务详情中的文案摘要（比 CopyResponse 字段少，够前端展示）"""
+    id: int
+    version: int
+    title: Optional[str] = None
+    content: str
+    hashtags: Optional[list] = None
+    review_score: Optional[float] = None
+    is_final: bool
+
+    class Config:
+        from_attributes = True
+
+
 class TaskDetailResponse(TaskResponse):
     """任务详情（含生成的文案列表）"""
-    copies: list[dict] = []
+    copies: list[TaskCopySummary] = []
 
 
 class CopyResponse(BaseModel):

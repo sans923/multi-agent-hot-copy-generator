@@ -78,6 +78,10 @@ class GenerateOutlineSkill(BaseSkill):
                     "description": "开头钩子类型",
                     "enum": ["疑问式", "数字式", "反常识", "故事式", "痛点式"],
                     "default": "疑问式"
+                },
+                "writing_pattern": {
+                    "type": "object",
+                    "description": "由 extract_writing_pattern 或 get_style_card 返回的抽象写作规律 JSON"
                 }
             },
             "required": ["topic", "platform", "style"]
@@ -90,23 +94,109 @@ class GenerateOutlineSkill(BaseSkill):
         hot_topics = kwargs.get("hot_topics", [])
         key_points = kwargs.get("key_points", [])
         hook_type = kwargs.get("hook_type", "疑问式")
+        writing_pattern = kwargs.get("writing_pattern")
 
-        # 根据平台和风格生成大纲框架
-        outline = self._build_outline(
-            topic=topic,
-            platform=platform,
-            style=style,
-            hot_topics=hot_topics,
-            key_points=key_points,
-            hook_type=hook_type,
-        )
+        # 有抽象规律时优先按 pattern 生成大纲
+        if writing_pattern and isinstance(writing_pattern, dict):
+            outline = self._build_outline_from_pattern(
+                topic=topic,
+                platform=platform,
+                style=style,
+                hot_topics=hot_topics,
+                key_points=key_points,
+                writing_pattern=writing_pattern,
+            )
+        else:
+            outline = self._build_outline(
+                topic=topic,
+                platform=platform,
+                style=style,
+                hot_topics=hot_topics,
+                key_points=key_points,
+                hook_type=hook_type,
+            )
 
-        logger.info(f"生成文案大纲: topic={topic}, platform={platform}")
+        logger.info(f"生成文案大纲: topic={topic}, platform={platform}, pattern={bool(writing_pattern)}")
 
         return {
             "success": True,
             "outline": outline,
             "message": f"文案大纲生成完成，共 {len(outline['sections'])} 个段落"
+        }
+
+    def _build_outline_from_pattern(
+        self,
+        topic: str,
+        platform: str,
+        style: str,
+        hot_topics: list,
+        key_points: list,
+        writing_pattern: dict,
+    ) -> dict:
+        """根据抽象写作规律动态生成大纲段落。"""
+        hook = writing_pattern.get("hook", {}) or {}
+        hook_type = hook.get("type", "疑问式")
+        title_formula = writing_pattern.get("title_formula", {}) or {}
+        structure = writing_pattern.get("structure") or []
+        rhythm = writing_pattern.get("rhythm", {}) or {}
+        cta_pattern = writing_pattern.get("cta_pattern", "引导互动")
+        emotion_arc = writing_pattern.get("emotion_arc") or []
+
+        sections = []
+        if title_formula.get("pattern"):
+            sections.append({
+                "name": "标题",
+                "type": "title",
+                "instruction": f"按公式撰写：{title_formula.get('pattern')}；长度 {title_formula.get('length_chars', '适中')}",
+                "must_include": title_formula.get("must_include", []),
+                "avoid": title_formula.get("avoid", []),
+            })
+
+        beats = hook.get("beats") or ["冲击句", "共情", "核心问题"]
+        sections.append({
+            "name": "开头钩子",
+            "type": "hook",
+            "hook_type": hook_type,
+            "instruction": f"钩子类型：{hook_type}；节奏：{' → '.join(beats)}",
+            "hot_topic": hot_topics[0] if hot_topics else None,
+            "first_screen_chars": hook.get("first_screen_chars", 60),
+        })
+
+        if structure:
+            for block in structure:
+                ratio = block.get("ratio", 0)
+                word_hint = f"约占全文 {int(float(ratio) * 100)}%" if ratio else ""
+                sections.append({
+                    "name": block.get("section", "段落"),
+                    "type": "body",
+                    "instruction": f"{block.get('function', '展开论证')} {word_hint}".strip(),
+                    "key_points": key_points[:3] if key_points else [],
+                })
+        else:
+            sections.append({
+                "name": "核心内容",
+                "type": "body",
+                "instruction": "按爆款长文节奏展开，短句+小结",
+                "key_points": key_points[:3],
+            })
+
+        sections.append({
+            "name": "结尾互动",
+            "type": "cta",
+            "instruction": f"CTA 模式：{cta_pattern}",
+        })
+
+        return {
+            "topic": topic,
+            "platform": platform,
+            "style": style,
+            "sections": sections,
+            "hot_topics_to_use": hot_topics[:2],
+            "total_sections": len(sections),
+            "writing_pattern_applied": True,
+            "rhythm_hints": rhythm,
+            "emotion_arc": emotion_arc,
+            "title_formula": title_formula.get("pattern", ""),
         }
 
     def _build_outline(self, topic, platform, style, hot_topics, key_points, hook_type) -> dict:
@@ -252,6 +342,10 @@ class WriteCopyDraftSkill(BaseSkill):
                 "extra_requirements": {
                     "type": "string",
                     "description": "额外的特殊要求（如：强调某个产品功能，避免某个词）"
+                },
+                "writing_pattern": {
+                    "type": "object",
+                    "description": "抽象写作规律，约束语气与节奏，禁止照搬参考原文"
                 }
             },
             "required": ["outline"]
@@ -263,6 +357,7 @@ class WriteCopyDraftSkill(BaseSkill):
         similar_copies = kwargs.get("similar_copies", [])
         hot_titles = kwargs.get("hot_titles", [])
         extra_requirements = kwargs.get("extra_requirements", "")
+        writing_pattern = kwargs.get("writing_pattern")
 
         if not outline:
             return {"success": False, "error": "大纲不能为空，请先调用 generate_outline"}
@@ -274,6 +369,7 @@ class WriteCopyDraftSkill(BaseSkill):
             similar_copies=similar_copies,
             hot_titles=hot_titles,
             extra_requirements=extra_requirements,
+            writing_pattern=writing_pattern,
         )
 
         logger.info(f"写作摘要生成完成: platform={outline.get('platform')}")
@@ -283,13 +379,17 @@ class WriteCopyDraftSkill(BaseSkill):
             "writing_brief": writing_brief,
             "instruction": (
                 "请根据上面的写作摘要，现在开始创作完整文案。"
-                "严格按照大纲结构展开，融入热点话题，"
+                "严格按照大纲结构与 writing_pattern 的节奏展开，融入热点话题，"
                 f"控制在{outline.get('platform', '')}平台推荐字数范围内。"
+                "禁止照搬任何参考长文原句，只学习抽象结构与手法。"
                 "直接输出文案正文，不需要解释。"
             )
         }
 
-    def _build_writing_brief(self, outline, platform_rules, similar_copies, hot_titles, extra_requirements) -> dict:
+    def _build_writing_brief(
+        self, outline, platform_rules, similar_copies, hot_titles, extra_requirements,
+        writing_pattern=None,
+    ) -> dict:
         """整合所有创作素材为写作摘要"""
 
         brief = {
@@ -316,6 +416,18 @@ class WriteCopyDraftSkill(BaseSkill):
 
         if extra_requirements:
             brief["extra_requirements"] = extra_requirements
+
+        if writing_pattern and isinstance(writing_pattern, dict):
+            # 只注入抽象规律，不注入参考全文
+            brief["writing_pattern"] = {
+                "title_formula": (writing_pattern.get("title_formula") or {}).get("pattern"),
+                "hook_type": (writing_pattern.get("hook") or {}).get("type"),
+                "rhythm": writing_pattern.get("rhythm"),
+                "emotion_arc": writing_pattern.get("emotion_arc"),
+                "cta_pattern": writing_pattern.get("cta_pattern"),
+                "argument_mix": writing_pattern.get("argument_mix"),
+            }
+            brief["anti_plagiarism"] = "禁止复制参考长文原句，仅按结构与节奏创作"
 
         return brief
 
@@ -555,7 +667,18 @@ class SaveFinalCopySkill(BaseSkill):
 
         logger.info(f"文案已保存: copy_id={copy.id}, task_id={task_id}, version={version}")
 
-        # 文案向量化暂不处理（embedding_service 提供函数式接口，无 EmbeddingService 类）
+        #trae 将文案向量化后存入 ChromaDB，供后续 RAG 检索使用
+        from app.services.embedding_service import upsert_copy_to_chroma
+        upsert_copy_to_chroma(
+            copy_id=copy.id,
+            task_id=task_id,
+            content=content,
+            platform=platform,
+            tone=tone,
+            version=version,
+            is_final=is_final,
+            hot_keywords=hot_keywords,
+        )
 
         return {
             "success": True,

@@ -29,9 +29,11 @@ from app.schemas.task import (
     TaskDetailResponse,
     TaskCopySummary,
     CopyResponse,
+    TaskResumeRequest,
 )
 from app.schemas.common import ApiResponse, PaginationResponse
 from app.core.deps import get_current_active_user
+from app.utils.log_writer import write_log
 from app.utils.logger import logger
 
 
@@ -39,13 +41,6 @@ router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
 
 
 def _run_agents_background(task_id: int) -> None:
-    """
-    后台执行 Agent 编排流程
-    
-    为什么要在独立函数里创建新的 db session？
-    因为 FastAPI 的请求级 Session 在请求结束后就关闭了，
-    后台线程必须自己创建独立的 Session
-    """
     db = SessionLocal()
     try:
         # 双引擎切换的唯一接缝：按配置 settings.ORCHESTRATION_ENGINE 取编排引擎并调用。
@@ -56,8 +51,30 @@ def _run_agents_background(task_id: int) -> None:
         engine = get_orchestration_engine(settings.ORCHESTRATION_ENGINE)
         result = engine.run(db=db, task_id=task_id)
         logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
+        write_log(
+            db,
+            category="task",
+            action="task.pipeline_complete",
+            message=f"任务 {task_id} 编排完成 success={result.get('success')}",
+            task_id=task_id,
+            extra={
+                "success": result.get("success"),
+                "task_mode": result.get("task_mode"),
+                "awaiting_human": result.get("awaiting_human"),
+            },
+            is_success=bool(result.get("success")),
+        )
     except Exception as e:
         logger.exception(f"后台任务执行异常: task_id={task_id}")
+        write_log(
+            db,
+            category="task",
+            action="task.pipeline_error",
+            message=f"任务 {task_id} 编排异常: {str(e)[:200]}",
+            task_id=task_id,
+            level="ERROR",
+            is_success=False,
+        )
         # 更新任务状态为失败
         task = db.query(Task).filter(Task.id == task_id).first()
         if task:
@@ -101,6 +118,16 @@ def create_task(
     db.add(task)
     db.commit()
     db.refresh(task)
+
+    write_log(
+        db,
+        category="task",
+        action="task.create",
+        message=f"用户 {current_user.username} 创建任务 {task.id}",
+        user_id=current_user.id,
+        task_id=task.id,
+        extra={"platform": task_data.platform.value},
+    )
 
     logger.info(
         f"新任务创建: task_id={task.id}, user_id={current_user.id}, "
@@ -250,4 +277,98 @@ def get_task_copies(
         success=True,
         message=f"共 {len(copies)} 个版本",
         data=[CopyResponse.model_validate(c) for c in copies]
+    )
+
+
+def _resume_task_background(task_id: int, action: str) -> None:
+    """后台恢复 awaiting_human 任务。"""
+    db = SessionLocal()
+    try:
+        from app.agents.agentic_runners import resume_agentic_pipeline
+        from app.config import settings
+
+        mode = (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
+        if mode != "agentic":
+            task = db.query(Task).filter(Task.id == task_id).first()
+            if task:
+                task.status = TaskStatus.FAILED
+                task.error_message = "仅 agentic 模式支持恢复"
+                db.commit()
+            return
+
+        result = resume_agentic_pipeline(db, task_id, action=action)  # type: ignore[arg-type]
+        logger.info(f"任务恢复完成: task_id={task_id}, action={action}, success={result.get('success')}")
+    except Exception as e:
+        logger.exception(f"任务恢复异常: task_id={task_id}")
+        task = db.query(Task).filter(Task.id == task_id).first()
+        if task:
+            task.status = TaskStatus.FAILED
+            task.error_message = str(e)[:500]
+            db.commit()
+    finally:
+        db.close()
+
+
+@router.post(
+    "/{task_id}/resume",
+    response_model=ApiResponse[TaskResponse],
+    summary="恢复等待人工介入的任务",
+    description="action: retry | accept_draft | cancel",
+)
+def resume_task(
+    task_id: int,
+    body: TaskResumeRequest,
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> ApiResponse[TaskResponse]:
+    """人工介入后恢复 Agentic 任务。"""
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.user_id == current_user.id,
+    ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"任务 {task_id} 不存在",
+        )
+
+    if task.status != TaskStatus.AWAITING_HUMAN:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"任务状态为 {task.status.value}，无法恢复（需要 awaiting_human）",
+        )
+
+    if body.action == "cancel":
+        from app.agents.agentic_runners import resume_agentic_pipeline
+
+        result = resume_agentic_pipeline(db, task.id, action="cancel")
+        db.refresh(task)
+        return ApiResponse(
+            success=result.get("success", False),
+            message=result.get("error") or "任务已取消",
+            data=TaskResponse.model_validate(task),
+        )
+
+    if body.action == "accept_draft":
+        from app.agents.agentic_runners import resume_agentic_pipeline
+
+        result = resume_agentic_pipeline(db, task.id, action="accept_draft")
+        db.refresh(task)
+        return ApiResponse(
+            success=result.get("success", True),
+            message=result.get("message") or "已接受初稿",
+            data=TaskResponse.model_validate(task),
+        )
+
+    # retry
+    task.status = TaskStatus.PROCESSING
+    db.commit()
+    background_tasks.add_task(_resume_task_background, task.id, "retry")
+    db.refresh(task)
+    return ApiResponse(
+        success=True,
+        message="任务已重新执行，请轮询状态",
+        data=TaskResponse.model_validate(task),
     )
