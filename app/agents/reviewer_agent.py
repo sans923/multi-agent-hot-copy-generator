@@ -4,6 +4,8 @@
 职责：合规检测 → 洗稿检测 → 质量评审 → 优化 → 保存终稿
 """
 
+import json
+
 from sqlalchemy.orm import Session
 
 from app.agents.base_agent import BaseAgent
@@ -42,7 +44,7 @@ class ReviewerAgent(BaseAgent):
 1. 调用 check_sensitive_words 检测敏感词；未通过则 optimize_copy 修改违禁表达
 2. 调用 check_plagiarism_overlap 检测洗稿风险；need_rewrite=true 时必须重写而非微调
 3. 调用 review_copy_quality 进行五维度评分（每项0-20分）
-4. 若总分 < 70，调用 optimize_copy 优化一次，输出优化后完整文案
+4. 若总分 < 70 或 failed_sections 非空，调用 optimize_copy 定向优化一次，输出优化后完整文案
 5. 调用 save_final_copy 保存终稿（version=2, is_final=True）
 6. 输出简洁审核报告（含合规与重叠检测结果）
 
@@ -86,6 +88,7 @@ class ReviewerAgent(BaseAgent):
         platform = parsed_requirement.get("platform", "weibo")
         topic = parsed_requirement.get("topic", "")
         hot_titles = [ht.get("title", "") for ht in hot_topics if ht.get("title")]
+        article_outline = parsed_requirement.get("article_outline") or {}
 
         user_message = f"""请对以下{platform}文案进行专业审核：
 
@@ -107,6 +110,19 @@ class ReviewerAgent(BaseAgent):
 3) review_copy_quality → 必要时 optimize_copy → save_final_copy
 4) 输出审核报告"""
 
+        if platform == "toutiao" and article_outline:
+            user_message += f"""
+
+【长文章节契约】
+{json.dumps(article_outline, ensure_ascii=False)}
+
+长文审核附加要求：
+- review_copy_quality 必须返回 failed_sections，仅列出低于70分的章节
+- section_id 必须来自上述提纲，指出具体原因和可执行 rewrite_instruction
+- 若需要 optimize_copy，只改进 failed_sections 指定部分，保留其他达标章节的观点和结构
+- 最多调用 optimize_copy 一次，禁止循环重写
+"""
+
         result = self._run_loop(
             db=db,
             task_id=task_id,
@@ -123,6 +139,8 @@ class ReviewerAgent(BaseAgent):
         final_copy_id = copy_id
         compliance_passed = True
         plagiarism_passed = True
+        quality_report = {}
+        rewrite_count = 0
 
         for tool_result in result.get("tool_results", []):
             skill = tool_result["skill_name"]
@@ -135,12 +153,36 @@ class ReviewerAgent(BaseAgent):
             elif skill == "review_copy_quality":
                 review_score = res.get("total_score", 0)
                 need_optimization = res.get("need_optimization", False)
+                score_labels = {
+                    "title_appeal": "标题吸引力",
+                    "content_relevance": "内容相关性",
+                    "platform_fit": "平台适配性",
+                    "emotional_resonance": "情感共鸣度",
+                    "call_to_action": "行动引导力",
+                }
+                quality_report = {
+                    "total_score": review_score,
+                    "grade": res.get("grade"),
+                    "dimensions": [
+                        {
+                            "name": score_labels.get(name, name),
+                            "score": int(score or 0) * 5,
+                        }
+                        for name, score in (res.get("scores") or {}).items()
+                    ],
+                    "strengths": res.get("strengths") or [],
+                    "weaknesses": res.get("weaknesses") or [],
+                    "suggestions": res.get("suggestions") or [],
+                    "failed_sections": res.get("failed_sections") or [],
+                }
                 if copy_id:
                     copy = db.query(Copy).filter(Copy.id == copy_id).first()
                     if copy:
                         copy.review_score = review_score
                         copy.review_comment = res.get("verdict", "")
                         db.commit()
+            elif skill == "optimize_copy":
+                rewrite_count = 1
             elif skill == "save_final_copy":
                 new_id = res.get("copy_id")
                 if new_id:
@@ -166,5 +208,7 @@ class ReviewerAgent(BaseAgent):
             "plagiarism_passed": plagiarism_passed,
             "final_content": result["final_response"],
             "review_report": result["final_response"],
+            "quality_report": quality_report,
+            "rewrite_count": rewrite_count,
             "tokens_used": result["tokens_used"],
         }

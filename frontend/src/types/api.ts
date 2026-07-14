@@ -37,6 +37,7 @@ export type TaskStatus =
   | "completed"
   | "failed";
 export type TaskPlatform =
+  | "toutiao"
   | "weibo"
   | "wechat"
   | "douyin"
@@ -151,6 +152,7 @@ export interface HotlistSearchResult {
 }
 
 export const PLATFORM_LABELS: Record<TaskPlatform, string> = {
+  toutiao: "今日头条长文",
   weibo: "微博",
   wechat: "微信公众号",
   douyin: "抖音",

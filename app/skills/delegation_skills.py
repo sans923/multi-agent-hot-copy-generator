@@ -64,8 +64,8 @@ class DelegateToRequirementSkill(BaseSkill):
 
         run_requirement_stage, _, _ = _get_stage_runners()
         updates = run_requirement_stage(db, active.agents, active.state)
-        mark_stage_delegated(updates.get("stages", {}), "requirement")
         active.merge(updates)
+        mark_stage_delegated(active.state.setdefault("stages", {}), "requirement")
 
         return {
             "success": True,
@@ -117,8 +117,8 @@ class DelegateToCopywriterSkill(BaseSkill):
 
         _, run_copywriter_stage, _ = _get_stage_runners()
         updates = run_copywriter_stage(db, active.agents, active.state)
-        mark_stage_delegated(updates.get("stages", {}), "copywriter")
         active.merge(updates)
+        mark_stage_delegated(active.state.setdefault("stages", {}), "copywriter")
 
         return {
             "success": updates.get("abort") is not True,
@@ -177,8 +177,8 @@ class DelegateToReviewerSkill(BaseSkill):
 
         _, _, run_reviewer_stage = _get_stage_runners()
         updates = run_reviewer_stage(db, active.agents, active.state)
-        mark_stage_delegated(updates.get("stages", {}), "reviewer")
         active.merge(updates)
+        mark_stage_delegated(active.state.setdefault("stages", {}), "reviewer")
 
         return {
             "success": True,

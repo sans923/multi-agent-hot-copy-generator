@@ -60,7 +60,7 @@ class SearchSimilarCopiesSkill(BaseSkill):
                 "platform": {
                     "type": "string",
                     "description": "限定平台，不传则搜索所有平台",
-                    "enum": ["weibo", "wechat", "douyin", "xiaohongshu", "zhihu", "all"]
+                    "enum": ["toutiao", "weibo", "wechat", "douyin", "xiaohongshu", "zhihu", "all"]
                 },
                 "limit": {
                     "type": "integer",

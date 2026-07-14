@@ -21,6 +21,7 @@ from app.agents.pipeline_state import (
 from app.models.copy import Copy
 from app.models.task import Task, TaskStatus
 from app.services.audit_service import write_audit_log
+from app.services.longform_mvp_service import build_content_brief, build_outline
 from app.utils.logger import logger
 
 
@@ -156,12 +157,53 @@ def run_copywriter_stage(
     write_audit_log(db, task_id, "stage", "copywriter_start", agent_name="copywriter_agent")
 
     try:
+        parsed_requirement = dict(state.get("parsed_requirement") or {})
+        if state.get("platform") == "toutiao":
+            brief = build_content_brief(
+                parsed_requirement=parsed_requirement,
+                hot_topics=state.get("hot_topics", []),
+            )
+            outline = build_outline(brief)
+            parsed_requirement.update({
+                "platform": "toutiao",
+                "word_count": brief.target_word_count,
+                "content_brief": brief.model_dump(),
+                "article_outline": outline.model_dump(),
+                "longform_mvp": {
+                    "enabled": True,
+                    "rewrite_count": 0,
+                    "max_rewrites": 1,
+                },
+            })
+            task = db.query(Task).filter(Task.id == task_id).first()
+            if task:
+                task.parsed_requirement = parsed_requirement
+                db.commit()
+            stages["longform_planning"] = {
+                "success": True,
+                "section_count": len(outline.sections),
+                "target_word_count": brief.target_word_count,
+            }
+            write_audit_log(
+                db,
+                task_id,
+                "stage",
+                "longform_planning_done",
+                agent_name="copywriter_agent",
+                output_summary={
+                    "section_count": len(outline.sections),
+                    "target_word_count": brief.target_word_count,
+                    "selected_title": outline.selected_title,
+                },
+            )
+
         copy_result = agents.copywriter_agent.run(
             db=db,
             task_id=task_id,
-            parsed_requirement=state.get("parsed_requirement", {}),
+            parsed_requirement=parsed_requirement,
             hot_topics=state.get("hot_topics", []),
             context_messages=state.get("context_messages", []),
+            rewrite_hint=state.get("rewrite_hint") or "",
         )
         stages["copywriter"] = {
             "success": copy_result.get("success"),
@@ -197,6 +239,9 @@ def run_copywriter_stage(
         return {
             "copy_id": copy_id,
             "copy_content": copy_result.get("copy_content", ""),
+            "parsed_requirement": parsed_requirement,
+            "content_brief": parsed_requirement.get("content_brief", {}),
+            "article_outline": parsed_requirement.get("article_outline", {}),
             "stages": stages,
             "total_tokens": total_tokens,
             "abort": False,
@@ -256,6 +301,21 @@ def run_reviewer_stage(
             final_copy_id = review_result.get("final_copy_id", copy_id)
             review_score = float(review_result.get("review_score", 0) or 0)
 
+        quality_report = review_result.get("quality_report") or {}
+        parsed_requirement = dict(state.get("parsed_requirement") or {})
+        if parsed_requirement.get("platform") == "toutiao":
+            longform_meta = dict(parsed_requirement.get("longform_mvp") or {})
+            longform_meta.update({
+                "quality_report": quality_report,
+                "rewrite_count": int(review_result.get("rewrite_count", 0) or 0),
+                "max_rewrites": 1,
+            })
+            parsed_requirement["longform_mvp"] = longform_meta
+            task = db.query(Task).filter(Task.id == task_id).first()
+            if task:
+                task.parsed_requirement = parsed_requirement
+                db.commit()
+
         logger.info(
             f"[Stage 3/3] 审核优化完成: "
             f"score={review_score}, final_copy_id={final_copy_id}"
@@ -267,12 +327,16 @@ def run_reviewer_stage(
                 "review_score": review_score,
                 "final_copy_id": final_copy_id,
                 "success": review_result.get("success"),
+                "rewrite_count": review_result.get("rewrite_count", 0),
             },
             status="success" if review_result.get("success") else "failed",
         )
         return {
             "final_copy_id": final_copy_id,
             "review_score": review_score,
+            "quality_report": quality_report,
+            "rewrite_count": int(review_result.get("rewrite_count", 0) or 0),
+            "parsed_requirement": parsed_requirement,
             "stages": stages,
             "total_tokens": total_tokens,
         }

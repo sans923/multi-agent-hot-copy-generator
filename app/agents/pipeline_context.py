@@ -24,6 +24,18 @@ class ActivePipeline:
     agents: PipelineAgents
 
     def merge(self, updates: dict[str, Any]) -> None:
+        if "stages" in updates and isinstance(updates["stages"], dict):
+            merged_stages = dict(self.state.get("stages") or {})
+            for key, value in updates["stages"].items():
+                if (
+                    key in merged_stages
+                    and isinstance(merged_stages[key], dict)
+                    and isinstance(value, dict)
+                ):
+                    merged_stages[key] = {**merged_stages[key], **value}
+                else:
+                    merged_stages[key] = value
+            updates = {**updates, "stages": merged_stages}
         self.state.update(updates)
 
 

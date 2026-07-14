@@ -57,7 +57,7 @@ class ParseRequirementSkill(BaseSkill):
                 "platform": {
                     "type": "string",
                     "description": "目标发布平台",
-                    "enum": ["weibo", "wechat", "douyin", "xiaohongshu", "zhihu"],
+                    "enum": ["toutiao", "weibo", "wechat", "douyin", "xiaohongshu", "zhihu"],
                 },
                 "topic": {
                     "type": "string",
@@ -102,6 +102,7 @@ class ParseRequirementSkill(BaseSkill):
 
         # 根据平台自动设置推荐字数
         platform_word_limits = {
+            "toutiao": 2200,
             "weibo": 140,
             "xiaohongshu": 500,
             "wechat": 1000,
@@ -172,7 +173,7 @@ class SearchHotlistSkill(BaseSkill):
                 "platform": {
                     "type": "string",
                     "description": "限定热榜来源平台，不传则搜索所有平台",
-                    "enum": ["weibo", "douyin", "wechat", "bilibili", "zhihu", "all"]
+                    "enum": ["toutiao", "weibo", "douyin", "wechat", "bilibili", "zhihu", "all"]
                 },
                 "limit": {
                     "type": "integer",

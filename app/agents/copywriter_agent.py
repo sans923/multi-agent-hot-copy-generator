@@ -4,6 +4,8 @@
 检索爆款长文 → 提取抽象写作规律 → 按 pattern 生成文案初稿。
 """
 
+import json
+
 from sqlalchemy.orm import Session
 
 from app.agents.base_agent import BaseAgent
@@ -42,8 +44,8 @@ class CopywriterAgent(BaseAgent):
 3. 调用 search_hot_articles_by_topic 按话题+点赞量检索最热长文（sort_by=likes）
 4. 调用 extract_writing_pattern 从长文提取抽象 writing_pattern（禁止抄原文）
 5. 调用 search_similar_copies 参考本系统历史爆款文案
-6. 调用 generate_outline，必须传入 writing_pattern
-7. 调用 write_copy_draft，传入 outline 与 writing_pattern，再创作正文
+6. 调用 generate_outline，必须传入 writing_pattern；若输入已提供今日头条 article_outline，则直接复用，不重复生成
+7. 调用 write_copy_draft，传入 outline 与 writing_pattern，再按章节创作正文
 8. 调用 add_hashtags 添加话题标签
 9. 调用 save_final_copy 保存初稿（version=1, is_final=False）
 
@@ -56,6 +58,7 @@ class CopywriterAgent(BaseAgent):
         parsed_requirement = kwargs.get("parsed_requirement", {})
         hot_topics = kwargs.get("hot_topics", [])
         context_messages = kwargs.get("context_messages", [])
+        rewrite_hint = (kwargs.get("rewrite_hint") or "").strip()
 
         if not parsed_requirement:
             from app.models.task import Task
@@ -70,6 +73,8 @@ class CopywriterAgent(BaseAgent):
         keywords = parsed_requirement.get("keywords", [])
         word_count = parsed_requirement.get("word_count", 140)
         hot_titles = [ht.get("title", "") for ht in hot_topics if ht.get("title")]
+        content_brief = parsed_requirement.get("content_brief") or {}
+        article_outline = parsed_requirement.get("article_outline") or {}
 
         user_message = f"""请为以下需求创作一篇{platform}爆款文案：
 
@@ -89,17 +94,38 @@ class CopywriterAgent(BaseAgent):
 
 禁止照搬任何参考长文原句，只学习抽象结构与节奏。"""
 
+        if platform == "toutiao" and content_brief and article_outline:
+            longform_contract = json.dumps(
+                {
+                    "content_brief": content_brief,
+                    "article_outline": article_outline,
+                },
+                ensure_ascii=False,
+            )
+            user_message += f"""
+
+【今日头条长文 MVP 契约】
+{longform_contract}
+
+必须遵守：
+- article_outline 是权威提纲：跳过 generate_outline，直接将它传给 write_copy_draft
+- 以 article_outline.selected_title 为主标题，正文使用 Markdown 二级小标题
+- 严格按 sections 的顺序逐节写作，每节完成对应 goal，不能合并或遗漏章节
+- 全文目标约 {content_brief.get('target_word_count', word_count)} 字
+- 前 150 字回应标题承诺；每个核心章节至少包含案例、事实或可执行建议之一
+- 参考资料只用于学习结构与论证，禁止复制原句
+- 最终仍需调用 save_final_copy 保存初稿
+"""
+
+        if rewrite_hint:
+            user_message += f"\n\n【Reflexion 改写提示】\n{rewrite_hint}"
+
         extra_messages = []
-        if context_messages:
-            assistant_msgs = [
-                m for m in context_messages
-                if m.get("role") == "assistant" and m.get("content")
-            ]
-            if assistant_msgs:
-                extra_messages = [{
-                    "role": "user",
-                    "content": f"【需求分析结果参考】\n{assistant_msgs[-1]['content']}",
-                }]
+        for msg in context_messages:
+            role = msg.get("role")
+            content = msg.get("content")
+            if role in ("user", "assistant", "system") and content:
+                extra_messages.append({"role": role, "content": content})
 
         result = self._run_loop(
             db=db,

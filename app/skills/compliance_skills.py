@@ -24,17 +24,29 @@ _DEFAULT_NGRAM_LEN = 10
 _DEFAULT_OVERLAP_THRESHOLD = 0.15  # 重叠字符占比超过 15% 视为高风险
 
 
+_DEFAULT_SENSITIVE_WORDS = [
+    "最好",
+    "第一",
+    "顶级",
+    "日赚",
+    "万元不是梦",
+    "稳赚",
+    "包治",
+    "绝对",
+]
+
+
 def _load_sensitive_words() -> list[str]:
     global _SENSITIVE_WORDS_CACHE
     if _SENSITIVE_WORDS_CACHE is not None:
         return _SENSITIVE_WORDS_CACHE
 
-    words: list[str] = []
+    words: list[str] = list(_DEFAULT_SENSITIVE_WORDS)
     word_file = Path(__file__).resolve().parent.parent / "data" / "sensitive_words.txt"
     if word_file.exists():
         for line in word_file.read_text(encoding="utf-8").splitlines():
             line = line.strip()
-            if line and not line.startswith("#"):
+            if line and not line.startswith("#") and line not in words:
                 words.append(line)
 
     _SENSITIVE_WORDS_CACHE = words

@@ -37,6 +37,7 @@ class TaskStatus(str, enum.Enum):
 
 class TaskPlatform(str, enum.Enum):
     """目标发布平台"""
+    TOUTIAO = "toutiao"        # 今日头条长文
     WEIBO = "weibo"            # 微博
     WECHAT = "wechat"          # 微信公众号
     DOUYIN = "douyin"          # 抖音/短视频脚本

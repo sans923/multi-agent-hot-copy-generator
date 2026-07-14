@@ -17,9 +17,9 @@ export function CreateTask() {
   const [requirement, setRequirement] = useState(
     titleFromUrl
       ? `围绕热点「${decodeURIComponent(titleFromUrl)}」写一篇爆款文案，风格口语化，要蹭热度`
-      : "帮我写一篇关于最新AI技术突破的微博，风格幽默，要蹭热点"
+      : "围绕35岁程序员职业转型，写一篇约2000字的今日头条深度长文，理性、有共情，并给出可执行建议"
   );
-  const [platform, setPlatform] = useState<TaskPlatform>("weibo");
+  const [platform, setPlatform] = useState<TaskPlatform>("toutiao");
   const [hotlistId, setHotlistId] = useState<number | null>(
     hotlistFromUrl ? Number(hotlistFromUrl) : null
   );
@@ -67,7 +67,7 @@ export function CreateTask() {
         <div>
           <h1>生成文案</h1>
           <p className="page-desc">
-            三个 AI Agent 将依次理解需求、创作初稿并审核优化
+            AI 流水线将依次完成需求分析、长文规划、分节创作与质量审核
           </p>
         </div>
       </div>

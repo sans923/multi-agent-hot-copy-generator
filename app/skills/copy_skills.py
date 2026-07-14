@@ -530,6 +530,7 @@ class AddHashtagsSkill(BaseSkill):
 
         # 4. 根据平台限制数量
         platform_limits = {
+            "toutiao": 3,
             "weibo": 3,
             "xiaohongshu": 8,
             "douyin": 5,

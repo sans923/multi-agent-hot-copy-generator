@@ -1005,6 +1005,157 @@ form textarea:focus {
   font-size: 0.9rem;
 }
 
+/* Toutiao long-form MVP */
+.longform-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.longform-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.longform-panel-header h3 {
+  margin: 0.15rem 0 0;
+  font-size: 1.05rem;
+}
+
+.longform-kicker {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.longform-brief-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+.longform-brief-grid div {
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.longform-brief-grid dt {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.longform-brief-grid dd {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.outline-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.outline-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.outline-index {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.outline-item p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.outline-words {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.quality-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+
+.quality-item > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+}
+
+.quality-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+}
+
+.quality-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+}
+
+.rewrite-list {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.rewrite-list p {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.rewrite-list p span {
+  color: var(--warning);
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .longform-panel-header {
+    flex-direction: column;
+  }
+
+  .outline-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .outline-words {
+    grid-column: 2;
+  }
+}
+
 /* Copy actions */
 .copy-actions {
   display: flex;

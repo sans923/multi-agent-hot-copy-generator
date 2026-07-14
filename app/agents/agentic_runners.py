@@ -41,6 +41,7 @@ from app.services.orchestration_persistence import (
 from app.services.audit_service import write_audit_log
 from app.services.planner_service import generate_plan
 from app.services.task_classifier import classify_task
+from app.services.reflect_service import reflect_on_step_failure
 from app.services.verify_service import verify_step
 from app.utils.logger import logger
 
@@ -212,11 +213,13 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
     step_def = _get_current_step_def(state) or {}
     stage = (step_def.get("stage") or "").lower()
 
-    if stage in ("verify", "copywriter"):
+    if stage in ("verify", "copywriter", "reviewer"):
         reflect_count = (state.get("reflect_count") or 0) + 1
         if reflect_count <= settings.MAX_REFLECT_ROUNDS:
+            reflection = reflect_on_step_failure(state, stage=stage)
             logger.warning(
-                f"L2 局部反思: 回退 copywriter, reflect={reflect_count}"
+                f"L2 Reflexion: 回退 copywriter, reflect={reflect_count}, "
+                f"source={reflection.get('source')}"
             )
             plan = state.get("plan") or {}
             steps = plan.get("steps") or []
@@ -225,12 +228,26 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
                 None,
             )
             if copywriter_idx is not None:
+                notes = list(state.get("reflect_notes") or [])
+                notes.append(reflection.get("summary") or "")
+                ctx = list(state.get("context_messages") or [])
+                if reflection.get("context_append"):
+                    ctx.append({
+                        "role": "system",
+                        "content": reflection["context_append"],
+                    })
                 write_audit_log(
                     state.get("db"),
                     state.get("task_id"),
                     "orchestration",
-                    "reflect_rewind_copywriter",
-                    output_summary={"reflect_count": reflect_count},
+                    "reflect_node",
+                    input_summary={"stage": stage, "reflect_count": reflect_count},
+                    output_summary={
+                        "summary": reflection.get("summary"),
+                        "rewrite_hint": reflection.get("rewrite_hint"),
+                        "focus": reflection.get("focus"),
+                        "source": reflection.get("source"),
+                    },
                     status="retry",
                     failure_level="local",
                 )
@@ -238,6 +255,9 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
                     "current_step": copywriter_idx,
                     "retry_count": 0,
                     "reflect_count": reflect_count,
+                    "reflect_notes": notes,
+                    "rewrite_hint": reflection.get("rewrite_hint") or "",
+                    "context_messages": ctx,
                     "failure_level": "local",
                     "last_step_failed": False,
                 }

@@ -11,6 +11,42 @@ import { ApiError } from "../api/client";
 const POLL_INTERVAL = 3000;
 const TERMINAL: TaskStatus[] = ["completed", "failed"];
 
+interface LongformBrief {
+  target_reader?: string;
+  content_goal?: string;
+  primary_keyword?: string;
+  secondary_keywords?: string[];
+  reader_questions?: string[];
+  article_angle?: string;
+  tone?: string;
+  target_word_count?: number;
+}
+
+interface LongformOutline {
+  selected_title?: string;
+  opening_strategy?: string;
+  sections?: Array<{
+    id: string;
+    heading: string;
+    goal: string;
+    target_words?: number;
+  }>;
+}
+
+interface LongformQuality {
+  total_score?: number;
+  grade?: string;
+  dimensions?: Array<{ name: string; score: number }>;
+  strengths?: string[];
+  suggestions?: string[];
+  failed_sections?: Array<{
+    section_id: string;
+    score: number;
+    reason: string;
+    rewrite_instruction: string;
+  }>;
+}
+
 export function TaskDetail() {
   const { taskId } = useParams<{ taskId: string }>();
   const id = Number(taskId);
@@ -109,6 +145,12 @@ export function TaskDetail() {
 
   const parsed = task?.parsed_requirement as Record<string, unknown> | null;
   const orch = task?.orchestration_meta;
+  const contentBrief = parsed?.content_brief as LongformBrief | undefined;
+  const articleOutline = parsed?.article_outline as LongformOutline | undefined;
+  const longformMeta = parsed?.longform_mvp as
+    | { rewrite_count?: number; quality_report?: LongformQuality }
+    | undefined;
+  const qualityReport = longformMeta?.quality_report;
 
   const TASK_MODE_LABELS: Record<string, string> = {
     simple: "简单（固定流水线）",
@@ -268,6 +310,98 @@ export function TaskDetail() {
                   </div>
                 )}
               </dl>
+            </section>
+          )}
+
+          {contentBrief && articleOutline && (
+            <section className="longform-panel">
+              <div className="longform-panel-header">
+                <div>
+                  <span className="longform-kicker">Content Brief</span>
+                  <h3>{articleOutline.selected_title || String(parsed?.topic || "长文规划")}</h3>
+                </div>
+                <span className="score-badge">
+                  目标 {contentBrief.target_word_count ?? "—"} 字
+                </span>
+              </div>
+
+              <dl className="longform-brief-grid">
+                <div>
+                  <dt>目标读者</dt>
+                  <dd>{contentBrief.target_reader}</dd>
+                </div>
+                <div>
+                  <dt>内容目标</dt>
+                  <dd>{contentBrief.content_goal}</dd>
+                </div>
+                <div>
+                  <dt>核心关键词</dt>
+                  <dd>
+                    {[contentBrief.primary_keyword, ...(contentBrief.secondary_keywords ?? [])]
+                      .filter(Boolean)
+                      .join("、")}
+                  </dd>
+                </div>
+                <div>
+                  <dt>写作角度</dt>
+                  <dd>{contentBrief.article_angle}</dd>
+                </div>
+              </dl>
+
+              <div className="outline-list">
+                {(articleOutline.sections ?? []).map((section, index) => (
+                  <div className="outline-item" key={section.id}>
+                    <span className="outline-index">{index + 1}</span>
+                    <div>
+                      <strong>{section.heading}</strong>
+                      <p>{section.goal}</p>
+                    </div>
+                    {section.target_words != null && (
+                      <span className="outline-words">约 {section.target_words} 字</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {qualityReport && (
+            <section className="longform-panel">
+              <div className="longform-panel-header">
+                <div>
+                  <span className="longform-kicker">Quality Gate</span>
+                  <h3>长文质量报告</h3>
+                </div>
+                <span className="score-badge">
+                  {qualityReport.total_score ?? 0} 分 · 重写 {longformMeta?.rewrite_count ?? 0}/1
+                </span>
+              </div>
+
+              <div className="quality-grid">
+                {(qualityReport.dimensions ?? []).map((dimension) => (
+                  <div className="quality-item" key={dimension.name}>
+                    <div>
+                      <span>{dimension.name}</span>
+                      <strong>{dimension.score}</strong>
+                    </div>
+                    <div className="quality-track">
+                      <span style={{ width: `${Math.max(0, Math.min(100, dimension.score))}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {(qualityReport.failed_sections ?? []).length > 0 && (
+                <div className="rewrite-list">
+                  <strong>定向重写记录</strong>
+                  {(qualityReport.failed_sections ?? []).map((section) => (
+                    <p key={section.section_id}>
+                      <span>{section.section_id} · {section.score}分</span>
+                      {section.reason}；{section.rewrite_instruction}
+                    </p>
+                  ))}
+                </div>
+              )}
             </section>
           )}
 

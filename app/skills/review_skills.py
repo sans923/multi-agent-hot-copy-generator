@@ -28,6 +28,16 @@ from app.utils.logger import logger
 
 # 各平台的审核标准（不同平台的关注点不同）
 REVIEW_CRITERIA = {
+    "toutiao": {
+        "title_weight": 0.2,
+        "checklist": [
+            "标题承诺是否在前150字得到回应",
+            "是否使用3-6个信息明确的小标题",
+            "核心观点是否有案例、数据或行动建议支撑",
+            "段落之间是否递进且没有明显重复",
+            "结尾是否提出自然、开放的互动问题",
+        ],
+    },
     "weibo": {
         "title_weight": 0.15,
         "checklist": [
@@ -154,6 +164,20 @@ class ReviewCopyQualitySkill(BaseSkill):
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "具体改进建议（2-3条，要可操作）"
+                },
+                "failed_sections": {
+                    "type": "array",
+                    "description": "仅列出低于70分、确实需要重写的长文章节",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "section_id": {"type": "string"},
+                            "score": {"type": "integer", "minimum": 0, "maximum": 100},
+                            "reason": {"type": "string"},
+                            "rewrite_instruction": {"type": "string"}
+                        },
+                        "required": ["section_id", "score", "reason", "rewrite_instruction"]
+                    }
                 }
             },
             "required": ["copy_content", "platform", "scores", "strengths", "weaknesses", "suggestions"]
@@ -169,6 +193,26 @@ class ReviewCopyQualitySkill(BaseSkill):
         strengths = kwargs.get("strengths", [])
         weaknesses = kwargs.get("weaknesses", [])
         suggestions = kwargs.get("suggestions", [])
+        failed_sections = kwargs.get("failed_sections", [])
+
+        normalized_failed_sections = []
+        for item in failed_sections:
+            if not isinstance(item, dict):
+                continue
+            try:
+                section_score = int(item.get("score", 100))
+            except (TypeError, ValueError):
+                continue
+            if section_score < 70 and item.get("section_id"):
+                normalized_failed_sections.append({
+                    "section_id": str(item["section_id"]),
+                    "score": max(0, min(100, section_score)),
+                    "reason": str(item.get("reason") or "该章节质量未达标"),
+                    "rewrite_instruction": str(
+                        item.get("rewrite_instruction") or "根据审核意见定向改写"
+                    ),
+                })
+        normalized_failed_sections = normalized_failed_sections[:3]
 
         # 计算总分（5个维度，每个满分20，总分100）
         title_appeal = max(0, min(20, scores_raw.get("title_appeal", 15)))
@@ -193,7 +237,7 @@ class ReviewCopyQualitySkill(BaseSkill):
         penalty = sum(1 for r in rule_check_results if not r["passed"]) * 2
         total_score = max(0, total_score - penalty)
 
-        need_optimization = total_score < 70
+        need_optimization = total_score < 70 or bool(normalized_failed_sections)
         grade = self._score_to_grade(total_score)
 
         logger.info(
@@ -215,6 +259,7 @@ class ReviewCopyQualitySkill(BaseSkill):
             "strengths": strengths,
             "weaknesses": weaknesses,
             "suggestions": suggestions,
+            "failed_sections": normalized_failed_sections,
             "rule_check": rule_check_results,
             "need_optimization": need_optimization,
             "verdict": (
@@ -228,7 +273,14 @@ class ReviewCopyQualitySkill(BaseSkill):
         results = []
 
         # 检查字数
-        word_limits = {"weibo": 140, "douyin": 150, "xiaohongshu": 1000, "wechat": 5000, "zhihu": 10000}
+        word_limits = {
+            "toutiao": 5000,
+            "weibo": 140,
+            "douyin": 150,
+            "xiaohongshu": 1000,
+            "wechat": 5000,
+            "zhihu": 10000,
+        }
         limit = word_limits.get(platform, 500)
         results.append({
             "check": "字数限制",

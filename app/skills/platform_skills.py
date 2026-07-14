@@ -23,6 +23,23 @@ from app.utils.logger import logger
 
 # 平台规则配置（实际项目可以存数据库，这里先用字典）
 PLATFORM_RULES = {
+    "toutiao": {
+        "name": "今日头条长文",
+        "max_words": 5000,
+        "recommended_words": "1500-3000",
+        "hashtag_format": "正文末尾添加相关话题（可选）",
+        "hashtag_count": "0-3个",
+        "style_tips": [
+            "标题明确承诺读者收益，避免标题与正文脱节",
+            "前150字使用具体场景、冲突或反常识结论留住读者",
+            "使用3-6个信息明确的小标题，逐层推进而不是堆观点",
+            "每个核心观点至少配一个案例、数据或可执行建议",
+            "段落保持短小，结尾用开放问题引导高质量评论",
+        ],
+        "forbidden_words": ["震惊", "百分百", "绝对有效", "未经证实的数据"],
+        "best_post_time": "根据账号历史数据验证，默认不硬编码",
+        "engagement_tips": "标题兑现度、前屏留存和有效信息密度优先于关键词堆砌",
+    },
     "weibo": {
         "name": "微博",
         "max_words": 140,
@@ -144,7 +161,7 @@ class GetPlatformRulesSkill(BaseSkill):
                 "platform": {
                     "type": "string",
                     "description": "目标发布平台",
-                    "enum": ["weibo", "wechat", "douyin", "xiaohongshu", "zhihu"]
+                    "enum": ["toutiao", "weibo", "wechat", "douyin", "xiaohongshu", "zhihu"]
                 }
             },
             "required": ["platform"]

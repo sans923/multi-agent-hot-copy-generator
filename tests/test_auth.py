@@ -53,7 +53,7 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest.fixture(autouse=True)
 def setup_database():
     """每个测试前创建表，测试后删除（确保测试隔离）"""
-    from app.models import user, task, document, copy, agent_log, hotlist_sync  # noqa
+    import app.models  # noqa: F401
     Base.metadata.create_all(bind=test_engine)
     yield
     Base.metadata.drop_all(bind=test_engine)

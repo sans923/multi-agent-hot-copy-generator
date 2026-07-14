@@ -39,6 +39,10 @@ class PipelineState(TypedDict, total=False):
     copy_content: str
     final_copy_id: int | None
     review_score: float
+    content_brief: dict[str, Any]
+    article_outline: dict[str, Any]
+    quality_report: dict[str, Any]
+    rewrite_count: int
 
     total_tokens: int
     stages: dict[str, Any]
@@ -55,6 +59,8 @@ class PipelineState(TypedDict, total=False):
     step_count: int
     retry_count: int
     reflect_count: int
+    reflect_notes: list[str]
+    rewrite_hint: str
     failure_level: str | None         # retry | local | global | human
     verification: dict[str, Any]
     deadline_ts: float
@@ -90,6 +96,10 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         "copy_content": "",
         "final_copy_id": None,
         "review_score": 0.0,
+        "content_brief": {},
+        "article_outline": {},
+        "quality_report": {},
+        "rewrite_count": 0,
         "total_tokens": 0,
         "stages": {},
         "abort": False,
@@ -102,6 +112,8 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         "step_count": 0,
         "retry_count": 0,
         "reflect_count": 0,
+        "reflect_notes": [],
+        "rewrite_hint": "",
         "failure_level": None,
         "verification": {},
         "deadline_ts": time.time() + settings.AGENT_TIMEOUT_SEC,

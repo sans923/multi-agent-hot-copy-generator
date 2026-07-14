@@ -16,6 +16,29 @@
 返回最终文案
 ```
 
+## 今日头条长文 MVP
+
+今日头条任务使用一条可解释、成本有上限的长文流水线：
+
+```text
+需求解析 + 热点
+    → Content Brief（读者、目标、关键词、字数）
+    → 结构化提纲（至少 3 个章节，独立章节 ID 与字数预算）
+    → 头条 RAG + 按提纲分节创作
+    → 五维质量门禁
+    → 仅对低分章节定向优化一次
+    → 保存终稿、质量报告与审计轨迹
+```
+
+任务详情页会展示 Brief、章节提纲、质量维度和重写记录。领域规则集中在
+`app/services/longform_mvp_service.py`，保持无数据库、无网络依赖，便于独立测试。
+
+已有 MySQL 数据库升级后需执行：
+
+```powershell
+mysql -u root -p copy_generator < scripts/migrate_add_toutiao_platform.sql
+```
+
 ## 技术栈
 
 
@@ -99,6 +122,12 @@ npm run dev
 
 ### 6. 运行测试
 
+```powershell
+pytest tests -q
+cd frontend
+npm run build
+```
+
 ```bash
 pip install pytest httpx
 pytest tests/ -v
@@ -161,5 +190,3 @@ multi-agent-hot-copy-generator/
 | PUT  | /api/v1/users/me      | 更新用户信息     |
 | GET  | /health               | 健康检查       |
 | GET  | /docs                 | Swagger 文档 |
-
-
