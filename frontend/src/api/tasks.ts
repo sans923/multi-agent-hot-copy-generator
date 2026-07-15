@@ -13,6 +13,7 @@ export async function createTask(payload: {
   platform: TaskPlatform;
   hotlist_id?: number | null;
   execution_mode?: ExecutionMode;
+  style_card_id?: number | null;
 }) {
   return request<Task>("/api/v1/tasks/", {
     method: "POST",

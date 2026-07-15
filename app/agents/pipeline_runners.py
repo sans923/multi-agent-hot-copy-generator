@@ -158,6 +158,30 @@ def run_copywriter_stage(
 
     try:
         parsed_requirement = dict(state.get("parsed_requirement") or {})
+        selected_style_card_id = state.get("selected_style_card_id")
+        if selected_style_card_id:
+            from app.models.style_card import StyleCard
+
+            selected_card = db.query(StyleCard).filter(StyleCard.id == selected_style_card_id).first()
+            if selected_card:
+                parsed_requirement["selected_style_card"] = {
+                    "id": selected_card.id,
+                    "topic_cluster": selected_card.topic_cluster,
+                    "pattern": selected_card.pattern_json,
+                    "confidence": float(selected_card.confidence or 0),
+                }
+                parsed_requirement["writing_pattern"] = selected_card.pattern_json
+                write_audit_log(
+                    db,
+                    task_id,
+                    "asset",
+                    "style_card_selected",
+                    agent_name="copywriter_agent",
+                    output_summary={
+                        "style_card_id": selected_card.id,
+                        "topic_cluster": selected_card.topic_cluster,
+                    },
+                )
         if state.get("platform") == "toutiao":
             brief = build_content_brief(
                 parsed_requirement=parsed_requirement,

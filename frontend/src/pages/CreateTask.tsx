@@ -5,6 +5,8 @@ import { listHotlist } from "../api/hotlist";
 import type { ExecutionMode, HotlistItem, TaskPlatform } from "../types/api";
 import { PLATFORM_LABELS } from "../types/api";
 import { ApiError } from "../api/client";
+import { listStyleCards } from "../api/contentAssets";
+import type { StyleCard } from "../types/api";
 
 const PLATFORMS = Object.keys(PLATFORM_LABELS) as TaskPlatform[];
 
@@ -21,6 +23,8 @@ export function CreateTask() {
   );
   const [platform, setPlatform] = useState<TaskPlatform>("toutiao");
   const [executionMode, setExecutionMode] = useState<ExecutionMode>("plan");
+  const [styleCardId, setStyleCardId] = useState<number | null>(null);
+  const [styleCards, setStyleCards] = useState<StyleCard[]>([]);
   const [hotlistId, setHotlistId] = useState<number | null>(
     hotlistFromUrl ? Number(hotlistFromUrl) : null
   );
@@ -32,6 +36,12 @@ export function CreateTask() {
     listHotlist(1, 30)
       .then((res) => setHotlist(res.data?.items ?? []))
       .catch(() => setHotlist([]));
+  }, []);
+
+  useEffect(() => {
+    listStyleCards()
+      .then((res) => setStyleCards(res.data ?? []))
+      .catch(() => setStyleCards([]));
   }, []);
 
   useEffect(() => {
@@ -52,6 +62,7 @@ export function CreateTask() {
         platform,
         hotlist_id: hotlistId,
         execution_mode: executionMode,
+        style_card_id: platform === "toutiao" ? styleCardId : null,
       });
       if (res.data?.id) {
         navigate(`/tasks/${res.data.id}`);
@@ -139,6 +150,26 @@ export function CreateTask() {
             </button>
           </div>
         </div>
+
+        {platform === "toutiao" && (
+          <label>
+            指定风格卡（可选）
+            <select
+              value={styleCardId ?? ""}
+              onChange={(e) => setStyleCardId(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">由 Agent 按话题自动匹配</option>
+              {styleCards.map((card) => (
+                <option key={card.id} value={card.id}>
+                  {card.topic_cluster} · 置信度 {Math.round(card.confidence * 100)}%
+                </option>
+              ))}
+            </select>
+            <span className="field-help">
+              指定后，Copywriter 将优先使用该卡片的标题公式、结构与节奏规则。
+            </span>
+          </label>
+        )}
 
         <label>
           关联热榜（可选）

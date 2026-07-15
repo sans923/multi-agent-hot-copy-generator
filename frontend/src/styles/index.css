@@ -1338,6 +1338,134 @@ form textarea:focus {
   margin-bottom: 1rem;
 }
 
+/* Content asset operations desk */
+.asset-page {
+  max-width: 1320px;
+}
+
+.asset-hero {
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1.25rem;
+  padding: 2.4rem;
+  overflow: hidden;
+  border: 1px solid #3c332d;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 107, 53, 0.2), transparent 28%),
+    linear-gradient(135deg, #201d1c 0%, #171a22 58%, #14161c 100%);
+}
+
+.asset-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.asset-hero > * { position: relative; z-index: 1; }
+.asset-eyebrow, .asset-panel-heading span, .asset-toolbar span, .asset-card-builder > div > span {
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.asset-hero h1 { margin: 0.35rem 0 0.45rem; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: -0.045em; }
+.asset-hero p { max-width: 650px; margin: 0; color: #b7bbca; }
+.asset-metrics { display: flex; gap: 1.5rem; }
+.asset-metrics div { min-width: 82px; padding-left: 1rem; border-left: 1px solid #57443a; }
+.asset-metrics strong { display: block; font-size: 1.8rem; line-height: 1; }
+.asset-metrics span { display: block; margin-top: 0.35rem; color: var(--text-muted); font-size: 0.72rem; }
+
+.asset-import-panel, .asset-library-panel, .asset-card-builder, .asset-cards-section {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.asset-import-panel, .asset-cards-section { margin-bottom: 1.25rem; padding: 1.35rem; }
+.asset-panel-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.asset-panel-heading h2, .asset-toolbar h2, .asset-card-builder h2 { margin: 0.15rem 0 0; font-size: 1.1rem; }
+.asset-panel-heading p { margin: 0; color: var(--text-muted); font-size: 0.82rem; }
+.asset-import-form { display: grid; grid-template-columns: minmax(320px, 2fr) minmax(130px, 1fr) 110px auto; align-items: end; gap: 0.75rem; }
+.asset-import-form label, .asset-card-builder label { color: var(--text-muted); font-size: 0.76rem; }
+.asset-import-form input, .asset-toolbar input, .asset-card-builder input {
+  width: 100%; margin-top: 0.35rem; padding: 0.68rem 0.75rem; color: var(--text); background: #12141b; border: 1px solid var(--border); border-radius: 8px;
+}
+
+.asset-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 1.25rem; margin-bottom: 1.25rem; align-items: start; }
+.asset-library-panel { min-width: 0; overflow: hidden; }
+.asset-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.25rem; border-bottom: 1px solid var(--border); }
+.asset-toolbar input { max-width: 260px; margin: 0; }
+.asset-reference-list { max-height: 650px; overflow: auto; }
+.asset-reference { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 0.8rem; align-items: center; padding: 1rem 1.15rem; border-bottom: 1px solid var(--border); transition: background .18s ease, box-shadow .18s ease; }
+.asset-reference:last-child { border-bottom: 0; }
+.asset-reference:hover { background: rgba(255,255,255,.018); }
+.asset-reference.selected { background: rgba(255, 107, 53, 0.07); box-shadow: inset 3px 0 var(--accent); }
+.asset-check { width: 28px; height: 28px; padding: 0; border: 1px solid #4c5267; border-radius: 7px; background: #12141b; color: #fff; cursor: pointer; }
+.asset-reference.selected .asset-check { border-color: var(--accent); background: var(--accent); }
+.asset-reference-main { min-width: 0; }
+.asset-reference-main h3 { margin: 0.35rem 0; overflow: hidden; color: var(--text); font-size: 0.96rem; text-overflow: ellipsis; white-space: nowrap; }
+.asset-reference-meta, .asset-reference-stats { display: flex; flex-wrap: wrap; gap: 0.7rem; color: var(--text-muted); font-size: 0.7rem; }
+.asset-status { padding: 0.08rem 0.38rem; border-radius: 999px; background: rgba(139,146,168,.12); }
+.asset-status.status-completed { color: var(--success); background: rgba(61,214,140,.1); }
+.asset-status.status-failed { color: var(--error); background: rgba(255,92,92,.1); }
+.asset-status.status-processing { color: var(--warning); }
+.asset-row-actions { display: flex; align-items: center; gap: 0.35rem; }
+.asset-row-actions button, .asset-row-actions a, .style-card-tile header button { padding: 0.32rem 0.48rem; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.72rem; }
+.asset-row-actions button:hover, .asset-row-actions a:hover { color: var(--text); }
+.asset-row-actions .danger:hover, .style-card-tile header button:hover { color: var(--error); }
+
+.asset-card-builder { position: sticky; top: 78px; padding: 1.25rem; background: linear-gradient(160deg, #211d1c, var(--bg-card) 45%); }
+.asset-card-builder p { color: var(--text-muted); font-size: 0.8rem; }
+.asset-selection-count { display: flex; align-items: baseline; gap: 0.35rem; margin: 1.3rem 0; }
+.asset-selection-count strong { color: var(--accent); font-size: 2.8rem; line-height: 1; }
+.asset-selection-count span, .asset-card-builder small { color: var(--text-muted); font-size: 0.72rem; }
+.asset-card-builder .btn-primary { width: 100%; margin: 0.9rem 0 0.7rem; }
+.asset-empty { display: flex; min-height: 210px; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; color: var(--text-muted); text-align: center; }
+.asset-empty.compact { min-height: 100px; }
+
+.style-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.85rem; }
+.style-card-tile { position: relative; padding: 1.1rem; overflow: hidden; border: 1px solid #34394b; border-radius: 12px; background: linear-gradient(145deg, #20232e, #171920); }
+.style-card-tile::before { content: ""; position: absolute; width: 90px; height: 90px; right: -35px; top: -35px; border: 1px solid rgba(255,107,53,.28); border-radius: 50%; }
+.style-card-tile header { display: flex; justify-content: space-between; gap: 1rem; }
+.style-card-tile header span { color: var(--accent); font-size: 0.65rem; letter-spacing: .1em; }
+.style-card-tile h3 { margin: 0.2rem 0 0.8rem; font-size: 1.15rem; }
+.style-card-tags { display: flex; min-height: 52px; flex-wrap: wrap; align-content: start; gap: 0.35rem; }
+.style-card-tags span { padding: 0.25rem 0.45rem; border-radius: 5px; background: #292d3a; color: #c4c8d4; font-size: 0.7rem; }
+.style-card-tile dl { display: flex; gap: 1.5rem; margin: 1rem 0; }
+.style-card-tile dl div { display: flex; flex-direction: column; }
+.style-card-tile dt { color: var(--text-muted); font-size: 0.65rem; }
+.style-card-tile dd { margin: 0.1rem 0 0; font-weight: 700; }
+.style-card-tile details { color: var(--text-muted); font-size: 0.74rem; }
+.style-card-tile pre { max-height: 260px; overflow: auto; padding: 0.75rem; border-radius: 7px; background: #101219; color: #bfc4d3; white-space: pre-wrap; font-size: 0.68rem; }
+.field-help { display: block; margin-top: 0.3rem; color: var(--text-muted); font-size: 0.75rem; font-weight: 400; }
+
+@media (max-width: 900px) {
+  .asset-hero { align-items: start; flex-direction: column; }
+  .asset-import-form { grid-template-columns: 1fr 1fr; }
+  .asset-url-field { grid-column: 1 / -1; }
+  .asset-workspace { grid-template-columns: 1fr; }
+  .asset-card-builder { position: static; }
+}
+
+@media (max-width: 620px) {
+  .asset-hero { padding: 1.4rem; }
+  .asset-metrics { width: 100%; justify-content: space-between; gap: 0.5rem; }
+  .asset-import-form { grid-template-columns: 1fr; }
+  .asset-url-field { grid-column: auto; }
+  .asset-panel-heading, .asset-toolbar { align-items: stretch; flex-direction: column; }
+  .asset-toolbar input { max-width: none; }
+  .asset-reference { grid-template-columns: 30px minmax(0, 1fr); }
+  .asset-row-actions { grid-column: 2; }
+}
+
 .btn-sm {
   padding: 0.35rem 0.75rem !important;
   font-size: 0.8rem !important;

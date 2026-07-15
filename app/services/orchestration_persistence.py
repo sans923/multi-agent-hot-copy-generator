@@ -48,6 +48,7 @@ def build_orchestration_meta(state: PipelineState) -> dict[str, Any]:
     return {
         "execution_mode": state.get("execution_mode", "fast"),
         "resolved_mode": state.get("resolved_mode", "fixed"),
+        "selected_style_card_id": state.get("selected_style_card_id"),
         "task_mode": state.get("task_mode"),
         "plan_source": plan.get("source"),
         "plan_reasoning": plan.get("reasoning"),

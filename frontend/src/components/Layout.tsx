@@ -18,7 +18,10 @@ export function Layout() {
           <NavLink to="/create">生成文案</NavLink>
           <NavLink to="/hotlist">热榜</NavLink>
           {user?.is_admin && (
-            <NavLink to="/admin/users">用户管理</NavLink>
+            <>
+              <NavLink to="/admin/content-assets">内容资产</NavLink>
+              <NavLink to="/admin/users">用户管理</NavLink>
+            </>
           )}
         </nav>
         <div className="header-user">

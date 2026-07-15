@@ -45,6 +45,10 @@ export async function request<T>(
     headers,
   });
 
+  if (res.status === 204) {
+    return { success: true, message: "操作成功", data: null };
+  }
+
   let body: ApiResponse<T> | { detail?: string | unknown };
   try {
     body = await res.json();

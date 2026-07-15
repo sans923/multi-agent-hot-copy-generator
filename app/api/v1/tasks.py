@@ -23,6 +23,7 @@ from app.database import get_db, SessionLocal
 from app.models.task import Task, TaskStatus, TaskPlatform
 from app.models.copy import Copy
 from app.models.user import User
+from app.models.style_card import StyleCard
 from app.schemas.task import (
     TaskCreate,
     TaskResponse,
@@ -110,6 +111,14 @@ def create_task(
     客户端拿到 task_id 后，每隔 3-5 秒轮询 GET /tasks/{task_id}
     直到 status 变为 completed 或 failed
     """
+    selected_style_card = None
+    if task_data.style_card_id is not None:
+        selected_style_card = db.query(StyleCard).filter(StyleCard.id == task_data.style_card_id).first()
+        if selected_style_card is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="指定的风格卡不存在")
+        if task_data.platform != TaskPlatform.TOUTIAO:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="风格卡当前仅支持今日头条长文")
+
     # 创建任务记录
     from app.services.orchestration_policy import resolve_execution_mode
 
@@ -122,6 +131,8 @@ def create_task(
         orchestration_meta={
             "execution_mode": task_data.execution_mode,
             "resolved_mode": resolve_execution_mode(task_data.execution_mode),
+            "selected_style_card_id": selected_style_card.id if selected_style_card else None,
+            "selected_style_card_topic": selected_style_card.topic_cluster if selected_style_card else None,
         },
     )
     db.add(task)
@@ -138,6 +149,7 @@ def create_task(
         extra={
             "platform": task_data.platform.value,
             "execution_mode": task_data.execution_mode,
+            "style_card_id": task_data.style_card_id,
         },
     )
 

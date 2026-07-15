@@ -73,6 +73,7 @@ class PipelineState(TypedDict, total=False):
     quality_gate: dict[str, Any]
     decision_log: list[dict[str, Any]]
     skipped_steps: list[dict[str, Any]]
+    selected_style_card_id: int | None
 
 
 def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None, dict | None]:
@@ -132,6 +133,7 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         "quality_gate": {},
         "decision_log": [],
         "skipped_steps": [],
+        "selected_style_card_id": orchestration_meta.get("selected_style_card_id"),
     }, None
 
 

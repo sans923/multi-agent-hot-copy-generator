@@ -28,6 +28,11 @@ class TaskCreate(BaseModel):
         default="fast",
         description="fast=固定流水线快速生成；plan=Lead 动态规划、重试与质量门控",
     )
+    style_card_id: Optional[int] = Field(
+        default=None,
+        ge=1,
+        description="今日头条任务指定使用的风格卡 ID",
+    )
 
     @field_validator("hotlist_id", mode="before")
     @classmethod

@@ -75,6 +75,36 @@ export interface OrchestrationMeta {
   quality_gate?: QualityGateMeta;
   decision_log?: Array<Record<string, unknown>>;
   skipped_steps?: Array<Record<string, unknown>>;
+  selected_style_card_id?: number | null;
+}
+
+export interface ToutiaoReference {
+  id: number;
+  article_id: string;
+  title: string;
+  author_name: string | null;
+  keyword: string | null;
+  source_url: string | null;
+  like_count: number;
+  read_count: number;
+  comment_count: number;
+  embedding_status: string;
+  chunk_count: number;
+  content_length: number;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface StyleCard {
+  id: number;
+  topic_cluster: string;
+  platform: string;
+  pattern_json: Record<string, unknown>;
+  avg_like_count: number;
+  source_article_ids: string[];
+  confidence: number;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface AuditLogItem {

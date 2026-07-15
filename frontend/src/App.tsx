@@ -12,6 +12,7 @@ import { TaskDetail } from "./pages/TaskDetail";
 import { Hotlist } from "./pages/Hotlist";
 import { Profile } from "./pages/Profile";
 import { AdminUsers } from "./pages/AdminUsers";
+import { ContentAssets } from "./pages/ContentAssets";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route element={<AdminRoute />}>
                   <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/content-assets" element={<ContentAssets />} />
                 </Route>
               </Route>
             </Route>
