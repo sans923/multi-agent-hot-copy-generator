@@ -46,6 +46,8 @@ def build_orchestration_meta(state: PipelineState) -> dict[str, Any]:
     """从 state 提取对外展示的 orchestration 元数据。"""
     plan = state.get("plan") or {}
     return {
+        "execution_mode": state.get("execution_mode", "fast"),
+        "resolved_mode": state.get("resolved_mode", "fixed"),
         "task_mode": state.get("task_mode"),
         "plan_source": plan.get("source"),
         "plan_reasoning": plan.get("reasoning"),
@@ -54,6 +56,7 @@ def build_orchestration_meta(state: PipelineState) -> dict[str, Any]:
                 "step_id": s.get("step_id"),
                 "stage": s.get("stage"),
                 "description": s.get("description"),
+                "can_skip": bool(s.get("can_skip", False)),
             }
             for s in (plan.get("steps") or [])
         ],
@@ -64,6 +67,9 @@ def build_orchestration_meta(state: PipelineState) -> dict[str, Any]:
         "verification": state.get("verification"),
         "awaiting_human": state.get("awaiting_human", False),
         "human_prompt": state.get("error"),
+        "quality_gate": state.get("quality_gate") or {},
+        "decision_log": state.get("decision_log") or [],
+        "skipped_steps": state.get("skipped_steps") or [],
     }
 
 
@@ -142,7 +148,9 @@ def apply_result_meta_to_task(
 
     if state:
         meta = build_orchestration_meta(state)
-        meta.pop("checkpoint", None)
+        existing = task.orchestration_meta if isinstance(task.orchestration_meta, dict) else {}
+        if result.get("awaiting_human"):
+            meta["checkpoint"] = existing.get("checkpoint") or state_to_checkpoint(state)
         task.orchestration_meta = meta
     elif result.get("task_mode"):
         existing = dict(task.orchestration_meta or {})

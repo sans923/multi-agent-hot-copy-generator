@@ -43,6 +43,8 @@ from app.agents.pipeline_state import (
     is_timed_out,
 )
 from app.services.orchestration_persistence import apply_result_meta_to_task
+from app.services.orchestration_policy import decide_final_quality_gate
+from app.services.audit_service import write_audit_log
 from app.config import settings
 from app.utils.logger import logger
 
@@ -98,11 +100,69 @@ def _simple_pipeline_node(state: PipelineState) -> dict:
 
 def _finalize_node(state: PipelineState) -> dict:
     result = build_success_result(state)
+    apply_result_meta_to_task(state["db"], state["task_id"], result, state)
     logger.info(
         f"Agentic 图完成: task_id={state.get('task_id')}, "
         f"mode={state.get('task_mode')}, final_copy_id={result.get('final_copy_id')}"
     )
     return {"result": result}
+
+
+def _quality_gate_node(state: PipelineState) -> dict:
+    """确定性终稿门控：模型负责评分，规则负责是否放行。"""
+    decision = decide_final_quality_gate(state)
+    gate = decision.as_dict()
+    entry = {"type": "quality_gate", **gate}
+    write_audit_log(
+        state.get("db"),
+        state.get("task_id"),
+        "quality_gate",
+        "final_quality_gate",
+        output_summary=gate,
+        status="success" if decision.passed else "failed",
+        failure_level=None if decision.passed else "local",
+    )
+    updates = {
+        "quality_gate": gate,
+        "decision_log": [*(state.get("decision_log") or []), entry],
+    }
+    if decision.action == "awaiting_human":
+        updates.update({
+            "awaiting_human": True,
+            "failure_level": "human",
+            "error": f"质量门控未通过：{', '.join(decision.failed_checks)}",
+        })
+    return updates
+
+
+def _prepare_quality_rewrite_node(state: PipelineState) -> dict:
+    """门控失败后仅回退 Reviewer 一次，形成有上限的恢复闭环。"""
+    steps = (state.get("plan") or {}).get("steps") or []
+    reviewer_idx = next(
+        (i for i, step in enumerate(steps) if step.get("stage") == "reviewer"),
+        None,
+    )
+    if reviewer_idx is None:
+        return {
+            "awaiting_human": True,
+            "failure_level": "human",
+            "error": "质量门控要求重写，但计划中没有 Reviewer 步骤",
+        }
+    return {
+        "current_step": reviewer_idx,
+        "rewrite_count": 1,
+        "awaiting_human": False,
+        "failure_level": "local",
+        "decision_log": [
+            *(state.get("decision_log") or []),
+            {
+                "type": "quality_rewrite",
+                "to_stage": "reviewer",
+                "round": 1,
+                "reason": "failed_sections_detected",
+            },
+        ],
+    }
 
 
 def _mark_awaiting_human_node(state: PipelineState) -> dict:
@@ -112,12 +172,12 @@ def _mark_awaiting_human_node(state: PipelineState) -> dict:
     from app.services.orchestration_persistence import mark_task_awaiting_human
 
     mark_task_awaiting_human(db, task_id, state)
-    apply_result_meta_to_task(db, task_id, result, state)
     return {"result": result}
 
 
 def _mark_failed_node(state: PipelineState) -> dict:
     result = build_failure_result(state)
+    apply_result_meta_to_task(state["db"], state["task_id"], result, state)
     logger.error(
         f"Agentic 图失败: task_id={state.get('task_id')}, error={result.get('error')}"
     )
@@ -127,20 +187,31 @@ def _mark_failed_node(state: PipelineState) -> dict:
 def _route_after_classify(
     state: PipelineState,
 ) -> Literal["simple_pipeline", "plan"]:
-    if state.get("task_mode") == "simple":
+    if state.get("execution_mode") != "plan" and state.get("task_mode") == "simple":
         return "simple_pipeline"
     return "plan"
 
 
 def _route_after_handle(
     state: PipelineState,
-) -> Literal["execute_step", "finalize", "mark_failed", "awaiting_human"]:
+) -> Literal["execute_step", "quality_gate", "mark_failed", "awaiting_human"]:
     if state.get("awaiting_human"):
         return "awaiting_human"
     if state.get("abort"):
         return "mark_failed"
     if plan_has_more_steps(state):
         return "execute_step"
+    return "quality_gate"
+
+
+def _route_after_quality_gate(
+    state: PipelineState,
+) -> Literal["finalize", "prepare_quality_rewrite", "awaiting_human"]:
+    if state.get("awaiting_human"):
+        return "awaiting_human"
+    action = (state.get("quality_gate") or {}).get("action")
+    if action == "rewrite":
+        return "prepare_quality_rewrite"
     return "finalize"
 
 
@@ -153,6 +224,8 @@ def build_agentic_pipeline_graph():
     graph.add_node("plan", _plan_node)
     graph.add_node("execute_step", _execute_step_node)
     graph.add_node("handle_outcome", _handle_outcome_node)
+    graph.add_node("quality_gate", _quality_gate_node)
+    graph.add_node("prepare_quality_rewrite", _prepare_quality_rewrite_node)
     graph.add_node("finalize", _finalize_node)
     graph.add_node("mark_failed", _mark_failed_node)
     graph.add_node("awaiting_human", _mark_awaiting_human_node)
@@ -174,11 +247,21 @@ def build_agentic_pipeline_graph():
         _route_after_handle,
         {
             "execute_step": "execute_step",
-            "finalize": "finalize",
+            "quality_gate": "quality_gate",
             "mark_failed": "mark_failed",
             "awaiting_human": "awaiting_human",
         },
     )
+    graph.add_conditional_edges(
+        "quality_gate",
+        _route_after_quality_gate,
+        {
+            "finalize": "finalize",
+            "prepare_quality_rewrite": "prepare_quality_rewrite",
+            "awaiting_human": "awaiting_human",
+        },
+    )
+    graph.add_edge("prepare_quality_rewrite", "execute_step")
     graph.add_edge("finalize", END)
     graph.add_edge("mark_failed", END)
     graph.add_edge("awaiting_human", END)

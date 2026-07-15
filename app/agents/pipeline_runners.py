@@ -302,12 +302,16 @@ def run_reviewer_stage(
             review_score = float(review_result.get("review_score", 0) or 0)
 
         quality_report = review_result.get("quality_report") or {}
+        rewrite_count = max(
+            int(state.get("rewrite_count", 0) or 0),
+            int(review_result.get("rewrite_count", 0) or 0),
+        )
         parsed_requirement = dict(state.get("parsed_requirement") or {})
         if parsed_requirement.get("platform") == "toutiao":
             longform_meta = dict(parsed_requirement.get("longform_mvp") or {})
             longform_meta.update({
                 "quality_report": quality_report,
-                "rewrite_count": int(review_result.get("rewrite_count", 0) or 0),
+                "rewrite_count": rewrite_count,
                 "max_rewrites": 1,
             })
             parsed_requirement["longform_mvp"] = longform_meta
@@ -327,7 +331,7 @@ def run_reviewer_stage(
                 "review_score": review_score,
                 "final_copy_id": final_copy_id,
                 "success": review_result.get("success"),
-                "rewrite_count": review_result.get("rewrite_count", 0),
+                "rewrite_count": rewrite_count,
             },
             status="success" if review_result.get("success") else "failed",
         )
@@ -335,7 +339,7 @@ def run_reviewer_stage(
             "final_copy_id": final_copy_id,
             "review_score": review_score,
             "quality_report": quality_report,
-            "rewrite_count": int(review_result.get("rewrite_count", 0) or 0),
+            "rewrite_count": rewrite_count,
             "parsed_requirement": parsed_requirement,
             "stages": stages,
             "total_tokens": total_tokens,

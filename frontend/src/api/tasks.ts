@@ -5,12 +5,14 @@ import type {
   Task,
   TaskDetail,
   TaskPlatform,
+  ExecutionMode,
 } from "../types/api";
 
 export async function createTask(payload: {
   raw_requirement: string;
   platform: TaskPlatform;
   hotlist_id?: number | null;
+  execution_mode?: ExecutionMode;
 }) {
   return request<Task>("/api/v1/tasks/", {
     method: "POST",

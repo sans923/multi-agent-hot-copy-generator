@@ -24,6 +24,10 @@ class TaskCreate(BaseModel):
         default=None,
         description="指定关联的热榜话题ID（可选，不填或填0则不关联）"
     )
+    execution_mode: Literal["fast", "plan"] = Field(
+        default="fast",
+        description="fast=固定流水线快速生成；plan=Lead 动态规划、重试与质量门控",
+    )
 
     @field_validator("hotlist_id", mode="before")
     @classmethod

@@ -21,24 +21,28 @@ DEFAULT_PIPELINE_STEPS: list[dict[str, Any]] = [
         "stage": "requirement",
         "description": "解析需求并检索相关热榜",
         "mergeable": True,
+        "can_skip": True,
     },
     {
         "step_id": "copywriter",
         "stage": "copywriter",
         "description": "检索规律并创作文案初稿",
         "mergeable": False,
+        "can_skip": True,
     },
     {
         "step_id": "verify_draft",
         "stage": "verify",
         "description": "规则验证初稿是否满足基本目标",
         "mergeable": False,
+        "can_skip": False,
     },
     {
         "step_id": "reviewer",
         "stage": "reviewer",
         "description": "合规检测、洗稿检测、质量评分与终稿保存",
         "mergeable": False,
+        "can_skip": False,
     },
 ]
 
@@ -56,7 +60,7 @@ JSON 格式：
 {
   "task_mode": "complex",
   "steps": [
-    {"step_id": "requirement", "stage": "requirement", "description": "...", "mergeable": true},
+    {"step_id": "requirement", "stage": "requirement", "description": "...", "mergeable": true, "can_skip": true},
     ...
   ],
   "reasoning": "一句话说明规划理由"
@@ -105,6 +109,7 @@ def _parse_plan_json(raw: str) -> dict[str, Any] | None:
             "stage": stage,
             "description": step.get("description") or "",
             "mergeable": bool(step.get("mergeable", False)),
+            "can_skip": bool(step.get("can_skip", False)),
         })
 
     if not normalized:

@@ -43,8 +43,18 @@ export type TaskPlatform =
   | "douyin"
   | "xiaohongshu"
   | "zhihu";
+export type ExecutionMode = "fast" | "plan";
+
+export interface QualityGateMeta {
+  passed?: boolean;
+  action?: "finalize" | "rewrite" | "awaiting_human";
+  failed_checks?: string[];
+  reason?: string;
+}
 
 export interface OrchestrationMeta {
+  execution_mode?: ExecutionMode;
+  resolved_mode?: "fixed" | "agentic";
   task_mode?: string;
   plan_source?: string;
   plan_reasoning?: string;
@@ -52,6 +62,7 @@ export interface OrchestrationMeta {
     step_id?: string;
     stage?: string;
     description?: string;
+    can_skip?: boolean;
   }>;
   current_step?: number;
   step_count?: number;
@@ -61,6 +72,9 @@ export interface OrchestrationMeta {
   awaiting_human?: boolean;
   human_prompt?: string;
   human_action?: string;
+  quality_gate?: QualityGateMeta;
+  decision_log?: Array<Record<string, unknown>>;
+  skipped_steps?: Array<Record<string, unknown>>;
 }
 
 export interface AuditLogItem {

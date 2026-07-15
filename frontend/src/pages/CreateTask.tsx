@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createTask } from "../api/tasks";
 import { listHotlist } from "../api/hotlist";
-import type { HotlistItem, TaskPlatform } from "../types/api";
+import type { ExecutionMode, HotlistItem, TaskPlatform } from "../types/api";
 import { PLATFORM_LABELS } from "../types/api";
 import { ApiError } from "../api/client";
 
@@ -20,6 +20,7 @@ export function CreateTask() {
       : "围绕35岁程序员职业转型，写一篇约2000字的今日头条深度长文，理性、有共情，并给出可执行建议"
   );
   const [platform, setPlatform] = useState<TaskPlatform>("toutiao");
+  const [executionMode, setExecutionMode] = useState<ExecutionMode>("plan");
   const [hotlistId, setHotlistId] = useState<number | null>(
     hotlistFromUrl ? Number(hotlistFromUrl) : null
   );
@@ -50,6 +51,7 @@ export function CreateTask() {
         raw_requirement: requirement,
         platform,
         hotlist_id: hotlistId,
+        execution_mode: executionMode,
       });
       if (res.data?.id) {
         navigate(`/tasks/${res.data.id}`);
@@ -113,6 +115,28 @@ export function CreateTask() {
                 {PLATFORM_LABELS[p]}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="mode-picker">
+          <span className="picker-label">执行模式</span>
+          <div className="mode-options">
+            <button
+              type="button"
+              className={`mode-option ${executionMode === "fast" ? "active" : ""}`}
+              onClick={() => setExecutionMode("fast")}
+            >
+              <strong>Fast</strong>
+              <span>固定流水线，速度快、成本低</span>
+            </button>
+            <button
+              type="button"
+              className={`mode-option ${executionMode === "plan" ? "active" : ""}`}
+              onClick={() => setExecutionMode("plan")}
+            >
+              <strong>Plan</strong>
+              <span>动态规划、受控重试、最终质量门控</span>
+            </button>
           </div>
         </div>
 

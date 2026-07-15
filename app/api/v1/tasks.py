@@ -48,7 +48,10 @@ def _run_agents_background(task_id: int) -> None:
         # 统一接口 run(db, task_id) -> dict 与历史保持一致，API/前端/事务管理均无需改动。
         from app.config import settings
         from app.orchestration import get_orchestration_engine
-        engine = get_orchestration_engine(settings.ORCHESTRATION_ENGINE)
+        task = db.query(Task).filter(Task.id == task_id).first()
+        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+        engine_name = "langgraph" if meta.get("execution_mode") else settings.ORCHESTRATION_ENGINE
+        engine = get_orchestration_engine(engine_name)
         result = engine.run(db=db, task_id=task_id)
         logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
         write_log(
@@ -108,12 +111,18 @@ def create_task(
     直到 status 变为 completed 或 failed
     """
     # 创建任务记录
+    from app.services.orchestration_policy import resolve_execution_mode
+
     task = Task(
         user_id=current_user.id,
         raw_requirement=task_data.raw_requirement,
         platform=task_data.platform,
         hotlist_id=task_data.hotlist_id,
         status=TaskStatus.PENDING,
+        orchestration_meta={
+            "execution_mode": task_data.execution_mode,
+            "resolved_mode": resolve_execution_mode(task_data.execution_mode),
+        },
     )
     db.add(task)
     db.commit()
@@ -126,7 +135,10 @@ def create_task(
         message=f"用户 {current_user.username} 创建任务 {task.id}",
         user_id=current_user.id,
         task_id=task.id,
-        extra={"platform": task_data.platform.value},
+        extra={
+            "platform": task_data.platform.value,
+            "execution_mode": task_data.execution_mode,
+        },
     )
 
     logger.info(
@@ -287,7 +299,9 @@ def _resume_task_background(task_id: int, action: str) -> None:
         from app.agents.agentic_runners import resume_agentic_pipeline
         from app.config import settings
 
-        mode = (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
+        task = db.query(Task).filter(Task.id == task_id).first()
+        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+        mode = meta.get("resolved_mode") or (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
         if mode != "agentic":
             task = db.query(Task).filter(Task.id == task_id).first()
             if task:

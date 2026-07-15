@@ -42,6 +42,7 @@ from app.services.audit_service import write_audit_log
 from app.services.planner_service import generate_plan
 from app.services.task_classifier import classify_task
 from app.services.reflect_service import reflect_on_step_failure
+from app.services.orchestration_policy import decide_final_quality_gate, decide_step_skip
 from app.services.verify_service import verify_step
 from app.utils.logger import logger
 
@@ -129,6 +130,30 @@ def run_execute_current_step(
 
     stage = (step_def.get("stage") or "").lower()
     step_id = step_def.get("step_id") or stage
+    skip = decide_step_skip(state, step_def)
+    if skip.should_skip:
+        decision = {
+            "type": "skip",
+            "step_id": step_id,
+            "stage": stage,
+            "reason": skip.reason,
+        }
+        write_audit_log(
+            db,
+            state.get("task_id"),
+            "orchestration",
+            "step_skipped",
+            input_summary={"step_id": step_id, "stage": stage},
+            output_summary={"reason": skip.reason},
+            status="success",
+        )
+        return {
+            "step_count": (state.get("step_count") or 0) + 1,
+            "last_step_failed": False,
+            "decision_log": [*(state.get("decision_log") or []), decision],
+            "skipped_steps": [*(state.get("skipped_steps") or []), decision],
+        }
+
     _audit_execute_step(db, state, step_def)
     logger.info(
         f"执行计划步骤: task_id={state.get('task_id')}, "
@@ -208,6 +233,15 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
             "retry_count": retry_count,
             "failure_level": "retry",
             "last_step_failed": False,
+            "decision_log": [
+                *(state.get("decision_log") or []),
+                {
+                    "type": "retry",
+                    "step": state.get("current_step"),
+                    "retry": retry_count,
+                    "reason": "step_verification_failed",
+                },
+            ],
         }
 
     step_def = _get_current_step_def(state) or {}
@@ -260,12 +294,30 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
                     "context_messages": ctx,
                     "failure_level": "local",
                     "last_step_failed": False,
+                    "decision_log": [
+                        *(state.get("decision_log") or []),
+                        {
+                            "type": "reflect",
+                            "from_stage": stage,
+                            "to_stage": "copywriter",
+                            "round": reflect_count,
+                            "reason": reflection.get("summary") or "local_recovery",
+                        },
+                    ],
                 }
 
     return {
         "failure_level": "human",
         "awaiting_human": True,
         "error": state.get("error") or "步骤多次失败，需人工介入",
+        "decision_log": [
+            *(state.get("decision_log") or []),
+            {
+                "type": "escalate",
+                "step": state.get("current_step"),
+                "reason": "bounded_recovery_exhausted",
+            },
+        ],
     }
 
 
@@ -342,6 +394,69 @@ def _run_complex_loop(
     return state
 
 
+def _run_bounded_quality_gate(
+    db: Session,
+    agents: PipelineAgents,
+    state: PipelineState,
+) -> PipelineState:
+    """为非 LangGraph/人工恢复路径补齐同一套终稿门控与一次重写。"""
+    while True:
+        decision = decide_final_quality_gate(state)
+        gate = decision.as_dict()
+        state = _merge_state(state, {
+            "quality_gate": gate,
+            "decision_log": [
+                *(state.get("decision_log") or []),
+                {"type": "quality_gate", **gate},
+            ],
+        })
+        write_audit_log(
+            db,
+            state.get("task_id"),
+            "quality_gate",
+            "final_quality_gate",
+            output_summary=gate,
+            status="success" if decision.passed else "failed",
+            failure_level=None if decision.passed else "local",
+        )
+        if decision.action == "finalize":
+            return state
+        if decision.action == "awaiting_human":
+            return _merge_state(state, {
+                "awaiting_human": True,
+                "failure_level": "human",
+                "error": f"质量门控未通过：{', '.join(decision.failed_checks)}",
+            })
+
+        steps = (state.get("plan") or {}).get("steps") or []
+        reviewer_idx = next(
+            (i for i, step in enumerate(steps) if step.get("stage") == "reviewer"),
+            None,
+        )
+        if reviewer_idx is None:
+            return _merge_state(state, {
+                "awaiting_human": True,
+                "failure_level": "human",
+                "error": "质量门控要求重写，但计划中没有 Reviewer 步骤",
+            })
+        state = _merge_state(state, {
+            "current_step": reviewer_idx,
+            "rewrite_count": 1,
+            "decision_log": [
+                *(state.get("decision_log") or []),
+                {
+                    "type": "quality_rewrite",
+                    "to_stage": "reviewer",
+                    "round": 1,
+                    "reason": "failed_sections_detected",
+                },
+            ],
+        })
+        state = _run_complex_loop(db, agents, state)
+        if state.get("awaiting_human") or state.get("abort"):
+            return state
+
+
 def run_agentic_pipeline(
     db: Session,
     task_id: int,
@@ -372,7 +487,7 @@ def run_agentic_pipeline(
 
     state = _merge_state(state, run_classify_stage(state))
 
-    if state.get("task_mode") == "simple":
+    if state.get("execution_mode") != "plan" and state.get("task_mode") == "simple":
         logger.info(f"简单任务，委托 fixed 流水线: task_id={task_id}")
         result = run_full_pipeline(db, task_id, agents=agents)
         result["task_mode"] = "simple"
@@ -381,6 +496,8 @@ def run_agentic_pipeline(
 
     state = _merge_state(state, run_plan_stage(state))
     state = _run_complex_loop(db, agents, state)
+    if not state.get("awaiting_human") and not state.get("abort"):
+        state = _run_bounded_quality_gate(db, agents, state)
 
     if state.get("awaiting_human"):
         _audit_awaiting_human(state)
@@ -476,9 +593,32 @@ def resume_agentic_pipeline(
 
     state = checkpoint_to_state(checkpoint, db, task_id)
     state["retry_count"] = 0
+    state["step_count"] = 0
     state["deadline_ts"] = time.time() + settings.AGENT_TIMEOUT_SEC
 
+    previous_gate = state.get("quality_gate") or {}
+    if previous_gate.get("action") == "awaiting_human":
+        steps = (state.get("plan") or {}).get("steps") or []
+        reviewer_idx = next(
+            (i for i, step in enumerate(steps) if step.get("stage") == "reviewer"),
+            None,
+        )
+        if reviewer_idx is not None:
+            state["current_step"] = reviewer_idx
+            state["rewrite_count"] = 0
+            state["quality_gate"] = {}
+            state["decision_log"] = [
+                *(state.get("decision_log") or []),
+                {
+                    "type": "human_retry",
+                    "to_stage": "reviewer",
+                    "reason": "user_started_new_bounded_recovery_round",
+                },
+            ]
+
     state = _run_complex_loop(db, agents, state)
+    if not state.get("awaiting_human") and not state.get("abort"):
+        state = _run_bounded_quality_gate(db, agents, state)
 
     if state.get("awaiting_human"):
         _audit_awaiting_human(state)

@@ -151,6 +151,8 @@ export function TaskDetail() {
     | { rewrite_count?: number; quality_report?: LongformQuality }
     | undefined;
   const qualityReport = longformMeta?.quality_report;
+  const qualityGate = orch?.quality_gate;
+  const decisionLog = orch?.decision_log ?? [];
 
   const TASK_MODE_LABELS: Record<string, string> = {
     simple: "简单（固定流水线）",
@@ -205,6 +207,12 @@ export function TaskDetail() {
             <section className="orchestration-box">
               <h3>编排信息（Agentic）</h3>
               <dl className="orchestration-grid">
+                {orch.execution_mode && (
+                  <div>
+                    <dt>执行模式</dt>
+                    <dd>{orch.execution_mode === "plan" ? "Plan · 动态编排" : "Fast · 固定流水线"}</dd>
+                  </div>
+                )}
                 {orch.task_mode && (
                   <div>
                     <dt>任务分级</dt>
@@ -244,6 +252,32 @@ export function TaskDetail() {
                     </li>
                   ))}
                 </ol>
+              )}
+              {qualityGate && Object.keys(qualityGate).length > 0 && (
+                <div className={`gate-summary ${qualityGate.passed ? "passed" : "blocked"}`}>
+                  <strong>
+                    最终质量门控：{qualityGate.passed ? "已通过" : "未通过"}
+                  </strong>
+                  <span>
+                    决策 {qualityGate.action}
+                    {(qualityGate.failed_checks ?? []).length > 0
+                      ? ` · 未通过项：${qualityGate.failed_checks?.join("、")}`
+                      : ""}
+                  </span>
+                </div>
+              )}
+              {decisionLog.length > 0 && (
+                <details className="decision-log">
+                  <summary>查看 Lead 决策记录（{decisionLog.length}）</summary>
+                  <ol>
+                    {decisionLog.map((item, index) => (
+                      <li key={index}>
+                        {String(item.type ?? "decision")}
+                        {item.reason ? `：${String(item.reason)}` : ""}
+                      </li>
+                    ))}
+                  </ol>
+                </details>
               )}
             </section>
           )}

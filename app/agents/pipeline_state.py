@@ -17,6 +17,7 @@ class PlanStep(TypedDict, total=False):
     stage: str
     description: str
     mergeable: bool
+    can_skip: bool
 
 
 class PipelineState(TypedDict, total=False):
@@ -67,6 +68,11 @@ class PipelineState(TypedDict, total=False):
     max_steps: int
     last_step_failed: bool
     awaiting_human: bool
+    execution_mode: str               # fast | plan
+    resolved_mode: str                # fixed | agentic
+    quality_gate: dict[str, Any]
+    decision_log: list[dict[str, Any]]
+    skipped_steps: list[dict[str, Any]]
 
 
 def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None, dict | None]:
@@ -84,6 +90,7 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         return None, {"success": False, "error": f"任务 {task_id} 不存在", "task_id": task_id}
 
     platform = task.platform.value if task.platform else "weibo"
+    orchestration_meta = task.orchestration_meta if isinstance(task.orchestration_meta, dict) else {}
     return {
         "db": db,
         "task_id": task_id,
@@ -120,6 +127,11 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         "max_steps": settings.AGENT_MAX_STEPS,
         "last_step_failed": False,
         "awaiting_human": False,
+        "execution_mode": orchestration_meta.get("execution_mode", "fast"),
+        "resolved_mode": orchestration_meta.get("resolved_mode", "fixed"),
+        "quality_gate": {},
+        "decision_log": [],
+        "skipped_steps": [],
     }, None
 
 

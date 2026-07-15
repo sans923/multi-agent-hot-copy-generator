@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.orchestration.base import OrchestrationEngine
+from app.models.task import Task
+from app.services.orchestration_policy import resolve_execution_mode
 
 
 class LangGraphOrchestrationEngine(OrchestrationEngine):
@@ -24,7 +26,14 @@ class LangGraphOrchestrationEngine(OrchestrationEngine):
     name = "langgraph"
 
     def run(self, db: Session, task_id: int) -> dict:
-        mode = (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
+        task = db.query(Task).filter(Task.id == task_id).first()
+        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+        requested_mode = meta.get("execution_mode")
+        mode = (
+            resolve_execution_mode(requested_mode)
+            if requested_mode
+            else (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
+        )
         if mode == "lead":
             from app.lang.graph.lead_pipeline_graph import run_lead_pipeline_graph
 
