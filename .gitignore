@@ -12,6 +12,8 @@ __pycache__/
 # 虚拟环境
 venv/
 .venv/
+.venv-debug/
+.venv-debug-broken-*/
 env/
 
 # 数据目录（SQLite文件和ChromaDB文件）
