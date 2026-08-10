@@ -806,6 +806,22 @@ Agent 执行失败
 
 **[待验证]** 该机制约束的是后续 Codex 项目任务。下一次实质性优化完成后，应检查最终回复是否说明了文档更新章节、真实验证结果和待验证项，以确认规则被正确执行。
 
+## 32.1 Windows Python 虚拟环境失效与恢复实录
+
+**[代码与环境事实] 原始问题与触发场景：** 项目标准环境目录 `venv` 的 `pyvenv.cfg` 原先记录 Python 3.13.9，调试环境 `.venv-debug` 记录 Python 3.11.9；两者引用的用户目录基础解释器均无法启动，当前终端也没有激活环境且 `PATH` 中没有可用的 `python`。直接执行虚拟环境解释器会报 `Unable to create process`。
+
+**[实际确认] 问题原因：** Python `venv` 不是独立复制的完整运行时，其 `python.exe` 仍依赖创建环境时的基础 Python。基础解释器被删除或路径迁移后，虚拟环境目录即使仍存在也不能运行。本轮还发现终端设置了不可达的代理变量，首次 `pip install` 因 `ProxyError` 失败；超时的安装命令遗留子进程又导致后续安装长时间无输出。
+
+**解决方案与修改范围：** 使用仓库已有的 `python-3.11.9-amd64.exe` 安装 Python 3.11.9 到当前用户目录；用该解释器执行 `python -m venv --clear venv` 重建标准环境；仅在安装命令进程内移除 `HTTP_PROXY`、`HTTPS_PROXY`、`ALL_PROXY` 后安装 `requirements.txt`；确认命令行后只终止本轮遗留的 `venv` 安装进程，没有终止此前已存在的 `.venv-debug` 进程。业务代码和 `requirements.txt` 均未由本轮修改；生成的 `venv` 属于本地可再生环境，Git 只记录本节文档。
+
+**[实际测试结果]** 基础解释器和 `venv` 均报告 Python 3.11.9；`pip install -r requirements.txt` 最终成功；`pip check` 返回 `No broken requirements found`；FastAPI、SQLAlchemy、ChromaDB、LangGraph、sentence-transformers 与 pytest 核心导入成功；完整执行 `venv\\Scripts\\python.exe -m pytest -q`，结果为 `103 passed, 6 warnings in 20.69s`。首次测试曾因部分安装状态缺少 `langchain_chroma` 和 `langchain_text_splitters`，补齐完整依赖后复测通过。
+
+**缺点、代价与遇到的坑：** Python 安装写入用户目录，不随 Git 克隆传播；虚拟环境体积较大，尤其包含 PyTorch、Transformers 和 sentence-transformers；首次机器学习栈导入约需百秒。当前依赖采用范围约束，重建环境可能解析出比历史环境更新的间接依赖，因此“本机测试通过”不等于跨机器完全可复现。安装时必须区分网络失败、代理失败、依赖不存在和遗留进程占用，不能把所有 `pip` 错误都归因于缺包。
+
+**[尚未验证]** 尚未验证 GPU/CUDA、真实模型下载、MySQL、外部 API、生产 Docker/Gunicorn 链路及 `.venv-debug` 的最终安装状态；这些不属于本轮 `venv` 恢复成功的证据。
+
+**面试时怎么讲：** “我先读 `pyvenv.cfg` 和 `sys.prefix/base_prefix` 定位解释器链路，确认不是业务依赖报错，而是 venv 依赖的基础 Python 消失。恢复 Python 后重建可再生环境，再用 `pip check`、核心导入和完整 pytest 分层验证。过程中我把不可达代理、超时遗留进程和真正缺包分别处理，最终以 103 个测试通过作为环境可用证据，同时明确外部服务和 GPU 尚未验证。”
+
 ## 33. 活文档更新日志
 
 > 本表只记录实际发生的项目工作。测试或验证未执行时必须明确写“未运行”；预期收益只能标记为“待验证”，不能写成实际效果。历史记录只追加，不删除、不覆盖。
@@ -821,3 +837,4 @@ Agent 执行失败
 | 2026-08-10 | 启用任务完成后的自动提交与推送 | 更新 `AGENTS.md`：默认自动提交并推送本轮相关修改、禁止夹带无关改动、要求提交信息记录修改和验证、失败时保留本地修改；同步活文档规则说明 | 已执行 `git diff --check`、逐文件差异审查、规则关键词检查和提交前 Git 状态检查；代码测试未运行 | 第 32、33 节 | 已完成规则修改；本轮提交与推送结果见 Git 历史 |
 | 2026-08-10 | 解释项目为何同时使用 pytest 与 unittest.mock.patch | 未修改代码或配置；补充 pytest 的测试组织职责、patch 的依赖替换职责、项目实例、代价与面试讲法 | 已静态核对 `tests/test_agentic_pipeline.py` 的 fixture、`@patch` 用例及 `requirements.txt` 中的 pytest 依赖；代码测试未运行 | 第 25.2.1、33 节 | 已完成 |
 | 2026-08-10 | 移出 Understand Anything 并修复 CodeGraph 默认检索 | 移出 `tools/Understand-Anything`；删除 `.codex/skills/understand*`、`.ua/**` 和原 Git link；更新 `.gitignore`；CodeGraph 1.4.1 升级到 1.5.0 并重建本地索引 | `codegraph index -f .`：170 文件、1,873 节点、4,279 边、工具报告 9.5 秒；真实 `codegraph explore` 返回源码和影响面；MCP `initialize`/`tools/list` 返回 1.5.0 与 `codegraph_explore`；业务代码测试未运行 | 第 9～11、15、33 节 | 已完成；新 Codex 任务中工具热加载待确认，项目内 token A/B 待验证 |
+| 2026-08-10 | 恢复 Windows Python 与项目标准虚拟环境 | 安装用户级 Python 3.11.9；以该解释器重建本地 `venv` 并安装 `requirements.txt`；未修改业务代码或依赖声明 | Python/venv 版本均为 3.11.9；`pip check` 无冲突；核心依赖导入成功；完整 pytest：`103 passed, 6 warnings in 20.69s` | 第 32.1、33 节 | 已完成；GPU、外部服务、生产链路和 `.venv-debug` 状态待验证 |
