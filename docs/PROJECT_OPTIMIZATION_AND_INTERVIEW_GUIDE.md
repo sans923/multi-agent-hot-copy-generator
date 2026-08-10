@@ -913,6 +913,28 @@ Agent 执行失败
 
 **[面试时怎么讲]** “我没有只把坏 venv 修到本机能跑，而是先确认基础解释器链路和代理边界，再用 `.python-version` 固定 Python、用 uv 锁定全部传递依赖、用幂等脚本把运行时和缓存局部化。Python 3.12 下 Chroma 触发源码构建和缓存锁问题后，我基于 wheel 可用性回到 3.11.9；大包下载中断则保留缓存重试。最后用依赖检查、关键导入、脚本重跑和三次 113/113 全量测试证明环境可复现，同时明确没有验证外部服务和生产链路。”
 
+## 32.4 LangGraph 编排状态安全闭环与认证测试线程隔离
+
+**[代码确认的事实：原始问题与触发场景]** `PipelineState` 已包含 `plan`、`quality_gate`、`awaiting_human` 三个状态键，LangGraph 又使用相同名称注册节点，构图时会直接报节点与状态键冲突。认证测试使用内存 SQLite，FastAPI `TestClient` 跨线程取得新连接后看不到建表连接中的 `users` 表。人工 retry API 还会在后台 runner 接管前把任务改成 `PROCESSING`，而 runner 只接受 `AWAITING_HUMAN`，导致恢复被自身状态校验拒绝；超时或步数上限进入人工暂停时，后续 outcome 节点仍可能推进 `current_step`。
+
+**[代码确认的原因与解决方案]** 将三个 LangGraph 节点重命名为 `create_plan`、`evaluate_quality`、`persist_awaiting_human`，状态键保持不变；认证测试引擎增加 `StaticPool`，让跨线程请求复用同一内存数据库连接。retry 的 `AWAITING_HUMAN -> PROCESSING` 转换只由实际接管 checkpoint 的 runner 通过数据库条件更新原子认领；`handle_step_outcome` 对人工暂停优先返回，不推进步骤。Planner 输出现在必须包含按顺序排列的 requirement、copywriter、verify、reviewer，步骤 ID 唯一且数量不超过 `AGENT_MAX_STEPS`，verify/reviewer 强制不可跳过；非法计划整体回退默认计划。接受草稿前同时验证 Copy 存在且属于当前任务，且所有草稿晋升调用都必须传 task ID，失败时保留人工暂停，避免无终稿 ID 的伪完成。LangGraph 入口与人工暂停节点补齐 start/awaiting 审计，simple 分支统一持久化成功或失败终态。
+
+**修改文件：** `app/lang/graph/agentic_pipeline_graph.py`、`app/agents/agentic_runners.py`、`app/agents/pipeline_runners.py`、`app/api/v1/tasks.py`、`app/services/planner_service.py`、`tests/test_auth.py`、`tests/test_agentic_pipeline.py`、`tests/test_agentic_phase2.py`。
+
+**[实际测试结果]** 修复前的聚焦基线为 `9 failed, 3 passed`，失败与 LangGraph 构图冲突及 SQLite `no such table: users` 一致。修复并补齐依赖后，`.venv-debug` 报告 Python 3.11.9、pytest 8.4.2，FastAPI/SQLAlchemy/OpenAI 导入成功，`pip check` 返回 `No broken requirements found`；首轮聚焦测试 `48 passed`、完整测试 `113 passed`。代码审查补测 simple 终态时取得预期 RED `2 failed`，retry 原子认领测试首次因 helper 尚不存在而收集失败；实现后最终聚焦测试 `50 passed, 6 warnings in 15.84s`，完整测试 `115 passed, 6 warnings in 17.45s`。警告来自 LangGraph 待弃用默认值和 Pydantic V2 class-based config，本轮未处理。
+
+**缺点、代价与遇到的坑：** 严格计划校验会让部分格式近似但缺安全阶段的 LLM 计划整体回退，牺牲一定灵活性换取确定性安全边界。`StaticPool` 只适用于该内存 SQLite 测试场景，不代表生产数据库连接池配置。调试环境一度被外部进程重建，出现 pytest 存在但 FastAPI 缺失、基础解释器路径暂时不可执行的中间状态；最终重新安装 `requirements.txt` 后才取得上述验证结果，不能把中间失败写成依赖已完成。
+
+**[仍未解决/预期效果]** 当前人工恢复仍依赖 `Task.orchestration_meta` JSON checkpoint 和自写循环，不是 LangGraph durable checkpointer/`thread_id`/`interrupt`；API 层快速重复 retry 仍可能排入多个后台任务，但 runner 的数据库条件更新只允许一个执行 checkpoint，尚未引入独立恢复 token/幂等键；单个阻塞 LLM 调用不能被当前总超时即时中断。预期本轮可避免已覆盖的状态冲突、重复 checkpoint 执行、跨任务草稿晋升和暂停步骤越过，但真实并发压力、进程崩溃恢复、MySQL 与外部模型链路尚未验证。
+
+**面试时怎么讲：** “我先把 LangGraph 图看成显式状态机，而不是只修一个异常字符串。除了节点名冲突，我沿 API、后台 runner、checkpoint 和人工恢复链路找到了互相矛盾的状态转换与越步风险，用单一状态写入方和状态不变量收口；再把 LLM Planner 当成不可信候选，用确定性校验确保安全阶段不能被省略。最后用跨线程 SQLite、复杂图路径、暂停审计、非法计划回退和跨任务 Copy 五类回归测试证明修复，同时明确 durable checkpoint 与并发幂等仍是下一阶段。”
+
+## 32.5 当前可复现测试环境复验
+
+**[本轮实测]** 系统级 `python` 不可用、Windows `py` 启动器也没有注册解释器，但仓库内 `.venv` 能独立运行项目级 Python 3.11.9 和 pytest 8.4.2；FastAPI 0.115.14 与 SQLAlchemy 2.0.30 可正常导入。`uv pip check --no-cache --python .venv\Scripts\python.exe` 检查 149 个包并确认全部兼容。pytest 收集最初发现 114 项；工作区中的并行代码改动补齐 retry 原子认领用例后，最终完整运行发现并通过 115 项：`115 passed, 6 warnings in 16.87s`。
+
+**[失败过程与边界]** 首次完整运行曾因 `tests/test_agentic_phase2.py` 导入当时尚不存在的 `_claim_retry_execution` 而在收集阶段中断；排除该文件后其余 `103 passed`。该函数随后由工作区中的并行修改补齐，本轮没有改动业务代码，仅基于最新文件重新运行全量测试。6 条警告来自 LangGraph 待弃用默认值及 Pydantic V2 class-based config；当前测试通过不代表 MySQL、外部模型、GPU 或生产部署已验证。
+
 ## 33. 活文档更新日志
 
 > 本表只记录实际发生的项目工作。测试或验证未执行时必须明确写“未运行”；预期收益只能标记为“待验证”，不能写成实际效果。历史记录只追加，不删除、不覆盖。
@@ -931,3 +953,5 @@ Agent 执行失败
 | 2026-08-10 | 恢复 Windows Python 与项目标准虚拟环境 | 安装用户级 Python 3.11.9；以该解释器重建本地 `venv` 并安装 `requirements.txt`；未修改业务代码或依赖声明 | Python/venv 版本均为 3.11.9；`pip check` 无冲突；核心依赖导入成功；完整 pytest：`103 passed, 6 warnings in 20.69s` | 第 32.1、33 节 | 已完成；GPU、外部服务、生产链路和 `.venv-debug` 状态待验证 |
 | 2026-08-10 | 恢复 `.venv-debug` 并加入真实 Prompt 注入 A/B | 新增 `app/evaluation/prompt_injection_ab.py`、真实评估 CLI、5 条固定攻击样例和 10 个评估器测试；为 `requirements.txt` 增加 UTF-8 声明；更新 `.gitignore`；用户代理改为 7890；重建 `.venv-debug` 并安装完整依赖 | RED：缺少 `app.evaluation`；GREEN：评估器 10/10、Prompt 相关 13/13、compileall 通过；最终完整 pytest `113 passed, 6 warnings in 16.47s`；真实 DeepSeek 修正版 A/B：两组均 0/5、0 越权工具，hardened 平均 +318.6 tokens、+305.05 ms；`pip check` 与核心导入通过 | 第 11～16、26.4、31、32.2、33 节 | 代码、环境与小样本真实评估已完成；统计显著性、服务端 allowlist、MySQL/生产链路待验证 |
 | 2026-08-10 | 重建可复现 Python 环境并运行完整测试 | 新增 `.python-version`、`requirements.lock.txt` 和 `scripts/bootstrap_python.ps1`；以 uv 项目级 Python 3.11.9 重建 `.venv` 并锁定 149 个包及分发包哈希；未修改业务代码 | `uv pip check`：149 个包全部兼容；关键依赖导入成功；完整 pytest 三次均为 `113 passed, 6 warnings`，最终为 `17.93s`；PowerShell 解析、`compileall`、引导脚本幂等运行和 CodeGraph 增量同步成功 | 第 9、10、23.2、32.3、33 节 | 已完成；覆盖率、外部服务、GPU 与生产链路待验证 |
+| 2026-08-10 | 修复 LangGraph 状态闭环与认证测试跨线程 SQLite | 重命名 3 个冲突节点；修复 retry 原子认领、人工暂停越步、simple 终态、草稿归属、Planner 安全校验和图审计；认证 fixture 增加 `StaticPool`；新增回归测试 | 初始 RED：`9 failed, 3 passed`；审查补测 RED：simple 终态 `2 failed`、认领 helper 首次收集失败；环境：Python 3.11.9、关键导入成功、`pip check` 无冲突；最终聚焦 `50 passed, 6 warnings`；完整 pytest `115 passed, 6 warnings in 17.45s` | 第 32.4、33 节 | 本轮修复与测试已完成；durable checkpointer、恢复 token/幂等和阻塞调用超时仍待处理 |
+| 2026-08-10 | 复验可复现 Python 环境并运行当前完整 pytest | 未修改业务代码或依赖；复用 `.venv` 项目级 Python 3.11.9，记录并行代码更新前后的真实测试状态 | 核心依赖导入成功；`uv pip check --no-cache`：149 个包兼容；首次因缺少 `_claim_retry_execution` 收集失败，排除对应文件后 `103 passed`；更新后完整 pytest `115 passed, 6 warnings in 16.87s` | 第 32.5、33 节 | 已完成；外部服务、GPU 和生产链路仍待验证 |

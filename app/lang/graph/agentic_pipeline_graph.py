@@ -10,7 +10,7 @@ LangGraph：Agentic 增强流水线
       ↓ (条件边)
     simple_pipeline ──→ END        （委托 fixed 三阶段）
       ↓ complex
-    plan
+    create_plan
       ↓
     execute_step ←──┐
       ↓             │ (retry / 步进)
@@ -26,6 +26,7 @@ from typing import Literal
 from langgraph.graph import END, StateGraph
 
 from app.agents.agentic_runners import (
+    audit_awaiting_human,
     handle_step_outcome,
     plan_has_more_steps,
     run_classify_stage,
@@ -42,7 +43,10 @@ from app.agents.pipeline_state import (
     is_step_limit_reached,
     is_timed_out,
 )
-from app.services.orchestration_persistence import apply_result_meta_to_task
+from app.services.orchestration_persistence import (
+    apply_result_meta_to_task,
+    mark_task_processing,
+)
 from app.services.orchestration_policy import decide_final_quality_gate
 from app.services.audit_service import write_audit_log
 from app.config import settings
@@ -95,6 +99,7 @@ def _simple_pipeline_node(state: PipelineState) -> dict:
     task_id = state["task_id"]
     result = run_full_pipeline(db, task_id, agents=_get_agents())
     result["task_mode"] = "simple"
+    apply_result_meta_to_task(db, task_id, result, state)
     return {"result": result, "task_mode": "simple"}
 
 
@@ -171,6 +176,7 @@ def _mark_awaiting_human_node(state: PipelineState) -> dict:
     task_id = state["task_id"]
     from app.services.orchestration_persistence import mark_task_awaiting_human
 
+    audit_awaiting_human(state)
     mark_task_awaiting_human(db, task_id, state)
     return {"result": result}
 
@@ -221,14 +227,14 @@ def build_agentic_pipeline_graph():
 
     graph.add_node("classify", _classify_node)
     graph.add_node("simple_pipeline", _simple_pipeline_node)
-    graph.add_node("plan", _plan_node)
+    graph.add_node("create_plan", _plan_node)
     graph.add_node("execute_step", _execute_step_node)
     graph.add_node("handle_outcome", _handle_outcome_node)
-    graph.add_node("quality_gate", _quality_gate_node)
+    graph.add_node("evaluate_quality", _quality_gate_node)
     graph.add_node("prepare_quality_rewrite", _prepare_quality_rewrite_node)
     graph.add_node("finalize", _finalize_node)
     graph.add_node("mark_failed", _mark_failed_node)
-    graph.add_node("awaiting_human", _mark_awaiting_human_node)
+    graph.add_node("persist_awaiting_human", _mark_awaiting_human_node)
 
     graph.set_entry_point("classify")
     graph.add_conditional_edges(
@@ -236,35 +242,35 @@ def build_agentic_pipeline_graph():
         _route_after_classify,
         {
             "simple_pipeline": "simple_pipeline",
-            "plan": "plan",
+            "plan": "create_plan",
         },
     )
     graph.add_edge("simple_pipeline", END)
-    graph.add_edge("plan", "execute_step")
+    graph.add_edge("create_plan", "execute_step")
     graph.add_edge("execute_step", "handle_outcome")
     graph.add_conditional_edges(
         "handle_outcome",
         _route_after_handle,
         {
             "execute_step": "execute_step",
-            "quality_gate": "quality_gate",
+            "quality_gate": "evaluate_quality",
             "mark_failed": "mark_failed",
-            "awaiting_human": "awaiting_human",
+            "awaiting_human": "persist_awaiting_human",
         },
     )
     graph.add_conditional_edges(
-        "quality_gate",
+        "evaluate_quality",
         _route_after_quality_gate,
         {
             "finalize": "finalize",
             "prepare_quality_rewrite": "prepare_quality_rewrite",
-            "awaiting_human": "awaiting_human",
+            "awaiting_human": "persist_awaiting_human",
         },
     )
     graph.add_edge("prepare_quality_rewrite", "execute_step")
     graph.add_edge("finalize", END)
     graph.add_edge("mark_failed", END)
-    graph.add_edge("awaiting_human", END)
+    graph.add_edge("persist_awaiting_human", END)
 
     return graph.compile()
 
@@ -277,6 +283,15 @@ def run_agentic_pipeline_graph(db, task_id: int) -> dict:
     if early_error:
         return early_error
     assert state is not None
+
+    mark_task_processing(db, task_id)
+    write_audit_log(
+        db,
+        task_id,
+        "orchestration",
+        "agentic_start",
+        input_summary={"mode": "langgraph"},
+    )
 
     logger.info(f"{'=' * 50}")
     logger.info(f"LangGraph Agentic 流程开始: task_id={task_id}")

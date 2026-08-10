@@ -10,6 +10,7 @@ import json
 import re
 from typing import Any
 
+from app.config import settings
 from app.utils.model_roles import get_model_for_role
 from app.utils.llm_client import format_llm_error, get_deepseek_client
 from app.utils.logger import logger
@@ -96,27 +97,42 @@ def _parse_plan_json(raw: str) -> dict[str, Any] | None:
     if not isinstance(steps, list) or not steps:
         return None
 
-    valid_stages = {"requirement", "copywriter", "verify", "reviewer"}
+    stage_rank = {"requirement": 0, "copywriter": 1, "verify": 2, "reviewer": 3}
+    if len(steps) > settings.AGENT_MAX_STEPS:
+        return None
+
     normalized: list[dict[str, Any]] = []
+    step_ids: set[str] = set()
+    previous_rank = -1
     for idx, step in enumerate(steps):
         if not isinstance(step, dict):
-            continue
+            return None
         stage = (step.get("stage") or "").strip().lower()
-        if stage not in valid_stages:
-            continue
+        if stage not in stage_rank or stage_rank[stage] < previous_rank:
+            return None
+        previous_rank = stage_rank[stage]
+
+        raw_step_id = step.get("step_id")
+        step_id = f"step_{idx + 1}" if raw_step_id is None else str(raw_step_id).strip()
+        if not step_id or step_id in step_ids:
+            return None
+        step_ids.add(step_id)
+
+        safety_stage = stage in {"verify", "reviewer"}
         normalized.append({
-            "step_id": step.get("step_id") or f"step_{idx + 1}",
+            "step_id": step_id,
             "stage": stage,
             "description": step.get("description") or "",
-            "mergeable": bool(step.get("mergeable", False)),
-            "can_skip": bool(step.get("can_skip", False)),
+            "mergeable": False if safety_stage else bool(step.get("mergeable", False)),
+            "can_skip": False if safety_stage else bool(step.get("can_skip", False)),
         })
 
-    if not normalized:
+    required_stages = {"requirement", "copywriter", "verify", "reviewer"}
+    if not required_stages.issubset({step["stage"] for step in normalized}):
         return None
 
     return {
-        "task_mode": data.get("task_mode") or "complex",
+        "task_mode": "complex",
         "steps": normalized,
         "source": "planner_llm",
         "reasoning": data.get("reasoning") or "",

@@ -45,18 +45,26 @@ def mark_task_failed(db: Session, task_id: int, error_message: str) -> None:
     logger.error(f"任务失败: task_id={task.id}, error={error_message}")
 
 
-def promote_draft_to_final(db: Session, copy_id: int | None) -> int | None:
+def promote_draft_to_final(
+    db: Session,
+    copy_id: int | None,
+    *,
+    task_id: int,
+) -> int | None:
     """审核失败时，把初稿升级为终稿（降级处理）。"""
     if not copy_id:
         return None
-    copy = db.query(Copy).filter(Copy.id == copy_id).first()
-    if copy:
-        copy.is_final = True
-        copy.version = 2
-        copy.review_comment = "审核Agent异常，自动采用初稿"
-        db.commit()
-        logger.info(f"初稿已升级为终稿: copy_id={copy_id}")
-    return copy_id
+    query = db.query(Copy).filter(Copy.id == copy_id)
+    query = query.filter(Copy.task_id == task_id)
+    copy = query.first()
+    if not copy:
+        return None
+    copy.is_final = True
+    copy.version = 2
+    copy.review_comment = "审核Agent异常，自动采用初稿"
+    db.commit()
+    logger.info(f"初稿已升级为终稿: copy_id={copy_id}")
+    return copy.id
 
 
 def run_requirement_stage(
@@ -319,7 +327,7 @@ def run_reviewer_stage(
             logger.warning(
                 f"审核Agent失败，使用初稿作为终稿: {review_result.get('error')}"
             )
-            final_copy_id = promote_draft_to_final(db, copy_id)
+            final_copy_id = promote_draft_to_final(db, copy_id, task_id=task_id)
             review_score = 0.0
         else:
             final_copy_id = review_result.get("final_copy_id", copy_id)
@@ -372,7 +380,7 @@ def run_reviewer_stage(
     except Exception as exc:
         logger.exception("审核Agent异常，使用初稿作为终稿")
         stages["reviewer"] = {"success": False, "error": str(exc)}
-        final_copy_id = promote_draft_to_final(db, copy_id)
+        final_copy_id = promote_draft_to_final(db, copy_id, task_id=task_id)
         return {
             "final_copy_id": final_copy_id,
             "review_score": 0.0,

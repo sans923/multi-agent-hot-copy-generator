@@ -5,15 +5,22 @@ Phase 2 测试：Judge、checkpoint、人工介入恢复
 from unittest.mock import patch
 
 import pytest
+from fastapi import BackgroundTasks
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.agents.agentic_runners import resume_agentic_pipeline, run_agentic_pipeline
+from app.agents.agentic_runners import (
+    _claim_retry_execution,
+    resume_agentic_pipeline,
+    run_agentic_pipeline,
+)
 from app.agents.pipeline_runners import PipelineAgents
 from app.agents.pipeline_state import init_pipeline_state
+from app.api.v1.tasks import resume_task
 from app.database import Base
 from app.models.task import Task, TaskPlatform, TaskStatus
 from app.models.user import User
+from app.schemas.task import TaskResumeRequest
 from app.services.judge_service import judge_goal_alignment
 from app.services.orchestration_persistence import (
     load_checkpoint,
@@ -195,5 +202,90 @@ def test_resume_accept_draft(db):
 
     result = resume_agentic_pipeline(db, task.id, action="accept_draft")
     assert result["success"] is True
+    assert result["final_copy_id"] == copy.id
     db.refresh(task)
+    db.refresh(copy)
     assert task.status == TaskStatus.COMPLETED
+    assert copy.is_final is True
+
+
+@pytest.mark.parametrize("copy_id", [None, 999_999], ids=["missing", "not-found"])
+def test_resume_accept_draft_rejects_invalid_copy(db, copy_id):
+    task = _create_task(db)
+    task.status = TaskStatus.AWAITING_HUMAN
+    task.orchestration_meta = {"checkpoint": {"copy_id": copy_id}}
+    db.commit()
+
+    result = resume_agentic_pipeline(db, task.id, action="accept_draft")
+
+    assert result["success"] is False
+    db.refresh(task)
+    assert task.status == TaskStatus.AWAITING_HUMAN
+
+
+def test_resume_accept_draft_rejects_copy_from_another_task(db):
+    from app.models.copy import Copy
+
+    task = _create_task(db)
+    other_task = Task(
+        user_id=task.user_id,
+        raw_requirement="另一个任务",
+        platform=TaskPlatform.WEIBO,
+        status=TaskStatus.PENDING,
+    )
+    db.add(other_task)
+    db.commit()
+    foreign_copy = Copy(
+        task_id=other_task.id,
+        version=1,
+        content="其他任务的初稿",
+        is_final=False,
+        tokens_used=0,
+    )
+    db.add(foreign_copy)
+    db.commit()
+    task.status = TaskStatus.AWAITING_HUMAN
+    task.orchestration_meta = {"checkpoint": {"copy_id": foreign_copy.id}}
+    db.commit()
+
+    result = resume_agentic_pipeline(db, task.id, action="accept_draft")
+
+    assert result["success"] is False
+    db.refresh(task)
+    db.refresh(foreign_copy)
+    assert task.status == TaskStatus.AWAITING_HUMAN
+    assert foreign_copy.is_final is False
+
+
+def test_resume_retry_api_leaves_state_for_background_runner(db):
+    task = _create_task(db)
+    task.status = TaskStatus.AWAITING_HUMAN
+    task.orchestration_meta = {"checkpoint": {"current_step": 1}}
+    db.commit()
+    user = db.query(User).filter(User.id == task.user_id).one()
+    background_tasks = BackgroundTasks()
+
+    response = resume_task(
+        task.id,
+        TaskResumeRequest(action="retry"),
+        background_tasks,
+        current_user=user,
+        db=db,
+    )
+
+    assert response.success is True
+    db.refresh(task)
+    assert task.status == TaskStatus.AWAITING_HUMAN
+    assert len(background_tasks.tasks) == 1
+
+
+def test_retry_execution_can_only_be_claimed_once(db):
+    task = _create_task(db)
+    task.status = TaskStatus.AWAITING_HUMAN
+    db.commit()
+
+    assert _claim_retry_execution(db, task.id) is True
+    assert _claim_retry_execution(db, task.id) is False
+
+    db.refresh(task)
+    assert task.status == TaskStatus.PROCESSING

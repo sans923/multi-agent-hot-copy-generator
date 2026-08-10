@@ -49,6 +49,29 @@ from app.utils.logger import logger
 ResumeAction = Literal["retry", "accept_draft", "cancel"]
 
 
+def _claim_retry_execution(db: Session, task_id: int) -> bool:
+    """以条件更新原子认领一次人工 retry，防止重复执行同一 checkpoint。"""
+    updated = (
+        db.query(Task)
+        .filter(
+            Task.id == task_id,
+            Task.status == TaskStatus.AWAITING_HUMAN,
+        )
+        .update(
+            {
+                Task.status: TaskStatus.PROCESSING,
+                Task.error_message: None,
+            },
+            synchronize_session=False,
+        )
+    )
+    if updated != 1:
+        db.rollback()
+        return False
+    db.commit()
+    return True
+
+
 def _merge_state(state: PipelineState, updates: dict[str, Any]) -> PipelineState:
     merged: PipelineState = dict(state)
     merged.update(updates)
@@ -208,6 +231,12 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
     if state.get("abort"):
         return {"failure_level": "global", "error": state.get("error")}
 
+    if state.get("awaiting_human"):
+        return {
+            "failure_level": state.get("failure_level") or "human",
+            "error": state.get("error"),
+        }
+
     if not state.get("last_step_failed"):
         return {
             "current_step": (state.get("current_step") or 0) + 1,
@@ -321,7 +350,7 @@ def handle_step_outcome(state: PipelineState) -> dict[str, Any]:
     }
 
 
-def _audit_awaiting_human(state: PipelineState) -> None:
+def audit_awaiting_human(state: PipelineState) -> None:
     write_audit_log(
         state.get("db"),
         state.get("task_id"),
@@ -500,7 +529,7 @@ def run_agentic_pipeline(
         state = _run_bounded_quality_gate(db, agents, state)
 
     if state.get("awaiting_human"):
-        _audit_awaiting_human(state)
+        audit_awaiting_human(state)
         mark_task_awaiting_human(db, task_id, state)
         result = build_awaiting_human_result(state)
         apply_result_meta_to_task(db, task_id, result, state)
@@ -558,10 +587,22 @@ def resume_agentic_pipeline(
         }
 
     if action == "accept_draft":
-        write_audit_log(db, task_id, "human", "resume_accept_draft")
         checkpoint = load_checkpoint(db, task_id)
         copy_id = checkpoint.get("copy_id") if checkpoint else None
-        final_copy_id = promote_draft_to_final(db, copy_id)
+        final_copy_id = promote_draft_to_final(db, copy_id, task_id=task_id)
+        if final_copy_id is None:
+            error = "找不到属于当前任务的有效初稿，无法接受"
+            write_audit_log(
+                db,
+                task_id,
+                "human",
+                "resume_accept_draft",
+                status="failed",
+                error_message=error,
+            )
+            return {"success": False, "error": error, "task_id": task_id}
+
+        write_audit_log(db, task_id, "human", "resume_accept_draft")
         task.status = TaskStatus.COMPLETED
         task.error_message = None
         meta = dict(task.orchestration_meta or {})
@@ -578,7 +619,6 @@ def resume_agentic_pipeline(
         }
 
     # action == retry
-    write_audit_log(db, task_id, "human", "resume_retry")
     checkpoint = load_checkpoint(db, task_id)
     if not checkpoint:
         return {
@@ -587,9 +627,13 @@ def resume_agentic_pipeline(
             "task_id": task_id,
         }
 
-    task.status = TaskStatus.PROCESSING
-    task.error_message = None
-    db.commit()
+    if not _claim_retry_execution(db, task_id):
+        return {
+            "success": False,
+            "error": "任务已被其他恢复请求接管或状态已变化",
+            "task_id": task_id,
+        }
+    write_audit_log(db, task_id, "human", "resume_retry")
 
     state = checkpoint_to_state(checkpoint, db, task_id)
     state["retry_count"] = 0
@@ -621,7 +665,7 @@ def resume_agentic_pipeline(
         state = _run_bounded_quality_gate(db, agents, state)
 
     if state.get("awaiting_human"):
-        _audit_awaiting_human(state)
+        audit_awaiting_human(state)
         mark_task_awaiting_human(db, task_id, state)
         result = build_awaiting_human_result(state)
         apply_result_meta_to_task(db, task_id, result, state)

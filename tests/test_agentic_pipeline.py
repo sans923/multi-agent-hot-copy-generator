@@ -2,6 +2,7 @@
 Agentic 编排、任务分级、模型路由测试
 """
 
+import json
 from unittest.mock import patch
 
 import pytest
@@ -21,12 +22,14 @@ from app.agents.pipeline_state import init_pipeline_state
 from app.config import settings
 from app.database import Base
 from app.lang.graph.agentic_pipeline_graph import (
+    _mark_awaiting_human_node,
     build_agentic_pipeline_graph,
     run_agentic_pipeline_graph,
 )
+from app.models.orchestration_audit_log import OrchestrationAuditLog
 from app.models.task import Task, TaskPlatform, TaskStatus
 from app.models.user import User
-from app.services.planner_service import default_plan, generate_plan
+from app.services.planner_service import _parse_plan_json, default_plan, generate_plan
 from app.services.task_classifier import classify_task
 from app.services.verify_service import verify_draft
 
@@ -112,6 +115,101 @@ def test_generate_plan_simple_skips_llm():
     assert len(plan["steps"]) == 4
 
 
+@pytest.mark.parametrize(
+    "steps",
+    [
+        [
+            {"step_id": "requirement", "stage": "requirement"},
+            {"step_id": "copywriter", "stage": "copywriter"},
+            {"step_id": "verify", "stage": "verify"},
+        ],
+        [
+            {"step_id": "requirement", "stage": "requirement"},
+            {"step_id": "reviewer", "stage": "reviewer"},
+            {"step_id": "verify", "stage": "verify"},
+            {"step_id": "copywriter", "stage": "copywriter"},
+        ],
+        [
+            {"step_id": "same", "stage": "requirement"},
+            {"step_id": "same", "stage": "copywriter"},
+            {"step_id": "verify", "stage": "verify"},
+            {"step_id": "reviewer", "stage": "reviewer"},
+        ],
+        [
+            {"step_id": f"requirement-{index}", "stage": "requirement"}
+            for index in range(settings.AGENT_MAX_STEPS + 1)
+        ],
+        [
+            {"step_id": "requirement", "stage": "requirement"},
+            {"step_id": "copywriter", "stage": "copywriter"},
+            {"step_id": "unknown", "stage": "publish"},
+            {"step_id": "verify", "stage": "verify"},
+            {"step_id": "reviewer", "stage": "reviewer"},
+        ],
+        [
+            {"step_id": "requirement", "stage": "requirement"},
+            {"step_id": "copywriter", "stage": "copywriter"},
+            "not-a-step",
+            {"step_id": "verify", "stage": "verify"},
+            {"step_id": "reviewer", "stage": "reviewer"},
+        ],
+    ],
+    ids=[
+        "missing-reviewer",
+        "out-of-order",
+        "duplicate-step-id",
+        "too-many-steps",
+        "invalid-stage",
+        "non-dict-step",
+    ],
+)
+def test_parse_plan_rejects_unsafe_plan(steps):
+    raw = json.dumps({"task_mode": "complex", "steps": steps})
+    assert _parse_plan_json(raw) is None
+
+
+def test_parse_plan_forces_safety_steps_to_be_non_skippable():
+    raw = json.dumps({
+        "task_mode": "complex",
+        "steps": [
+            {"step_id": "requirement", "stage": "requirement"},
+            {"step_id": "copywriter", "stage": "copywriter"},
+            {"step_id": "verify", "stage": "verify", "can_skip": True},
+            {"step_id": "reviewer", "stage": "reviewer", "can_skip": True},
+        ],
+    })
+
+    plan = _parse_plan_json(raw)
+
+    assert plan is not None
+    assert [step["can_skip"] for step in plan["steps"][-2:]] == [False, False]
+
+
+@patch("app.services.planner_service.get_deepseek_client")
+def test_generate_plan_falls_back_when_required_stage_is_missing(mock_client):
+    mock_client.return_value.chat.completions.create.return_value.choices = [
+        type("Choice", (), {
+            "message": type("Msg", (), {
+                "content": json.dumps({
+                    "task_mode": "complex",
+                    "steps": [
+                        {"step_id": "requirement", "stage": "requirement"},
+                        {"step_id": "copywriter", "stage": "copywriter"},
+                        {"step_id": "verify", "stage": "verify"},
+                    ],
+                })
+            })()
+        })()
+    ]
+
+    plan = generate_plan("多平台复杂文案", "weibo", "complex")
+
+    assert plan["source"] == "default_fallback"
+    assert [step["stage"] for step in plan["steps"]] == [
+        "requirement", "copywriter", "verify", "reviewer",
+    ]
+
+
 def test_model_roles_fallback_to_chat():
     assert get_model_for_role("executor") == settings.EXECUTOR_MODEL
     assert get_model_for_role("planner") == settings.PLANNER_MODEL
@@ -165,6 +263,23 @@ def test_handle_step_outcome_retries_on_failure():
     updates = handle_step_outcome(state)
     assert updates["failure_level"] == "retry"
     assert updates["retry_count"] == 1
+
+
+def test_handle_step_outcome_does_not_advance_while_awaiting_human():
+    state = {
+        "task_id": 1,
+        "current_step": 2,
+        "last_step_failed": False,
+        "abort": False,
+        "awaiting_human": True,
+        "failure_level": "human",
+        "error": "任务超时",
+    }
+
+    updates = handle_step_outcome(state)
+
+    assert "current_step" not in updates
+    assert updates["failure_level"] == "human"
 
 
 def test_plan_has_more_steps():
@@ -223,6 +338,101 @@ def test_agentic_graph_simple_path(mock_full, db):
     result = run_agentic_pipeline_graph(db, task.id)
     assert result["success"] is True
     assert result.get("task_mode") == "simple"
+    db.refresh(task)
+    assert task.status == TaskStatus.COMPLETED
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.run_full_pipeline")
+def test_agentic_graph_simple_failure_persists_task_status(mock_full, db):
+    mock_full.return_value = {
+        "success": False,
+        "task_id": 1,
+        "error": "固定流水线失败",
+        "stages": {},
+    }
+    task = _create_task(db, "写一篇失败路径测试微博")
+
+    result = run_agentic_pipeline_graph(db, task.id)
+
+    assert result["success"] is False
+    db.refresh(task)
+    assert task.status == TaskStatus.FAILED
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.decide_final_quality_gate")
+@patch("app.lang.graph.agentic_pipeline_graph.run_execute_current_step")
+@patch("app.lang.graph.agentic_pipeline_graph.run_plan_stage")
+@patch("app.lang.graph.agentic_pipeline_graph.run_classify_stage")
+def test_agentic_graph_complex_path_and_start_audit(
+    mock_classify,
+    mock_plan,
+    mock_execute,
+    mock_quality_gate,
+    db,
+):
+    mock_classify.return_value = {
+        "task_mode": "complex",
+        "classify_reasons": ["多平台"],
+    }
+    mock_plan.return_value = {
+        "plan": {
+            "source": "default",
+            "steps": [{"step_id": "reviewer", "stage": "reviewer"}],
+        },
+        "current_step": 0,
+    }
+    mock_execute.return_value = {
+        "final_copy_id": 10,
+        "review_score": 90.0,
+        "total_tokens": 5,
+        "stages": {"reviewer": {"success": True}},
+        "last_step_failed": False,
+        "step_count": 1,
+    }
+    mock_quality_gate.return_value = type("Decision", (), {
+        "passed": True,
+        "action": "finalize",
+        "failed_checks": [],
+        "as_dict": lambda self: {
+            "passed": True,
+            "action": "finalize",
+            "failed_checks": [],
+        },
+    })()
+    task = _create_task(db, "请生成复杂多平台文案")
+
+    result = run_agentic_pipeline_graph(db, task.id)
+
+    assert result["success"] is True
+    assert result["task_mode"] == "complex"
+    start_logs = db.query(OrchestrationAuditLog).filter_by(
+        task_id=task.id,
+        step_name="agentic_start",
+    ).all()
+    assert len(start_logs) == 1
+
+
+def test_agentic_graph_awaiting_node_writes_single_audit(db):
+    task = _create_task(db, "需要人工介入的复杂任务")
+    state = {
+        "db": db,
+        "task_id": task.id,
+        "task_mode": "complex",
+        "awaiting_human": True,
+        "failure_level": "human",
+        "error": "任务超时",
+        "plan": {"source": "default", "steps": []},
+    }
+
+    _mark_awaiting_human_node(state)
+
+    db.refresh(task)
+    assert task.status == TaskStatus.AWAITING_HUMAN
+    awaiting_logs = db.query(OrchestrationAuditLog).filter_by(
+        task_id=task.id,
+        step_name="awaiting_human",
+    ).all()
+    assert len(awaiting_logs) == 1
 
 
 @patch("app.agents.agentic_runners.run_reviewer_stage")

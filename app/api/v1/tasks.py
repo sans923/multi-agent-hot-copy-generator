@@ -389,8 +389,6 @@ def resume_task(
         )
 
     # retry
-    task.status = TaskStatus.PROCESSING
-    db.commit()
     background_tasks.add_task(_resume_task_background, task.id, "retry")
     db.refresh(task)
     return ApiResponse(
