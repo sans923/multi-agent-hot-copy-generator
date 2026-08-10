@@ -1,0 +1,164 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 2,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 2,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 2
+    }
+  },
+  "results": [
+    {
+      "path": "Dockerfile",
+      "language": "dockerfile",
+      "fileCategory": "infra",
+      "totalLines": 74,
+      "nonEmptyLines": 57,
+      "services": [
+        {
+          "name": "builder",
+          "image": "python:3.11-slim",
+          "ports": [],
+          "startLine": 12,
+          "endLine": 33
+        },
+        {
+          "name": "runtime",
+          "image": "python:3.11-slim",
+          "ports": [
+            8000
+          ],
+          "startLine": 34,
+          "endLine": 75
+        }
+      ],
+      "steps": [
+        {
+          "name": "FROM python:3.11-slim AS builder",
+          "startLine": 12,
+          "endLine": 12
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "RUN apt-get update && apt-get install -y \\",
+          "startLine": 18,
+          "endLine": 18
+        },
+        {
+          "name": "COPY requirements.txt .",
+          "startLine": 25,
+          "endLine": 25
+        },
+        {
+          "name": "RUN pip install --no-cache-dir --prefix=/install -r requirements",
+          "startLine": 28,
+          "endLine": 28
+        },
+        {
+          "name": "FROM python:3.11-slim AS runtime",
+          "startLine": 34,
+          "endLine": 34
+        },
+        {
+          "name": "ENV PYTHONDONTWRITEBYTECODE=1 \\",
+          "startLine": 37,
+          "endLine": 37
+        },
+        {
+          "name": "RUN useradd --create-home --shell /bin/bash appuser",
+          "startLine": 42,
+          "endLine": 42
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 44,
+          "endLine": 44
+        },
+        {
+          "name": "COPY --from=builder /install /usr/local",
+          "startLine": 47,
+          "endLine": 47
+        },
+        {
+          "name": "COPY --chown=appuser:appuser . .",
+          "startLine": 50,
+          "endLine": 50
+        },
+        {
+          "name": "RUN mkdir -p data/chroma logs && chown -R appuser:appuser data l",
+          "startLine": 53,
+          "endLine": 53
+        },
+        {
+          "name": "USER appuser",
+          "startLine": 56,
+          "endLine": 56
+        },
+        {
+          "name": "EXPOSE 8000",
+          "startLine": 59,
+          "endLine": 59
+        },
+        {
+          "name": "HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 ",
+          "startLine": 62,
+          "endLine": 62
+        },
+        {
+          "name": "CMD [\"gunicorn\", \"app.main:app\", \\",
+          "startLine": 68,
+          "endLine": 68
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "serviceCount": 2,
+        "stepCount": 16
+      }
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "fileCategory": "infra",
+      "totalLines": 83,
+      "nonEmptyLines": 78,
+      "sections": [
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 8
+        },
+        {
+          "heading": "services",
+          "level": 1,
+          "line": 10
+        },
+        {
+          "heading": "volumes",
+          "level": 1,
+          "line": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    }
+  ]
+}

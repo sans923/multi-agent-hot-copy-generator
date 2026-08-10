@@ -1,0 +1,581 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_audit_trail.py",
+      "type": "file",
+      "name": "test_audit_trail.py",
+      "filePath": "tests/test_audit_trail.py",
+      "summary": "覆盖 audit trail 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。",
+      "tags": [
+        "test",
+        "regression",
+        "quality-assurance"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        27,
+        33
+      ],
+      "summary": "实现 setup database 处理逻辑，服务于 test audit trail 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        37,
+        42
+      ],
+      "summary": "实现 db 处理逻辑，服务于 test audit trail 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:_create_task",
+      "type": "function",
+      "name": "_create_task",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        45,
+        58
+      ],
+      "summary": "实现 create task 处理逻辑，服务于 test audit trail 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "function",
+      "name": "test_write_audit_log_sequence",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        61,
+        76
+      ],
+      "summary": "验证 write audit log sequence 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "function",
+      "name": "test_audit_step_context_manager",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        79,
+        88
+      ],
+      "summary": "验证 audit step context manager 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "function",
+      "name": "test_skill_executor_writes_audit_log",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        91,
+        110
+      ],
+      "summary": "验证 skill executor writes audit log 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "function",
+      "name": "test_get_audit_trail_api",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        113,
+        127
+      ],
+      "summary": "验证 get audit trail api 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_compliance_skills.py",
+      "type": "file",
+      "name": "test_compliance_skills.py",
+      "filePath": "tests/test_compliance_skills.py",
+      "summary": "覆盖 compliance skills 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。",
+      "tags": [
+        "test",
+        "regression",
+        "quality-assurance"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        30,
+        35
+      ],
+      "summary": "实现 setup database 处理逻辑，服务于 test compliance skills 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        39,
+        44
+      ],
+      "summary": "实现 db 处理逻辑，服务于 test compliance skills 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_skill_ok_envelope",
+      "type": "function",
+      "name": "test_skill_ok_envelope",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        47,
+        50
+      ],
+      "summary": "验证 skill ok envelope 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_normalize_skill_result_legacy_shape",
+      "type": "function",
+      "name": "test_normalize_skill_result_legacy_shape",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        53,
+        59
+      ],
+      "summary": "验证 normalize skill result legacy shape 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_skill_executor_normalizes_output",
+      "type": "function",
+      "name": "test_skill_executor_normalizes_output",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        62,
+        77
+      ],
+      "summary": "验证 skill executor normalizes output 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_check_sensitive_words_hits",
+      "type": "function",
+      "name": "test_check_sensitive_words_hits",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        80,
+        88
+      ],
+      "summary": "验证 check sensitive words hits 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_check_plagiarism_overlap_with_reference",
+      "type": "function",
+      "name": "test_check_plagiarism_overlap_with_reference",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        91,
+        108
+      ],
+      "summary": "验证 check plagiarism overlap with reference 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_skills.py:test_check_plagiarism_clean_text",
+      "type": "function",
+      "name": "test_check_plagiarism_clean_text",
+      "filePath": "tests/test_compliance_skills.py",
+      "lineRange": [
+        111,
+        127
+      ],
+      "summary": "验证 check plagiarism clean text 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:_create_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:_create_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/orchestration_audit_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/skills/compliance_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_skill_ok_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_skill_ok_envelope",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_normalize_skill_result_legacy_shape",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_normalize_skill_result_legacy_shape",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_skill_executor_normalizes_output",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_skill_executor_normalizes_output",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_sensitive_words_hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_sensitive_words_hits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_plagiarism_overlap_with_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_plagiarism_overlap_with_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_plagiarism_clean_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "function:tests/test_compliance_skills.py:test_check_plagiarism_clean_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "file:app/skills/compliance_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_skills.py",
+      "target": "file:app/skills/skill_response.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

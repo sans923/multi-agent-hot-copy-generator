@@ -1,0 +1,52 @@
+{
+    "projectRoot":  "D:\\workspace\\demo_project\\multi-agent-hot-copy-generator",
+    "batchFiles":  [
+                       {
+                           "path":  "frontend/.env.example",
+                           "language":  "config",
+                           "sizeLines":  2,
+                           "fileCategory":  "config"
+                       },
+                       {
+                           "path":  "frontend/README.md",
+                           "language":  "markdown",
+                           "sizeLines":  46,
+                           "fileCategory":  "docs"
+                       },
+                       {
+                           "path":  "frontend/index.html",
+                           "language":  "html",
+                           "sizeLines":  18,
+                           "fileCategory":  "markup"
+                       },
+                       {
+                           "path":  "frontend/package.json",
+                           "language":  "json",
+                           "sizeLines":  23,
+                           "fileCategory":  "config"
+                       },
+                       {
+                           "path":  "frontend/tsconfig.json",
+                           "language":  "json",
+                           "sizeLines":  22,
+                           "fileCategory":  "config"
+                       }
+                   ],
+    "batchImportData":  {
+                            "frontend/.env.example":  [
+
+                                                      ],
+                            "frontend/README.md":  [
+
+                                                   ],
+                            "frontend/index.html":  [
+
+                                                    ],
+                            "frontend/package.json":  [
+
+                                                      ],
+                            "frontend/tsconfig.json":  [
+
+                                                       ]
+                        }
+}

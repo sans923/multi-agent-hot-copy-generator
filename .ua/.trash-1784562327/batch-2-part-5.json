@@ -1,0 +1,1009 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/schemas/task.py",
+      "type": "file",
+      "name": "task.py",
+      "filePath": "app/schemas/task.py",
+      "summary": "定义 task.py 相关的 Pydantic 请求与响应结构，约束 API 数据边界。",
+      "tags": [
+        "validation",
+        "数据契约",
+        "序列化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/schemas/task.py:TaskCreate",
+      "type": "class",
+      "name": "TaskCreate",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        11,
+        43
+      ],
+      "summary": "定义 TaskCreate 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/task.py:TaskResponse",
+      "type": "class",
+      "name": "TaskResponse",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        46,
+        60
+      ],
+      "summary": "定义 TaskResponse 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/task.py:TaskResumeRequest",
+      "type": "class",
+      "name": "TaskResumeRequest",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        63,
+        67
+      ],
+      "summary": "定义 TaskResumeRequest 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/task.py:TaskCopySummary",
+      "type": "class",
+      "name": "TaskCopySummary",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        70,
+        81
+      ],
+      "summary": "定义 TaskCopySummary 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/task.py:TaskDetailResponse",
+      "type": "class",
+      "name": "TaskDetailResponse",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        84,
+        86
+      ],
+      "summary": "定义 TaskDetailResponse 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/task.py:CopyResponse",
+      "type": "class",
+      "name": "CopyResponse",
+      "filePath": "app/schemas/task.py",
+      "lineRange": [
+        89,
+        106
+      ],
+      "summary": "定义 CopyResponse 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/schemas/user.py",
+      "type": "file",
+      "name": "user.py",
+      "filePath": "app/schemas/user.py",
+      "summary": "定义 user.py 相关的 Pydantic 请求与响应结构，约束 API 数据边界。",
+      "tags": [
+        "validation",
+        "数据契约",
+        "序列化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/schemas/user.py:UserCreate",
+      "type": "class",
+      "name": "UserCreate",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        26,
+        79
+      ],
+      "summary": "定义 UserCreate 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/schemas/user.py:UserLogin",
+      "type": "class",
+      "name": "UserLogin",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        82,
+        90
+      ],
+      "summary": "定义 UserLogin 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/user.py:UserResponse",
+      "type": "class",
+      "name": "UserResponse",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        93,
+        116
+      ],
+      "summary": "定义 UserResponse 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/user.py:UserUpdate",
+      "type": "class",
+      "name": "UserUpdate",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        119,
+        123
+      ],
+      "summary": "定义 UserUpdate 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/user.py:TokenResponse",
+      "type": "class",
+      "name": "TokenResponse",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        126,
+        140
+      ],
+      "summary": "定义 TokenResponse 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/user.py:TokenData",
+      "type": "class",
+      "name": "TokenData",
+      "filePath": "app/schemas/user.py",
+      "lineRange": [
+        143,
+        145
+      ],
+      "summary": "定义 TokenData 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/hotlist_service.py",
+      "type": "file",
+      "name": "hotlist_service.py",
+      "filePath": "app/services/hotlist_service.py",
+      "summary": "负责从聚合接口抓取和清洗多平台热榜，持久化同步结果并提供近期榜单查询。",
+      "tags": [
+        "service",
+        "业务逻辑",
+        "编排"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:fetch_juhe_hotlist",
+      "type": "function",
+      "name": "fetch_juhe_hotlist",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        52,
+        124
+      ],
+      "summary": "实现 fetch juhe hotlist 对应的核心处理逻辑，是 hotlist_service.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:_clean_juhe_items",
+      "type": "function",
+      "name": "_clean_juhe_items",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        127,
+        163
+      ],
+      "summary": "实现 clean juhe items 对应的核心处理逻辑，是 hotlist_service.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:sync_all_hotlists",
+      "type": "function",
+      "name": "sync_all_hotlists",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        170,
+        211
+      ],
+      "summary": "遍历受支持平台抓取热榜并将结果和同步状态写入数据库。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:_save_hotlist_to_db",
+      "type": "function",
+      "name": "_save_hotlist_to_db",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        214,
+        254
+      ],
+      "summary": "实现 save hotlist to db 对应的核心处理逻辑，是 hotlist_service.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:sync_single_platform",
+      "type": "function",
+      "name": "sync_single_platform",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        261,
+        287
+      ],
+      "summary": "执行 sync single platform 流程并同步更新处理状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/hotlist_service.py:get_recent_hotlist",
+      "type": "function",
+      "name": "get_recent_hotlist",
+      "filePath": "app/services/hotlist_service.py",
+      "lineRange": [
+        294,
+        323
+      ],
+      "summary": "查询并整理 get recent hotlist 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/seed_users.py",
+      "type": "file",
+      "name": "seed_users.py",
+      "filePath": "scripts/seed_users.py",
+      "summary": "提供 seed_users.py 对应的项目维护或初始化命令行流程。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/setup_mysql.py",
+      "type": "file",
+      "name": "setup_mysql.py",
+      "filePath": "scripts/setup_mysql.py",
+      "summary": "提供 setup_mysql.py 对应的项目维护或初始化命令行流程。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/setup_mysql.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/setup_mysql.py",
+      "lineRange": [
+        18,
+        48
+      ],
+      "summary": "执行 setup_mysql.py 的命令行主流程并输出处理结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_audit_trail.py",
+      "type": "file",
+      "name": "test_audit_trail.py",
+      "filePath": "tests/test_audit_trail.py",
+      "summary": "实现 test_audit_trail.py 所承载的项目功能，并与相邻模块协作完成业务流程。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        27,
+        33
+      ],
+      "summary": "实现 setup database 对应的核心处理逻辑，是 test_audit_trail.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        37,
+        42
+      ],
+      "summary": "实现 db 对应的核心处理逻辑，是 test_audit_trail.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:_create_task",
+      "type": "function",
+      "name": "_create_task",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        45,
+        58
+      ],
+      "summary": "实现 create task 对应的核心处理逻辑，是 test_audit_trail.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "function",
+      "name": "test_write_audit_log_sequence",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        61,
+        76
+      ],
+      "summary": "验证“write audit log sequence”场景的预期行为与关键断言。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "function",
+      "name": "test_audit_step_context_manager",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        79,
+        88
+      ],
+      "summary": "验证“audit step context manager”场景的预期行为与关键断言。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "function",
+      "name": "test_skill_executor_writes_audit_log",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        91,
+        110
+      ],
+      "summary": "验证“skill executor writes audit log”场景的预期行为与关键断言。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "function",
+      "name": "test_get_audit_trail_api",
+      "filePath": "tests/test_audit_trail.py",
+      "lineRange": [
+        113,
+        127
+      ],
+      "summary": "验证“get audit trail api”场景的预期行为与关键断言。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskCreate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskCreate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskResumeRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskResumeRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskCopySummary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskCopySummary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskDetailResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:TaskDetailResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:CopyResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/task.py",
+      "target": "class:app/schemas/task.py:CopyResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserCreate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserCreate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserLogin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserLogin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserUpdate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:UserUpdate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:TokenResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:TokenResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:TokenData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/user.py",
+      "target": "class:app/schemas/user.py:TokenData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "file:app/models/hotlist_sync.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:fetch_juhe_hotlist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:fetch_juhe_hotlist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:_clean_juhe_items",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:_clean_juhe_items",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:sync_all_hotlists",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:sync_all_hotlists",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:_save_hotlist_to_db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:_save_hotlist_to_db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:sync_single_platform",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:sync_single_platform",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:get_recent_hotlist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/hotlist_service.py",
+      "target": "function:app/services/hotlist_service.py:get_recent_hotlist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/seed_users.py",
+      "target": "file:app/core/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/seed_users.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/seed_users.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "function:scripts/setup_mysql.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "function:scripts/setup_mysql.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/orchestration_audit_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "file:app/skills/compliance_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:_create_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:_create_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_write_audit_log_sequence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_audit_step_context_manager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_skill_executor_writes_audit_log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_audit_trail.py",
+      "target": "function:tests/test_audit_trail.py:test_get_audit_trail_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

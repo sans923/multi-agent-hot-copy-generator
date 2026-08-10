@@ -1,0 +1,951 @@
+{
+    "batchIndex":  4,
+    "files":  [
+                  {
+                      "path":  "app/agents/base_agent.py",
+                      "language":  "python",
+                      "sizeLines":  377,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/agents/copywriter_agent.py",
+                      "language":  "python",
+                      "sizeLines":  175,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/agents/requirement_agent.py",
+                      "language":  "python",
+                      "sizeLines":  155,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/agents/reviewer_agent.py",
+                      "language":  "python",
+                      "sizeLines":  214,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/models/toutiao_reference.py",
+                      "language":  "python",
+                      "sizeLines":  60,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/scheduler.py",
+                      "language":  "python",
+                      "sizeLines":  293,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/services/embedding_service.py",
+                      "language":  "python",
+                      "sizeLines":  491,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/services/writing_pattern_service.py",
+                      "language":  "python",
+                      "sizeLines":  243,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/__init__.py",
+                      "language":  "python",
+                      "sizeLines":  169,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/base.py",
+                      "language":  "python",
+                      "sizeLines":  378,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/compliance_skills.py",
+                      "language":  "python",
+                      "sizeLines":  250,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/copy_skills.py",
+                      "language":  "python",
+                      "sizeLines":  690,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/platform_skills.py",
+                      "language":  "python",
+                      "sizeLines":  192,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/rag_skills.py",
+                      "language":  "python",
+                      "sizeLines":  187,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/requirement_skills.py",
+                      "language":  "python",
+                      "sizeLines":  239,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/review_skills.py",
+                      "language":  "python",
+                      "sizeLines":  432,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/skill_response.py",
+                      "language":  "python",
+                      "sizeLines":  85,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/style_skills.py",
+                      "language":  "python",
+                      "sizeLines":  347,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/skills/toutiao_rag_skills.py",
+                      "language":  "python",
+                      "sizeLines":  118,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/utils/log_writer.py",
+                      "language":  "python",
+                      "sizeLines":  83,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "app/utils/logger.py",
+                      "language":  "python",
+                      "sizeLines":  64,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "scripts/build_style_cards.py",
+                      "language":  "python",
+                      "sizeLines":  95,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "tests/test_compliance_skills.py",
+                      "language":  "python",
+                      "sizeLines":  127,
+                      "fileCategory":  "code"
+                  },
+                  {
+                      "path":  "tests/test_writing_pattern.py",
+                      "language":  "python",
+                      "sizeLines":  148,
+                      "fileCategory":  "code"
+                  }
+              ],
+    "batchImportData":  {
+                            "app/agents/base_agent.py":  [
+                                                             "app/config.py",
+                                                             "app/services/audit_service.py",
+                                                             "app/skills/__init__.py",
+                                                             "app/utils/llm_client.py",
+                                                             "app/utils/logger.py",
+                                                             "app/utils/model_roles.py"
+                                                         ],
+                            "app/agents/copywriter_agent.py":  [
+                                                                   "app/agents/base_agent.py",
+                                                                   "app/skills/__init__.py",
+                                                                   "app/utils/logger.py"
+                                                               ],
+                            "app/agents/requirement_agent.py":  [
+                                                                    "app/agents/base_agent.py",
+                                                                    "app/models/task.py",
+                                                                    "app/skills/__init__.py",
+                                                                    "app/utils/logger.py"
+                                                                ],
+                            "app/agents/reviewer_agent.py":  [
+                                                                 "app/agents/base_agent.py",
+                                                                 "app/models/copy.py",
+                                                                 "app/models/task.py",
+                                                                 "app/skills/__init__.py",
+                                                                 "app/utils/logger.py"
+                                                             ],
+                            "app/models/toutiao_reference.py":  [
+                                                                    "app/database.py"
+                                                                ],
+                            "app/scheduler.py":  [
+                                                     "app/config.py",
+                                                     "app/utils/logger.py"
+                                                 ],
+                            "app/services/embedding_service.py":  [
+                                                                      "app/config.py",
+                                                                      "app/utils/logger.py"
+                                                                  ],
+                            "app/services/writing_pattern_service.py":  [
+                                                                            "app/utils/llm_client.py",
+                                                                            "app/utils/logger.py",
+                                                                            "app/utils/model_roles.py"
+                                                                        ],
+                            "app/skills/__init__.py":  [
+                                                           "app/skills/base.py",
+                                                           "app/skills/compliance_skills.py",
+                                                           "app/skills/copy_skills.py",
+                                                           "app/skills/platform_skills.py",
+                                                           "app/skills/rag_skills.py",
+                                                           "app/skills/requirement_skills.py",
+                                                           "app/skills/review_skills.py",
+                                                           "app/skills/skill_response.py",
+                                                           "app/skills/style_skills.py",
+                                                           "app/skills/toutiao_rag_skills.py"
+                                                       ],
+                            "app/skills/base.py":  [
+                                                       "app/services/audit_service.py",
+                                                       "app/skills/skill_response.py",
+                                                       "app/utils/logger.py"
+                                                   ],
+                            "app/skills/compliance_skills.py":  [
+                                                                    "app/models/toutiao_reference.py",
+                                                                    "app/services/writing_pattern_service.py",
+                                                                    "app/skills/base.py",
+                                                                    "app/skills/skill_response.py",
+                                                                    "app/utils/logger.py"
+                                                                ],
+                            "app/skills/copy_skills.py":  [
+                                                              "app/skills/base.py",
+                                                              "app/utils/logger.py"
+                                                          ],
+                            "app/skills/platform_skills.py":  [
+                                                                  "app/skills/base.py",
+                                                                  "app/utils/logger.py"
+                                                              ],
+                            "app/skills/rag_skills.py":  [
+                                                             "app/skills/base.py",
+                                                             "app/utils/logger.py"
+                                                         ],
+                            "app/skills/requirement_skills.py":  [
+                                                                     "app/models/hotlist_sync.py",
+                                                                     "app/skills/base.py",
+                                                                     "app/utils/logger.py"
+                                                                 ],
+                            "app/skills/review_skills.py":  [
+                                                                "app/skills/base.py",
+                                                                "app/utils/logger.py"
+                                                            ],
+                            "app/skills/skill_response.py":  [
+
+                                                             ],
+                            "app/skills/style_skills.py":  [
+                                                               "app/models/style_card.py",
+                                                               "app/models/toutiao_reference.py",
+                                                               "app/services/writing_pattern_service.py",
+                                                               "app/skills/base.py",
+                                                               "app/utils/logger.py"
+                                                           ],
+                            "app/skills/toutiao_rag_skills.py":  [
+                                                                     "app/lang/graph/query_graph.py",
+                                                                     "app/skills/base.py",
+                                                                     "app/utils/logger.py"
+                                                                 ],
+                            "app/utils/log_writer.py":  [
+                                                            "app/utils/logger.py"
+                                                        ],
+                            "app/utils/logger.py":  [
+                                                        "app/config.py"
+                                                    ],
+                            "scripts/build_style_cards.py":  [
+                                                                 "app/database.py",
+                                                                 "app/models/toutiao_reference.py",
+                                                                 "app/services/writing_pattern_service.py",
+                                                                 "app/skills/style_skills.py"
+                                                             ],
+                            "tests/test_compliance_skills.py":  [
+                                                                    "app/database.py",
+                                                                    "app/models/toutiao_reference.py",
+                                                                    "app/skills/base.py",
+                                                                    "app/skills/compliance_skills.py",
+                                                                    "app/skills/skill_response.py"
+                                                                ],
+                            "tests/test_writing_pattern.py":  [
+                                                                  "app/database.py",
+                                                                  "app/models/style_card.py",
+                                                                  "app/models/toutiao_reference.py",
+                                                                  "app/services/writing_pattern_service.py",
+                                                                  "app/skills/copy_skills.py",
+                                                                  "app/skills/style_skills.py"
+                                                              ]
+                        },
+    "neighborMap":  {
+                        "app/agents/base_agent.py":  [
+                                                         {
+                                                             "path":  "app/config.py",
+                                                             "batchIndex":  1,
+                                                             "symbols":  [
+                                                                             "Settings",
+                                                                             "get_settings"
+                                                                         ]
+                                                         },
+                                                         {
+                                                             "path":  "app/services/audit_service.py",
+                                                             "batchIndex":  1,
+                                                             "symbols":  [
+                                                                             "_next_sequence_no",
+                                                                             "write_audit_log",
+                                                                             "audit_step"
+                                                                         ]
+                                                         },
+                                                         {
+                                                             "path":  "app/utils/llm_client.py",
+                                                             "batchIndex":  1,
+                                                             "symbols":  [
+                                                                             "get_deepseek_client",
+                                                                             "reset_deepseek_client",
+                                                                             "format_llm_error"
+                                                                         ]
+                                                         },
+                                                         {
+                                                             "path":  "app/utils/model_roles.py",
+                                                             "batchIndex":  1,
+                                                             "symbols":  [
+                                                                             "get_model_for_role"
+                                                                         ]
+                                                         },
+                                                         {
+                                                             "path":  "app/agents/lead_agent.py",
+                                                             "batchIndex":  1,
+                                                             "symbols":  [
+                                                                             "LeadAgent"
+                                                                         ]
+                                                         }
+                                                     ],
+                        "app/agents/copywriter_agent.py":  [
+                                                               {
+                                                                   "path":  "app/agents/pipeline_runners.py",
+                                                                   "batchIndex":  1,
+                                                                   "symbols":  [
+                                                                                   "PipelineAgents",
+                                                                                   "mark_task_failed",
+                                                                                   "promote_draft_to_final",
+                                                                                   "run_requirement_stage",
+                                                                                   "run_copywriter_stage",
+                                                                                   "run_reviewer_stage",
+                                                                                   "run_full_pipeline",
+                                                                                   "_merge_state",
+                                                                                   "run_lead_pipeline"
+                                                                               ]
+                                                               }
+                                                           ],
+                        "app/agents/requirement_agent.py":  [
+                                                                {
+                                                                    "path":  "app/models/task.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "TaskStatus",
+                                                                                    "TaskPlatform",
+                                                                                    "Task"
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "app/agents/pipeline_runners.py",
+                                                                    "batchIndex":  1,
+                                                                    "symbols":  [
+                                                                                    "PipelineAgents",
+                                                                                    "mark_task_failed",
+                                                                                    "promote_draft_to_final",
+                                                                                    "run_requirement_stage",
+                                                                                    "run_copywriter_stage",
+                                                                                    "run_reviewer_stage",
+                                                                                    "run_full_pipeline",
+                                                                                    "_merge_state",
+                                                                                    "run_lead_pipeline"
+                                                                                ]
+                                                                }
+                                                            ],
+                        "app/agents/reviewer_agent.py":  [
+                                                             {
+                                                                 "path":  "app/models/copy.py",
+                                                                 "batchIndex":  2,
+                                                                 "symbols":  [
+                                                                                 "Copy"
+                                                                             ]
+                                                             },
+                                                             {
+                                                                 "path":  "app/models/task.py",
+                                                                 "batchIndex":  2,
+                                                                 "symbols":  [
+                                                                                 "TaskStatus",
+                                                                                 "TaskPlatform",
+                                                                                 "Task"
+                                                                             ]
+                                                             },
+                                                             {
+                                                                 "path":  "app/agents/pipeline_runners.py",
+                                                                 "batchIndex":  1,
+                                                                 "symbols":  [
+                                                                                 "PipelineAgents",
+                                                                                 "mark_task_failed",
+                                                                                 "promote_draft_to_final",
+                                                                                 "run_requirement_stage",
+                                                                                 "run_copywriter_stage",
+                                                                                 "run_reviewer_stage",
+                                                                                 "run_full_pipeline",
+                                                                                 "_merge_state",
+                                                                                 "run_lead_pipeline"
+                                                                             ]
+                                                             }
+                                                         ],
+                        "app/models/toutiao_reference.py":  [
+                                                                {
+                                                                    "path":  "app/database.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "_get_engine_kwargs",
+                                                                                    "_prepare_sqlite_dir",
+                                                                                    "get_db",
+                                                                                    "create_tables"
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "app/api/v1/content_assets.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "list_references",
+                                                                                    "create_reference",
+                                                                                    "reindex_reference_route",
+                                                                                    "remove_reference",
+                                                                                    "list_style_cards",
+                                                                                    "create_style_card",
+                                                                                    "remove_style_card"
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "app/models/__init__.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "app/services/content_asset_service.py",
+                                                                    "batchIndex":  5,
+                                                                    "symbols":  [
+                                                                                    "reference_to_dict",
+                                                                                    "style_card_to_dict",
+                                                                                    "import_reference",
+                                                                                    "reindex_reference",
+                                                                                    "delete_reference",
+                                                                                    "build_style_card"
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "scripts/import_toutiao_article.py",
+                                                                    "batchIndex":  5,
+                                                                    "symbols":  [
+                                                                                    "main"
+                                                                                ]
+                                                                },
+                                                                {
+                                                                    "path":  "tests/test_content_assets_api.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "override_db",
+                                                                                    "database",
+                                                                                    "_admin",
+                                                                                    "_as_admin",
+                                                                                    "test_content_assets_require_admin_authentication",
+                                                                                    "test_list_reference_articles_for_admin",
+                                                                                    "test_import_reference_uses_fetch_and_ingest",
+                                                                                    "test_build_style_card_from_selected_references",
+                                                                                    "test_toutiao_task_persists_selected_style_card"
+                                                                                ]
+                                                                }
+                                                            ],
+                        "app/scheduler.py":  [
+                                                 {
+                                                     "path":  "app/config.py",
+                                                     "batchIndex":  1,
+                                                     "symbols":  [
+                                                                     "Settings",
+                                                                     "get_settings"
+                                                                 ]
+                                                 }
+                                             ],
+                        "app/services/embedding_service.py":  [
+                                                                  {
+                                                                      "path":  "app/config.py",
+                                                                      "batchIndex":  1,
+                                                                      "symbols":  [
+                                                                                      "Settings",
+                                                                                      "get_settings"
+                                                                                  ]
+                                                                  }
+                                                              ],
+                        "app/services/writing_pattern_service.py":  [
+                                                                        {
+                                                                            "path":  "app/utils/llm_client.py",
+                                                                            "batchIndex":  1,
+                                                                            "symbols":  [
+                                                                                            "get_deepseek_client",
+                                                                                            "reset_deepseek_client",
+                                                                                            "format_llm_error"
+                                                                                        ]
+                                                                        },
+                                                                        {
+                                                                            "path":  "app/utils/model_roles.py",
+                                                                            "batchIndex":  1,
+                                                                            "symbols":  [
+                                                                                            "get_model_for_role"
+                                                                                        ]
+                                                                        },
+                                                                        {
+                                                                            "path":  "app/services/content_asset_service.py",
+                                                                            "batchIndex":  5,
+                                                                            "symbols":  [
+                                                                                            "reference_to_dict",
+                                                                                            "style_card_to_dict",
+                                                                                            "import_reference",
+                                                                                            "reindex_reference",
+                                                                                            "delete_reference",
+                                                                                            "build_style_card"
+                                                                                        ]
+                                                                        }
+                                                                    ],
+                        "app/skills/__init__.py":  [
+                                                       {
+                                                           "path":  "app/agents/lead_agent.py",
+                                                           "batchIndex":  1,
+                                                           "symbols":  [
+                                                                           "LeadAgent"
+                                                                       ]
+                                                       }
+                                                   ],
+                        "app/skills/base.py":  [
+                                                   {
+                                                       "path":  "app/services/audit_service.py",
+                                                       "batchIndex":  1,
+                                                       "symbols":  [
+                                                                       "_next_sequence_no",
+                                                                       "write_audit_log",
+                                                                       "audit_step"
+                                                                   ]
+                                                   },
+                                                   {
+                                                       "path":  "app/skills/delegation_skills.py",
+                                                       "batchIndex":  1,
+                                                       "symbols":  [
+                                                                       "_get_stage_runners",
+                                                                       "_require_active_pipeline",
+                                                                       "DelegateToRequirementSkill",
+                                                                       "DelegateToCopywriterSkill",
+                                                                       "DelegateToReviewerSkill",
+                                                                       "FinishTaskSkill"
+                                                                   ]
+                                                   },
+                                                   {
+                                                       "path":  "tests/test_audit_trail.py",
+                                                       "batchIndex":  2,
+                                                       "symbols":  [
+                                                                       "setup_database",
+                                                                       "db",
+                                                                       "_create_task",
+                                                                       "test_write_audit_log_sequence",
+                                                                       "test_audit_step_context_manager",
+                                                                       "test_skill_executor_writes_audit_log",
+                                                                       "test_get_audit_trail_api"
+                                                                   ]
+                                                   }
+                                               ],
+                        "app/skills/compliance_skills.py":  [
+                                                                {
+                                                                    "path":  "tests/test_audit_trail.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "setup_database",
+                                                                                    "db",
+                                                                                    "_create_task",
+                                                                                    "test_write_audit_log_sequence",
+                                                                                    "test_audit_step_context_manager",
+                                                                                    "test_skill_executor_writes_audit_log",
+                                                                                    "test_get_audit_trail_api"
+                                                                                ]
+                                                                }
+                                                            ],
+                        "app/skills/requirement_skills.py":  [
+                                                                 {
+                                                                     "path":  "app/models/hotlist_sync.py",
+                                                                     "batchIndex":  2,
+                                                                     "symbols":  [
+                                                                                     "HotlistSync"
+                                                                                 ]
+                                                                 }
+                                                             ],
+                        "app/skills/style_skills.py":  [
+                                                           {
+                                                               "path":  "app/models/style_card.py",
+                                                               "batchIndex":  2,
+                                                               "symbols":  [
+                                                                               "StyleCard"
+                                                                           ]
+                                                           }
+                                                       ],
+                        "app/skills/toutiao_rag_skills.py":  [
+                                                                 {
+                                                                     "path":  "app/lang/graph/query_graph.py",
+                                                                     "batchIndex":  5,
+                                                                     "symbols":  [
+                                                                                     "_retrieve_node",
+                                                                                     "_format_node",
+                                                                                     "build_query_graph",
+                                                                                     "run_rag_query"
+                                                                                 ]
+                                                                 }
+                                                             ],
+                        "app/utils/log_writer.py":  [
+                                                        {
+                                                            "path":  "app/api/v1/tasks.py",
+                                                            "batchIndex":  2,
+                                                            "symbols":  [
+                                                                            "_run_agents_background",
+                                                                            "create_task",
+                                                                            "list_tasks",
+                                                                            "get_task",
+                                                                            "get_task_copies",
+                                                                            "_resume_task_background",
+                                                                            "resume_task"
+                                                                        ]
+                                                        }
+                                                    ],
+                        "app/utils/logger.py":  [
+                                                    {
+                                                        "path":  "app/config.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "Settings",
+                                                                        "get_settings"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/agents/agentic_runners.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_merge_state",
+                                                                        "run_classify_stage",
+                                                                        "run_plan_stage",
+                                                                        "_get_current_step_def",
+                                                                        "run_execute_current_step",
+                                                                        "handle_step_outcome",
+                                                                        "_audit_awaiting_human",
+                                                                        "_audit_execute_step",
+                                                                        "plan_has_more_steps",
+                                                                        "_run_complex_loop",
+                                                                        "_run_bounded_quality_gate",
+                                                                        "run_agentic_pipeline",
+                                                                        "resume_agentic_pipeline"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/agents/lead_agent.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "LeadAgent"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/agents/pipeline_runners.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "PipelineAgents",
+                                                                        "mark_task_failed",
+                                                                        "promote_draft_to_final",
+                                                                        "run_requirement_stage",
+                                                                        "run_copywriter_stage",
+                                                                        "run_reviewer_stage",
+                                                                        "run_full_pipeline",
+                                                                        "_merge_state",
+                                                                        "run_lead_pipeline"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/api/v1/auth.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "register",
+                                                                        "login",
+                                                                        "login_form",
+                                                                        "get_me",
+                                                                        "logout"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/api/v1/hotlist.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "HotlistItemResponse",
+                                                                        "HotlistSearchResult",
+                                                                        "get_platforms",
+                                                                        "list_hotlist",
+                                                                        "search_hotlist_semantic",
+                                                                        "trigger_full_sync",
+                                                                        "_run_sync_all",
+                                                                        "trigger_platform_sync",
+                                                                        "get_hotlist_stats"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/api/v1/logs.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "get_audit_trail",
+                                                                        "get_agent_logs",
+                                                                        "get_task_logs",
+                                                                        "_get_task_overview",
+                                                                        "get_system_logs"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/api/v1/tasks.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "_run_agents_background",
+                                                                        "create_task",
+                                                                        "list_tasks",
+                                                                        "get_task",
+                                                                        "get_task_copies",
+                                                                        "_resume_task_background",
+                                                                        "resume_task"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/api/v1/users.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "get_my_profile",
+                                                                        "update_my_profile",
+                                                                        "list_users",
+                                                                        "get_user_by_id"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/database.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "_get_engine_kwargs",
+                                                                        "_prepare_sqlite_dir",
+                                                                        "get_db",
+                                                                        "create_tables"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/lang/graph/agentic_pipeline_graph.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_get_agents",
+                                                                        "_classify_node",
+                                                                        "_plan_node",
+                                                                        "_execute_step_node",
+                                                                        "_handle_outcome_node",
+                                                                        "_simple_pipeline_node",
+                                                                        "_finalize_node",
+                                                                        "_quality_gate_node",
+                                                                        "_prepare_quality_rewrite_node",
+                                                                        "_mark_awaiting_human_node",
+                                                                        "_mark_failed_node",
+                                                                        "_route_after_classify",
+                                                                        "_route_after_handle",
+                                                                        "_route_after_quality_gate",
+                                                                        "build_agentic_pipeline_graph",
+                                                                        "run_agentic_pipeline_graph"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/lang/graph/copy_pipeline_graph.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_get_agents",
+                                                                        "_requirement_node",
+                                                                        "_copywriter_node",
+                                                                        "_reviewer_node",
+                                                                        "_finalize_node",
+                                                                        "_mark_failed_node",
+                                                                        "_route_after_copywriter",
+                                                                        "build_copy_pipeline_graph",
+                                                                        "run_copy_pipeline"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/lang/graph/lead_pipeline_graph.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_lead_node",
+                                                                        "build_lead_pipeline_graph",
+                                                                        "run_lead_pipeline_graph"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/lang/rag/ingest.py",
+                                                        "batchIndex":  5,
+                                                        "symbols":  [
+                                                                        "delete_article_chunks",
+                                                                        "ingest_documents"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/lang/toutiao_fetcher.py",
+                                                        "batchIndex":  5,
+                                                        "symbols":  [
+                                                                        "extract_article_id",
+                                                                        "_strip_html",
+                                                                        "_find_title_content",
+                                                                        "_parse_render_data",
+                                                                        "fetch_toutiao_article"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/main.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "lifespan",
+                                                                        "log_requests",
+                                                                        "validation_exception_handler",
+                                                                        "global_exception_handler",
+                                                                        "health_check",
+                                                                        "root"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/orchestration/factory.py",
+                                                        "batchIndex":  6,
+                                                        "symbols":  [
+                                                                        "register_engine",
+                                                                        "get_orchestration_engine"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/audit_service.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_next_sequence_no",
+                                                                        "write_audit_log",
+                                                                        "audit_step"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/hotlist_service.py",
+                                                        "batchIndex":  2,
+                                                        "symbols":  [
+                                                                        "fetch_juhe_hotlist",
+                                                                        "_clean_juhe_items",
+                                                                        "sync_all_hotlists",
+                                                                        "_save_hotlist_to_db",
+                                                                        "sync_single_platform",
+                                                                        "get_recent_hotlist"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/judge_service.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_parse_judge_json",
+                                                                        "judge_goal_alignment"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/orchestration_persistence.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "state_to_checkpoint",
+                                                                        "checkpoint_to_state",
+                                                                        "build_orchestration_meta",
+                                                                        "save_orchestration_meta",
+                                                                        "load_checkpoint",
+                                                                        "mark_task_processing",
+                                                                        "mark_task_awaiting_human",
+                                                                        "mark_task_completed_from_meta",
+                                                                        "apply_result_meta_to_task"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/planner_service.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "default_plan",
+                                                                        "_parse_plan_json",
+                                                                        "generate_plan"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/reflect_service.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "_parse_reflect_json",
+                                                                        "_fallback_reflection",
+                                                                        "reflect_on_step_failure"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/services/verify_service.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "verify_draft",
+                                                                        "verify_final",
+                                                                        "verify_step",
+                                                                        "_current_step_id"
+                                                                    ]
+                                                    },
+                                                    {
+                                                        "path":  "app/utils/llm_client.py",
+                                                        "batchIndex":  1,
+                                                        "symbols":  [
+                                                                        "get_deepseek_client",
+                                                                        "reset_deepseek_client",
+                                                                        "format_llm_error"
+                                                                    ]
+                                                    }
+                                                ],
+                        "scripts/build_style_cards.py":  [
+                                                             {
+                                                                 "path":  "app/database.py",
+                                                                 "batchIndex":  2,
+                                                                 "symbols":  [
+                                                                                 "_get_engine_kwargs",
+                                                                                 "_prepare_sqlite_dir",
+                                                                                 "get_db",
+                                                                                 "create_tables"
+                                                                             ]
+                                                             }
+                                                         ],
+                        "tests/test_compliance_skills.py":  [
+                                                                {
+                                                                    "path":  "app/database.py",
+                                                                    "batchIndex":  2,
+                                                                    "symbols":  [
+                                                                                    "_get_engine_kwargs",
+                                                                                    "_prepare_sqlite_dir",
+                                                                                    "get_db",
+                                                                                    "create_tables"
+                                                                                ]
+                                                                }
+                                                            ],
+                        "tests/test_writing_pattern.py":  [
+                                                              {
+                                                                  "path":  "app/database.py",
+                                                                  "batchIndex":  2,
+                                                                  "symbols":  [
+                                                                                  "_get_engine_kwargs",
+                                                                                  "_prepare_sqlite_dir",
+                                                                                  "get_db",
+                                                                                  "create_tables"
+                                                                              ]
+                                                              },
+                                                              {
+                                                                  "path":  "app/models/style_card.py",
+                                                                  "batchIndex":  2,
+                                                                  "symbols":  [
+                                                                                  "StyleCard"
+                                                                              ]
+                                                              }
+                                                          ]
+                    }
+}

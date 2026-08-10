@@ -1,0 +1,1261 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/agents/base_agent.py",
+      "type": "file",
+      "name": "base_agent.py",
+      "filePath": "app/agents/base_agent.py",
+      "summary": "实现“base agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "class",
+      "name": "BaseAgent",
+      "filePath": "app/agents/base_agent.py",
+      "lineRange": [
+        51,
+        377
+      ],
+      "summary": "封装“BaseAgent”的状态与行为，作为 实现“base agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/agents/copywriter_agent.py",
+      "type": "file",
+      "name": "copywriter_agent.py",
+      "filePath": "app/agents/copywriter_agent.py",
+      "summary": "实现“copywriter agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "class",
+      "name": "CopywriterAgent",
+      "filePath": "app/agents/copywriter_agent.py",
+      "lineRange": [
+        16,
+        175
+      ],
+      "summary": "封装“CopywriterAgent”的状态与行为，作为 实现“copywriter agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/requirement_agent.py",
+      "type": "file",
+      "name": "requirement_agent.py",
+      "filePath": "app/agents/requirement_agent.py",
+      "summary": "实现“requirement agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "class",
+      "name": "RequirementAgent",
+      "filePath": "app/agents/requirement_agent.py",
+      "lineRange": [
+        26,
+        155
+      ],
+      "summary": "封装“RequirementAgent”的状态与行为，作为 实现“requirement agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/reviewer_agent.py",
+      "type": "file",
+      "name": "reviewer_agent.py",
+      "filePath": "app/agents/reviewer_agent.py",
+      "summary": "实现“reviewer agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "class",
+      "name": "ReviewerAgent",
+      "filePath": "app/agents/reviewer_agent.py",
+      "lineRange": [
+        18,
+        214
+      ],
+      "summary": "封装“ReviewerAgent”的状态与行为，作为 实现“reviewer agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/toutiao_reference.py",
+      "type": "file",
+      "name": "toutiao_reference.py",
+      "filePath": "app/models/toutiao_reference.py",
+      "summary": "定义“toutiao reference”持久化数据模型，保存热点素材、任务或编排相关业务数据。",
+      "tags": [
+        "python",
+        "业务逻辑",
+        "热点文案"
+      ],
+      "complexity": "simple",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "class",
+      "name": "ToutiaoReference",
+      "filePath": "app/models/toutiao_reference.py",
+      "lineRange": [
+        26,
+        60
+      ],
+      "summary": "封装“ToutiaoReference”的状态与行为，作为 定义“toutiao reference”持久化数据模型，保存热点素材、任务或编排相关业务数据的核心对象。",
+      "tags": [
+        "类",
+        "领域对象",
+        "行为封装"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/scheduler.py",
+      "type": "file",
+      "name": "scheduler.py",
+      "filePath": "app/scheduler.py",
+      "summary": "实现“scheduler”模块，为多智能体热点爆款文案生成系统提供对应能力。",
+      "tags": [
+        "python",
+        "业务逻辑",
+        "热点文案"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/scheduler.py:get_scheduler",
+      "type": "function",
+      "name": "get_scheduler",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        41,
+        55
+      ],
+      "summary": "实现“get scheduler”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/scheduler.py:job_sync_hotlist",
+      "type": "function",
+      "name": "job_sync_hotlist",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        62,
+        87
+      ],
+      "summary": "实现“job sync hotlist”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/scheduler.py:job_embed_new_hotlist",
+      "type": "function",
+      "name": "job_embed_new_hotlist",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        90,
+        157
+      ],
+      "summary": "实现“job embed new hotlist”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/scheduler.py:job_cleanup_expired_data",
+      "type": "function",
+      "name": "job_cleanup_expired_data",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        160,
+        214
+      ],
+      "summary": "实现“job cleanup expired data”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/scheduler.py:_on_job_executed",
+      "type": "function",
+      "name": "_on_job_executed",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        221,
+        223
+      ],
+      "summary": "实现“ on job executed”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/scheduler.py:_on_job_error",
+      "type": "function",
+      "name": "_on_job_error",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        226,
+        228
+      ],
+      "summary": "实现“ on job error”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/scheduler.py:start_scheduler",
+      "type": "function",
+      "name": "start_scheduler",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        235,
+        282
+      ],
+      "summary": "实现“start scheduler”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/scheduler.py:stop_scheduler",
+      "type": "function",
+      "name": "stop_scheduler",
+      "filePath": "app/scheduler.py",
+      "lineRange": [
+        285,
+        293
+      ],
+      "summary": "实现“stop scheduler”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/embedding_service.py",
+      "type": "file",
+      "name": "embedding_service.py",
+      "filePath": "app/services/embedding_service.py",
+      "summary": "提供“embedding service”业务服务，为多智能体热点文案生成流程封装可复用的领域能力。",
+      "tags": [
+        "业务服务",
+        "领域逻辑",
+        "流程支撑"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:_get_st_model",
+      "type": "function",
+      "name": "_get_st_model",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        63,
+        81
+      ],
+      "summary": "实现“ get st model”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:_create_chroma_client",
+      "type": "function",
+      "name": "_create_chroma_client",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        84,
+        92
+      ],
+      "summary": "实现“ create chroma client”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:get_chroma_client",
+      "type": "function",
+      "name": "get_chroma_client",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        98,
+        103
+      ],
+      "summary": "实现“get chroma client”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:embed_texts",
+      "type": "function",
+      "name": "embed_texts",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        117,
+        141
+      ],
+      "summary": "实现“embed texts”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:embed_single",
+      "type": "function",
+      "name": "embed_single",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        144,
+        147
+      ],
+      "summary": "实现“embed single”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:upsert_hotlist_to_chroma",
+      "type": "function",
+      "name": "upsert_hotlist_to_chroma",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        154,
+        222
+      ],
+      "summary": "实现“upsert hotlist to chroma”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:chunk_text",
+      "type": "function",
+      "name": "chunk_text",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        229,
+        273
+      ],
+      "summary": "实现“chunk text”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:upsert_document_to_chroma",
+      "type": "function",
+      "name": "upsert_document_to_chroma",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        276,
+        343
+      ],
+      "summary": "实现“upsert document to chroma”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:search_hotlist",
+      "type": "function",
+      "name": "search_hotlist",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        350,
+        415
+      ],
+      "summary": "实现“search hotlist”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:search_documents",
+      "type": "function",
+      "name": "search_documents",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        418,
+        468
+      ],
+      "summary": "实现“search documents”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/embedding_service.py:delete_hotlist_vectors",
+      "type": "function",
+      "name": "delete_hotlist_vectors",
+      "filePath": "app/services/embedding_service.py",
+      "lineRange": [
+        475,
+        492
+      ],
+      "summary": "实现“delete hotlist vectors”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/writing_pattern_service.py",
+      "type": "file",
+      "name": "writing_pattern_service.py",
+      "filePath": "app/services/writing_pattern_service.py",
+      "summary": "提供“writing pattern service”业务服务，为多智能体热点文案生成流程封装可复用的领域能力。",
+      "tags": [
+        "业务服务",
+        "领域逻辑",
+        "流程支撑"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "function",
+      "name": "deidentify_text",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        68,
+        86
+      ],
+      "summary": "实现“deidentify text”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "function",
+      "name": "build_structure_summary",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        89,
+        103
+      ],
+      "summary": "构建 structure summary 所需的结构、状态或执行对象。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "function",
+      "name": "_guess_paragraph_function",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        106,
+        118
+      ],
+      "summary": "实现“ guess paragraph function”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "function",
+      "name": "_extract_json_from_response",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        121,
+        133
+      ],
+      "summary": "实现“ extract json from response”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "function",
+      "name": "has_ngram_overlap",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        136,
+        146
+      ],
+      "summary": "实现“has ngram overlap”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "function",
+      "name": "extract_writing_pattern_from_articles",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        149,
+        223
+      ],
+      "summary": "实现“extract writing pattern from articles”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "function",
+      "name": "merge_writing_patterns",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        226,
+        243
+      ],
+      "summary": "实现“merge writing patterns”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/llm_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/models/copy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:get_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:get_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_sync_hotlist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_sync_hotlist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_embed_new_hotlist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_embed_new_hotlist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_cleanup_expired_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:job_cleanup_expired_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:_on_job_executed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:_on_job_executed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:_on_job_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:_on_job_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:start_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:start_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:stop_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/scheduler.py",
+      "target": "function:app/scheduler.py:stop_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:_get_st_model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:_get_st_model",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:_create_chroma_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:_create_chroma_client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:get_chroma_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:get_chroma_client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:embed_texts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:embed_texts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:embed_single",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:embed_single",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:upsert_hotlist_to_chroma",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:upsert_hotlist_to_chroma",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:chunk_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:chunk_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:upsert_document_to_chroma",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:upsert_document_to_chroma",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:search_hotlist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:search_hotlist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:search_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:search_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:delete_hotlist_vectors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/embedding_service.py",
+      "target": "function:app/services/embedding_service.py:delete_hotlist_vectors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/llm_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

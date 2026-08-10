@@ -1,0 +1,735 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 175,
+    "filesWithImports": 120,
+    "totalEdges": 430
+  },
+  "importMap": {
+    ".env.example": [],
+    "app/__init__.py": [],
+    "app/agents/__init__.py": [],
+    "app/agents/agentic_runners.py": [
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/config.py",
+      "app/models/task.py",
+      "app/services/audit_service.py",
+      "app/services/orchestration_persistence.py",
+      "app/services/orchestration_policy.py",
+      "app/services/planner_service.py",
+      "app/services/reflect_service.py",
+      "app/services/task_classifier.py",
+      "app/services/verify_service.py",
+      "app/utils/logger.py"
+    ],
+    "app/agents/base_agent.py": [
+      "app/config.py",
+      "app/services/audit_service.py",
+      "app/skills/__init__.py",
+      "app/utils/llm_client.py",
+      "app/utils/logger.py",
+      "app/utils/model_roles.py"
+    ],
+    "app/agents/copywriter_agent.py": [
+      "app/agents/base_agent.py",
+      "app/skills/__init__.py",
+      "app/utils/logger.py"
+    ],
+    "app/agents/lead_agent.py": [
+      "app/agents/base_agent.py",
+      "app/agents/pipeline_context.py",
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/skills/__init__.py",
+      "app/utils/logger.py"
+    ],
+    "app/agents/model_roles.py": [
+      "app/utils/model_roles.py"
+    ],
+    "app/agents/orchestrator.py": [
+      "app/agents/agentic_runners.py",
+      "app/agents/pipeline_runners.py",
+      "app/config.py"
+    ],
+    "app/agents/pipeline_context.py": [
+      "app/agents/pipeline_state.py"
+    ],
+    "app/agents/pipeline_runners.py": [
+      "app/agents/copywriter_agent.py",
+      "app/agents/pipeline_state.py",
+      "app/agents/requirement_agent.py",
+      "app/agents/reviewer_agent.py",
+      "app/models/copy.py",
+      "app/models/task.py",
+      "app/services/audit_service.py",
+      "app/services/longform_mvp_service.py",
+      "app/utils/logger.py"
+    ],
+    "app/agents/pipeline_state.py": [
+      "app/config.py"
+    ],
+    "app/agents/requirement_agent.py": [
+      "app/agents/base_agent.py",
+      "app/models/task.py",
+      "app/skills/__init__.py",
+      "app/utils/logger.py"
+    ],
+    "app/agents/reviewer_agent.py": [
+      "app/agents/base_agent.py",
+      "app/models/copy.py",
+      "app/models/task.py",
+      "app/skills/__init__.py",
+      "app/utils/logger.py"
+    ],
+    "app/api/__init__.py": [],
+    "app/api/v1/__init__.py": [],
+    "app/api/v1/auth.py": [
+      "app/config.py",
+      "app/core/deps.py",
+      "app/core/security.py",
+      "app/database.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/schemas/user.py",
+      "app/utils/logger.py"
+    ],
+    "app/api/v1/content_assets.py": [
+      "app/core/deps.py",
+      "app/database.py",
+      "app/models/style_card.py",
+      "app/models/toutiao_reference.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/schemas/content_asset.py",
+      "app/services/content_asset_service.py"
+    ],
+    "app/api/v1/hotlist.py": [
+      "app/core/deps.py",
+      "app/database.py",
+      "app/models/hotlist_sync.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/services/hotlist_service.py",
+      "app/utils/logger.py"
+    ],
+    "app/api/v1/logs.py": [
+      "app/core/deps.py",
+      "app/database.py",
+      "app/models/agent_log.py",
+      "app/models/copy.py",
+      "app/models/orchestration_audit_log.py",
+      "app/models/system_log.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/utils/logger.py"
+    ],
+    "app/api/v1/tasks.py": [
+      "app/core/deps.py",
+      "app/database.py",
+      "app/models/copy.py",
+      "app/models/style_card.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/schemas/task.py",
+      "app/utils/log_writer.py",
+      "app/utils/logger.py"
+    ],
+    "app/api/v1/users.py": [
+      "app/core/deps.py",
+      "app/core/security.py",
+      "app/database.py",
+      "app/models/user.py",
+      "app/schemas/common.py",
+      "app/schemas/user.py",
+      "app/utils/logger.py"
+    ],
+    "app/config.py": [],
+    "app/core/__init__.py": [],
+    "app/core/deps.py": [
+      "app/core/security.py",
+      "app/database.py",
+      "app/models/user.py"
+    ],
+    "app/core/security.py": [
+      "app/config.py"
+    ],
+    "app/database.py": [
+      "app/config.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/__init__.py": [],
+    "app/lang/embeddings.py": [
+      "app/config.py"
+    ],
+    "app/lang/graph/__init__.py": [],
+    "app/lang/graph/agentic_pipeline_graph.py": [
+      "app/agents/agentic_runners.py",
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/config.py",
+      "app/services/audit_service.py",
+      "app/services/orchestration_persistence.py",
+      "app/services/orchestration_policy.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/graph/copy_pipeline_graph.py": [
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/graph/ingest_graph.py": [
+      "app/lang/graph/state.py",
+      "app/lang/rag/chunking.py",
+      "app/lang/rag/ingest.py"
+    ],
+    "app/lang/graph/lead_pipeline_graph.py": [
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/graph/query_graph.py": [
+      "app/config.py",
+      "app/lang/graph/state.py",
+      "app/lang/rag/retriever.py"
+    ],
+    "app/lang/graph/state.py": [],
+    "app/lang/rag/__init__.py": [],
+    "app/lang/rag/chunking.py": [
+      "app/config.py"
+    ],
+    "app/lang/rag/ingest.py": [
+      "app/lang/vectorstore.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/rag/retriever.py": [
+      "app/config.py",
+      "app/lang/vectorstore.py"
+    ],
+    "app/lang/toutiao_fetcher.py": [
+      "app/utils/logger.py"
+    ],
+    "app/lang/vectorstore.py": [
+      "app/config.py",
+      "app/lang/embeddings.py"
+    ],
+    "app/main.py": [
+      "app/api/v1/__init__.py",
+      "app/api/v1/auth.py",
+      "app/api/v1/content_assets.py",
+      "app/api/v1/hotlist.py",
+      "app/api/v1/logs.py",
+      "app/api/v1/tasks.py",
+      "app/api/v1/users.py",
+      "app/config.py",
+      "app/database.py",
+      "app/utils/logger.py"
+    ],
+    "app/models/__init__.py": [
+      "app/models/agent_log.py",
+      "app/models/copy.py",
+      "app/models/document.py",
+      "app/models/hotlist_sync.py",
+      "app/models/orchestration_audit_log.py",
+      "app/models/style_card.py",
+      "app/models/system_log.py",
+      "app/models/task.py",
+      "app/models/toutiao_reference.py",
+      "app/models/user.py"
+    ],
+    "app/models/agent_log.py": [
+      "app/database.py"
+    ],
+    "app/models/copy.py": [
+      "app/database.py"
+    ],
+    "app/models/document.py": [
+      "app/database.py"
+    ],
+    "app/models/hotlist_sync.py": [
+      "app/database.py"
+    ],
+    "app/models/orchestration_audit_log.py": [
+      "app/database.py"
+    ],
+    "app/models/style_card.py": [
+      "app/database.py"
+    ],
+    "app/models/system_log.py": [
+      "app/database.py"
+    ],
+    "app/models/task.py": [
+      "app/database.py"
+    ],
+    "app/models/toutiao_reference.py": [
+      "app/database.py"
+    ],
+    "app/models/user.py": [
+      "app/database.py"
+    ],
+    "app/orchestration/__init__.py": [
+      "app/orchestration/base.py",
+      "app/orchestration/factory.py",
+      "app/orchestration/langgraph_engine.py",
+      "app/orchestration/native_engine.py"
+    ],
+    "app/orchestration/base.py": [],
+    "app/orchestration/factory.py": [
+      "app/config.py",
+      "app/orchestration/base.py",
+      "app/orchestration/langgraph_engine.py",
+      "app/orchestration/native_engine.py",
+      "app/utils/logger.py"
+    ],
+    "app/orchestration/langgraph_engine.py": [
+      "app/config.py",
+      "app/models/task.py",
+      "app/orchestration/base.py",
+      "app/services/orchestration_policy.py"
+    ],
+    "app/orchestration/native_engine.py": [
+      "app/orchestration/base.py"
+    ],
+    "app/scheduler.py": [
+      "app/config.py",
+      "app/utils/logger.py"
+    ],
+    "app/schemas/__init__.py": [
+      "app/schemas/common.py",
+      "app/schemas/task.py",
+      "app/schemas/user.py"
+    ],
+    "app/schemas/common.py": [],
+    "app/schemas/content_asset.py": [],
+    "app/schemas/task.py": [
+      "app/models/task.py"
+    ],
+    "app/schemas/user.py": [],
+    "app/services/__init__.py": [],
+    "app/services/audit_service.py": [
+      "app/utils/logger.py"
+    ],
+    "app/services/content_asset_service.py": [
+      "app/lang/graph/ingest_graph.py",
+      "app/lang/rag/ingest.py",
+      "app/lang/toutiao_fetcher.py",
+      "app/models/style_card.py",
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py"
+    ],
+    "app/services/embedding_service.py": [
+      "app/config.py",
+      "app/utils/logger.py"
+    ],
+    "app/services/hotlist_service.py": [
+      "app/config.py",
+      "app/database.py",
+      "app/models/hotlist_sync.py",
+      "app/utils/logger.py"
+    ],
+    "app/services/judge_service.py": [
+      "app/config.py",
+      "app/utils/llm_client.py",
+      "app/utils/logger.py",
+      "app/utils/model_roles.py"
+    ],
+    "app/services/longform_mvp_service.py": [],
+    "app/services/orchestration_persistence.py": [
+      "app/agents/pipeline_state.py",
+      "app/models/task.py",
+      "app/utils/logger.py"
+    ],
+    "app/services/orchestration_policy.py": [],
+    "app/services/planner_service.py": [
+      "app/utils/llm_client.py",
+      "app/utils/logger.py",
+      "app/utils/model_roles.py"
+    ],
+    "app/services/reflect_service.py": [
+      "app/config.py",
+      "app/utils/llm_client.py",
+      "app/utils/logger.py",
+      "app/utils/model_roles.py"
+    ],
+    "app/services/task_classifier.py": [
+      "app/config.py"
+    ],
+    "app/services/verify_service.py": [
+      "app/config.py",
+      "app/services/audit_service.py",
+      "app/services/judge_service.py",
+      "app/utils/logger.py"
+    ],
+    "app/services/writing_pattern_service.py": [
+      "app/utils/llm_client.py",
+      "app/utils/logger.py",
+      "app/utils/model_roles.py"
+    ],
+    "app/skills/__init__.py": [
+      "app/skills/base.py",
+      "app/skills/compliance_skills.py",
+      "app/skills/copy_skills.py",
+      "app/skills/platform_skills.py",
+      "app/skills/rag_skills.py",
+      "app/skills/requirement_skills.py",
+      "app/skills/review_skills.py",
+      "app/skills/skill_response.py",
+      "app/skills/style_skills.py",
+      "app/skills/toutiao_rag_skills.py"
+    ],
+    "app/skills/base.py": [
+      "app/services/audit_service.py",
+      "app/skills/skill_response.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/compliance_skills.py": [
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py",
+      "app/skills/base.py",
+      "app/skills/skill_response.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/copy_skills.py": [
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/delegation_skills.py": [
+      "app/agents/pipeline_context.py",
+      "app/agents/pipeline_state.py",
+      "app/skills/base.py"
+    ],
+    "app/skills/platform_skills.py": [
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/rag_skills.py": [
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/requirement_skills.py": [
+      "app/models/hotlist_sync.py",
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/review_skills.py": [
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/skill_response.py": [],
+    "app/skills/style_skills.py": [
+      "app/models/style_card.py",
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py",
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/skills/toutiao_rag_skills.py": [
+      "app/lang/graph/query_graph.py",
+      "app/skills/base.py",
+      "app/utils/logger.py"
+    ],
+    "app/utils/__init__.py": [],
+    "app/utils/llm_client.py": [
+      "app/config.py",
+      "app/utils/logger.py"
+    ],
+    "app/utils/log_writer.py": [
+      "app/utils/logger.py"
+    ],
+    "app/utils/logger.py": [
+      "app/config.py"
+    ],
+    "app/utils/model_roles.py": [
+      "app/config.py"
+    ],
+    "deploy.sh": [],
+    "docker-compose.yml": [],
+    "Dockerfile": [],
+    "docs/resume_agent_fullstack.docx": [],
+    "docs/resume_agent_fullstack.md": [],
+    "docs/template_doc.xml": [],
+    "docs/template_lines.txt": [],
+    "docs/template_structure.txt": [],
+    "docs/TOUTIAO_RAG_GUIDE.md": [],
+    "frontend/.env.example": [],
+    "frontend/index.html": [],
+    "frontend/package.json": [],
+    "frontend/README.md": [],
+    "frontend/src/api/auth.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/client.ts": [
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/contentAssets.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/hotlist.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/logs.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/tasks.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/api/users.ts": [
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/App.tsx": [
+      "frontend/src/components/AdminRoute.tsx",
+      "frontend/src/components/Layout.tsx",
+      "frontend/src/components/ProtectedRoute.tsx",
+      "frontend/src/contexts/AuthContext.tsx",
+      "frontend/src/contexts/ToastContext.tsx",
+      "frontend/src/pages/AdminUsers.tsx",
+      "frontend/src/pages/ContentAssets.tsx",
+      "frontend/src/pages/CreateTask.tsx",
+      "frontend/src/pages/Dashboard.tsx",
+      "frontend/src/pages/Hotlist.tsx",
+      "frontend/src/pages/Login.tsx",
+      "frontend/src/pages/Profile.tsx",
+      "frontend/src/pages/Register.tsx",
+      "frontend/src/pages/TaskDetail.tsx"
+    ],
+    "frontend/src/components/AdminRoute.tsx": [
+      "frontend/src/contexts/AuthContext.tsx"
+    ],
+    "frontend/src/components/AgentPipeline.tsx": [
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/components/AuditTimeline.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/logs.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/components/Layout.tsx": [
+      "frontend/src/contexts/AuthContext.tsx"
+    ],
+    "frontend/src/components/ProtectedRoute.tsx": [
+      "frontend/src/contexts/AuthContext.tsx"
+    ],
+    "frontend/src/contexts/AuthContext.tsx": [
+      "frontend/src/api/auth.ts",
+      "frontend/src/api/client.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/contexts/ToastContext.tsx": [],
+    "frontend/src/main.tsx": [
+      "frontend/src/App.tsx",
+      "frontend/src/styles/index.css"
+    ],
+    "frontend/src/pages/AdminUsers.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/users.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/pages/ContentAssets.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/contentAssets.ts",
+      "frontend/src/contexts/ToastContext.tsx",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/pages/CreateTask.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/contentAssets.ts",
+      "frontend/src/api/hotlist.ts",
+      "frontend/src/api/tasks.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/pages/Dashboard.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/tasks.ts",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/pages/Hotlist.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/hotlist.ts",
+      "frontend/src/contexts/AuthContext.tsx",
+      "frontend/src/contexts/ToastContext.tsx",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/pages/Login.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/contexts/AuthContext.tsx"
+    ],
+    "frontend/src/pages/Profile.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/users.ts",
+      "frontend/src/contexts/AuthContext.tsx",
+      "frontend/src/contexts/ToastContext.tsx"
+    ],
+    "frontend/src/pages/Register.tsx": [
+      "frontend/src/api/auth.ts",
+      "frontend/src/api/client.ts",
+      "frontend/src/contexts/AuthContext.tsx"
+    ],
+    "frontend/src/pages/TaskDetail.tsx": [
+      "frontend/src/api/client.ts",
+      "frontend/src/api/tasks.ts",
+      "frontend/src/components/AgentPipeline.tsx",
+      "frontend/src/components/AuditTimeline.tsx",
+      "frontend/src/contexts/ToastContext.tsx",
+      "frontend/src/types/api.ts"
+    ],
+    "frontend/src/styles/index.css": [],
+    "frontend/src/types/api.ts": [],
+    "frontend/src/vite-env.d.ts": [],
+    "frontend/tsconfig.json": [],
+    "frontend/tsconfig.tsbuildinfo": [],
+    "frontend/vite.config.ts": [],
+    "gunicorn.conf.py": [],
+    "nginx.conf": [],
+    "package.json": [],
+    "quick_view.py": [
+      "app/config.py"
+    ],
+    "README.md": [],
+    "requirements.txt": [],
+    "run.py": [
+      "app/config.py"
+    ],
+    "scripts/build_style_cards.py": [
+      "app/database.py",
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py",
+      "app/skills/style_skills.py"
+    ],
+    "scripts/fill_user_resume_docx.py": [],
+    "scripts/import_toutiao_article.py": [
+      "app/database.py",
+      "app/lang/graph/ingest_graph.py",
+      "app/lang/toutiao_fetcher.py",
+      "app/models/toutiao_reference.py"
+    ],
+    "scripts/init_mysql.sql": [],
+    "scripts/md_resume_to_docx.py": [],
+    "scripts/migrate_add_toutiao_platform.sql": [],
+    "scripts/migrate_agentic_phase2.sql": [],
+    "scripts/migrate_audit_logs.sql": [],
+    "scripts/migrate_style_pattern.sql": [],
+    "scripts/query_toutiao_rag.py": [
+      "app/lang/graph/query_graph.py"
+    ],
+    "scripts/seed_users.py": [
+      "app/core/security.py",
+      "app/database.py",
+      "app/models/user.py"
+    ],
+    "scripts/setup_mysql.py": [
+      "app/config.py",
+      "app/database.py"
+    ],
+    "scripts/study.py": [],
+    "scripts/test_deepseek.py": [
+      "app/config.py",
+      "app/utils/llm_client.py"
+    ],
+    "tests/__init__.py": [],
+    "tests/conftest.py": [],
+    "tests/test_agentic_phase2.py": [
+      "app/agents/agentic_runners.py",
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/database.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/services/judge_service.py",
+      "app/services/orchestration_persistence.py",
+      "app/services/verify_service.py"
+    ],
+    "tests/test_agentic_pipeline.py": [
+      "app/agents/agentic_runners.py",
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/config.py",
+      "app/database.py",
+      "app/lang/graph/agentic_pipeline_graph.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/services/planner_service.py",
+      "app/services/task_classifier.py",
+      "app/services/verify_service.py",
+      "app/utils/model_roles.py"
+    ],
+    "tests/test_audit_trail.py": [
+      "app/database.py",
+      "app/models/orchestration_audit_log.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/services/audit_service.py",
+      "app/skills/base.py",
+      "app/skills/compliance_skills.py"
+    ],
+    "tests/test_auth.py": [
+      "app/database.py",
+      "app/main.py"
+    ],
+    "tests/test_compliance_skills.py": [
+      "app/database.py",
+      "app/models/toutiao_reference.py",
+      "app/skills/base.py",
+      "app/skills/compliance_skills.py",
+      "app/skills/skill_response.py"
+    ],
+    "tests/test_content_assets_api.py": [
+      "app/api/v1/tasks.py",
+      "app/core/deps.py",
+      "app/database.py",
+      "app/main.py",
+      "app/models/style_card.py",
+      "app/models/task.py",
+      "app/models/toutiao_reference.py",
+      "app/models/user.py",
+      "app/schemas/task.py"
+    ],
+    "tests/test_lead_agent.py": [
+      "app/agents/lead_agent.py",
+      "app/agents/pipeline_context.py",
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/config.py",
+      "app/database.py",
+      "app/lang/graph/lead_pipeline_graph.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/skills/delegation_skills.py"
+    ],
+    "tests/test_longform_mvp.py": [
+      "app/services/longform_mvp_service.py"
+    ],
+    "tests/test_orchestration_policy.py": [
+      "app/services/orchestration_policy.py"
+    ],
+    "tests/test_orchestration.py": [
+      "app/agents/pipeline_runners.py",
+      "app/agents/pipeline_state.py",
+      "app/database.py",
+      "app/lang/graph/copy_pipeline_graph.py",
+      "app/models/task.py",
+      "app/models/user.py",
+      "app/orchestration/__init__.py",
+      "app/orchestration/langgraph_engine.py",
+      "app/orchestration/native_engine.py"
+    ],
+    "tests/test_reflect_service.py": [
+      "app/services/reflect_service.py"
+    ],
+    "tests/test_writing_pattern.py": [
+      "app/database.py",
+      "app/models/style_card.py",
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py",
+      "app/skills/copy_skills.py",
+      "app/skills/style_skills.py"
+    ]
+  }
+}

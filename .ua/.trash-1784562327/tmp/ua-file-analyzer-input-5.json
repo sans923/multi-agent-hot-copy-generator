@@ -1,0 +1,128 @@
+{
+  "projectRoot": "D:/workspace/demo_project/multi-agent-hot-copy-generator",
+  "batchFiles": [
+    {
+      "path": "app/lang/embeddings.py",
+      "language": "python",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/graph/ingest_graph.py",
+      "language": "python",
+      "sizeLines": 159,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/graph/query_graph.py",
+      "language": "python",
+      "sizeLines": 140,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/graph/state.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/rag/chunking.py",
+      "language": "python",
+      "sizeLines": 94,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/rag/ingest.py",
+      "language": "python",
+      "sizeLines": 70,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/rag/retriever.py",
+      "language": "python",
+      "sizeLines": 78,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/toutiao_fetcher.py",
+      "language": "python",
+      "sizeLines": 159,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/vectorstore.py",
+      "language": "python",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/content_asset_service.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/import_toutiao_article.py",
+      "language": "python",
+      "sizeLines": 107,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/query_toutiao_rag.py",
+      "language": "python",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/lang/embeddings.py": [
+      "app/config.py"
+    ],
+    "app/lang/graph/ingest_graph.py": [
+      "app/lang/graph/state.py",
+      "app/lang/rag/chunking.py",
+      "app/lang/rag/ingest.py"
+    ],
+    "app/lang/graph/query_graph.py": [
+      "app/config.py",
+      "app/lang/graph/state.py",
+      "app/lang/rag/retriever.py"
+    ],
+    "app/lang/graph/state.py": [],
+    "app/lang/rag/chunking.py": [
+      "app/config.py"
+    ],
+    "app/lang/rag/ingest.py": [
+      "app/lang/vectorstore.py",
+      "app/utils/logger.py"
+    ],
+    "app/lang/rag/retriever.py": [
+      "app/config.py",
+      "app/lang/vectorstore.py"
+    ],
+    "app/lang/toutiao_fetcher.py": [
+      "app/utils/logger.py"
+    ],
+    "app/lang/vectorstore.py": [
+      "app/config.py",
+      "app/lang/embeddings.py"
+    ],
+    "app/services/content_asset_service.py": [
+      "app/lang/graph/ingest_graph.py",
+      "app/lang/rag/ingest.py",
+      "app/lang/toutiao_fetcher.py",
+      "app/models/style_card.py",
+      "app/models/toutiao_reference.py",
+      "app/services/writing_pattern_service.py"
+    ],
+    "scripts/import_toutiao_article.py": [
+      "app/database.py",
+      "app/lang/graph/ingest_graph.py",
+      "app/lang/toutiao_fetcher.py",
+      "app/models/toutiao_reference.py"
+    ],
+    "scripts/query_toutiao_rag.py": [
+      "app/lang/graph/query_graph.py"
+    ]
+  }
+}

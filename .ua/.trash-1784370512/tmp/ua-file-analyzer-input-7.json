@@ -1,0 +1,25 @@
+{
+    "projectRoot":  "D:\\workspace\\demo_project\\multi-agent-hot-copy-generator",
+    "batchFiles":  [
+                       {
+                           "path":  "docker-compose.yml",
+                           "language":  "yaml",
+                           "sizeLines":  83,
+                           "fileCategory":  "infra"
+                       },
+                       {
+                           "path":  "Dockerfile",
+                           "language":  "dockerfile",
+                           "sizeLines":  74,
+                           "fileCategory":  "infra"
+                       }
+                   ],
+    "batchImportData":  {
+                            "docker-compose.yml":  [
+
+                                                   ],
+                            "Dockerfile":  [
+
+                                           ]
+                        }
+}

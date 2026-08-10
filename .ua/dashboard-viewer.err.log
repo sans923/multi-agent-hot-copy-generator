@@ -1,0 +1,9 @@
+npm notice 
+npm notice New major version of npm available! 10.2.4 -> 12.0.1
+npm notice Changelog: <https://github.com/npm/cli/releases/tag/v12.0.1>
+npm notice Run `npm install -g npm@12.0.1` to update!
+npm notice 
+npm ERR! code E400
+npm ERR! 400 Bad Request - GET https://github.com/Egonex-AI/Understand-Anything/releases/download/v2.9.4/understand-anything-viewer.tgz
+
+npm ERR! A complete log of this run can be found in: C:\Users\Lenovo\AppData\Local\npm-cache\_logs\2026-07-18T10_29_33_201Z-debug-0.log

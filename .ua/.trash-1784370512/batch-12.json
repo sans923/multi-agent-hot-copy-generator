@@ -1,0 +1,951 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/__init__.py",
+      "summary": "应用顶层 Python 包标记文件，用于将 app 目录作为可导入包。",
+      "tags": [
+        "package",
+        "python",
+        "namespace"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/agents/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/agents/__init__.py",
+      "summary": "Agents 包公共入口，通过模块级 __getattr__ 惰性暴露编排器和三个 Agent，避免与 skills 包形成循环依赖。",
+      "tags": [
+        "entry-point",
+        "agents",
+        "lazy-import",
+        "orchestration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/api/__init__.py",
+      "summary": "API 子包标记文件，为路由和接口模块提供 Python 包命名空间。",
+      "tags": [
+        "package",
+        "api",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/core/__init__.py",
+      "summary": "核心基础设施子包的空入口文件，用于组织配置、鉴权等共享能力。",
+      "tags": [
+        "package",
+        "core",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/lang/__init__.py",
+      "summary": "说明头条长文 RAG 的 LangChain 与 LangGraph 分层、目录职责以及推荐阅读顺序的包文档入口。",
+      "tags": [
+        "package",
+        "rag",
+        "langchain",
+        "documentation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/graph/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/lang/graph/__init__.py",
+      "summary": "LangGraph 流程编排包说明，列出入库、检索、固定编排、Agentic 和 Lead 等状态图及其调用方。",
+      "tags": [
+        "package",
+        "langgraph",
+        "orchestration",
+        "documentation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/rag/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/lang/rag/__init__.py",
+      "summary": "LangChain RAG 工具包说明，映射图节点到切块、入库、检索和提示词格式化函数。",
+      "tags": [
+        "package",
+        "rag",
+        "langchain",
+        "documentation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/services/__init__.py",
+      "summary": "服务层子包标记文件，为业务服务实现提供统一命名空间。",
+      "tags": [
+        "package",
+        "service-layer",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/utils/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/utils/__init__.py",
+      "summary": "通用工具子包标记文件，用于组织跨模块复用的辅助函数。",
+      "tags": [
+        "package",
+        "utility",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/resume_agent_fullstack.docx",
+      "type": "file",
+      "name": "resume_agent_fullstack.docx",
+      "filePath": "docs/resume_agent_fullstack.docx",
+      "summary": "由 Markdown 简历源稿生成的 Word 投递文档，包含 AI 全栈技能、项目经历和教育背景等排版内容。",
+      "tags": [
+        "document-artifact",
+        "resume",
+        "docx",
+        "generated"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/styles/index.css",
+      "type": "file",
+      "name": "index.css",
+      "filePath": "frontend/src/styles/index.css",
+      "summary": "前端全局样式表，集中定义应用布局、鉴权表单、任务卡片、热榜、Agent Pipeline、审计时间线及响应式交互视觉。",
+      "tags": [
+        "stylesheet",
+        "frontend",
+        "design-system",
+        "responsive"
+      ],
+      "complexity": "complex",
+      "languageNotes": "单文件覆盖整套界面组件状态，包括 pending、processing、awaiting_human、completed 和 failed。"
+    },
+    {
+      "id": "file:frontend/src/vite-env.d.ts",
+      "type": "file",
+      "name": "vite-env.d.ts",
+      "filePath": "frontend/src/vite-env.d.ts",
+      "summary": "Vite 客户端类型声明，补充 ImportMetaEnv 中 VITE_API_BASE 的只读字符串类型。",
+      "tags": [
+        "type-definition",
+        "vite",
+        "environment",
+        "typescript"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/tsconfig.tsbuildinfo",
+      "type": "file",
+      "name": "tsconfig.tsbuildinfo",
+      "filePath": "frontend/tsconfig.tsbuildinfo",
+      "summary": "TypeScript 增量构建缓存元数据，由编译器生成以加速后续类型检查和构建。",
+      "tags": [
+        "build-cache",
+        "typescript",
+        "generated"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/vite.config.ts",
+      "type": "file",
+      "name": "vite.config.ts",
+      "filePath": "frontend/vite.config.ts",
+      "summary": "Vite 开发服务器配置，启用 React 插件、固定 5173 端口并将 /api 请求代理到本地 8000 后端。",
+      "tags": [
+        "configuration",
+        "vite",
+        "react",
+        "development-server"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:gunicorn.conf.py",
+      "type": "file",
+      "name": "gunicorn.conf.py",
+      "filePath": "gunicorn.conf.py",
+      "summary": "FastAPI 生产 Gunicorn 配置，使用 Uvicorn worker 并设置进程数、超时、日志、请求回收与生命周期钩子。",
+      "tags": [
+        "configuration",
+        "gunicorn",
+        "deployment",
+        "asgi"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:nginx.conf",
+      "type": "file",
+      "name": "nginx.conf",
+      "filePath": "nginx.conf",
+      "summary": "生产 Nginx 反向代理配置，提供 HTTP 到 HTTPS 跳转、TLS、限流、压缩、健康检查和 FastAPI 路由转发。",
+      "tags": [
+        "configuration",
+        "nginx",
+        "reverse-proxy",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/fill_user_resume_docx.py",
+      "type": "file",
+      "name": "fill_user_resume_docx.py",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "基于固定段落索引填充用户 Word 简历模板的脚本，自底向上修改内容、插入项目亮点并在写入前创建备份。",
+      "tags": [
+        "script",
+        "docx",
+        "resume",
+        "automation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/md_resume_to_docx.py",
+      "type": "file",
+      "name": "md_resume_to_docx.py",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "将 Markdown 简历转换为格式化 Word 文档，支持标题、富文本粗体、列表、引用和表格，并统一设置中文字体。",
+      "tags": [
+        "script",
+        "markdown",
+        "docx",
+        "converter"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/study.py",
+      "type": "file",
+      "name": "study.py",
+      "filePath": "scripts/study.py",
+      "summary": "LangGraph 最小学习示例，以 TypedDict 状态执行求和或乘积节点并编译为可调用状态图。",
+      "tags": [
+        "example",
+        "langgraph",
+        "state-machine",
+        "learning"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "tests/__init__.py",
+      "summary": "测试包标记文件，使测试模块可以使用包级导入。",
+      "tags": [
+        "test",
+        "package",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "tests/conftest.py",
+      "summary": "Pytest 公共配置，在测试收集和每个测试执行前导入全部 ORM 模型，确保 create_all 能创建新增表。",
+      "tags": [
+        "test",
+        "pytest",
+        "fixture",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/__init__.py:__getattr__",
+      "type": "function",
+      "name": "__getattr__",
+      "filePath": "app/agents/__init__.py",
+      "summary": "按请求名称惰性导入并返回编排器或具体 Agent 类，未知名称抛出 AttributeError。",
+      "tags": [
+        "lazy-import",
+        "factory",
+        "agents"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        15,
+        28
+      ]
+    },
+    {
+      "id": "function:gunicorn.conf.py:on_starting",
+      "type": "function",
+      "name": "on_starting",
+      "filePath": "gunicorn.conf.py",
+      "summary": "Gunicorn 主服务启动钩子，向服务器日志写入启动状态。",
+      "tags": [
+        "lifecycle-hook",
+        "logging",
+        "gunicorn"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        67,
+        68
+      ]
+    },
+    {
+      "id": "function:gunicorn.conf.py:on_exit",
+      "type": "function",
+      "name": "on_exit",
+      "filePath": "gunicorn.conf.py",
+      "summary": "Gunicorn 主服务退出钩子，记录服务器关闭状态。",
+      "tags": [
+        "lifecycle-hook",
+        "logging",
+        "gunicorn"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        70,
+        71
+      ]
+    },
+    {
+      "id": "function:gunicorn.conf.py:worker_init",
+      "type": "function",
+      "name": "worker_init",
+      "filePath": "gunicorn.conf.py",
+      "summary": "Gunicorn worker 初始化钩子，记录新 worker 的进程号。",
+      "tags": [
+        "lifecycle-hook",
+        "logging",
+        "worker"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        74
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:insert_paragraph_after",
+      "type": "function",
+      "name": "insert_paragraph_after",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "在指定 Word 段落后插入新段落，并按需设置样式和初始文本。",
+      "tags": [
+        "utility",
+        "docx",
+        "paragraph"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        17,
+        25
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:set_para_text",
+      "type": "function",
+      "name": "set_para_text",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "清空段落后写入新文本，并可显式设置粗体属性。",
+      "tags": [
+        "utility",
+        "docx",
+        "formatting"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        32
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:set_title_line",
+      "type": "function",
+      "name": "set_title_line",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "重建带制表符分隔的标题与日期行，并控制标题粗体。",
+      "tags": [
+        "utility",
+        "docx",
+        "formatting"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        35,
+        40
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:add_bullets",
+      "type": "function",
+      "name": "add_bullets",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "在给定段落后依次插入项目符号列表并返回最后一个段落。",
+      "tags": [
+        "utility",
+        "docx",
+        "list"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        43,
+        47
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:add_numbered_items",
+      "type": "function",
+      "name": "add_numbered_items",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "在给定段落后插入带序号的列表项并返回尾段落。",
+      "tags": [
+        "utility",
+        "docx",
+        "list"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        54
+      ]
+    },
+    {
+      "id": "function:scripts/fill_user_resume_docx.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/fill_user_resume_docx.py",
+      "summary": "备份并加载简历模板，自底向上替换教育、经历、项目和技能内容，最后覆盖或另存 Word 文件。",
+      "tags": [
+        "entry-point",
+        "resume",
+        "automation",
+        "file-io"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        57,
+        135
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:set_cn_font",
+      "type": "function",
+      "name": "set_cn_font",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "同时设置 Word run 的西文字体与东亚字体，并按需应用字号和粗体。",
+      "tags": [
+        "utility",
+        "docx",
+        "font"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        18,
+        24
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:add_rich_paragraph",
+      "type": "function",
+      "name": "add_rich_paragraph",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "解析 Markdown 粗体片段并创建统一中文字体的 Word 段落。",
+      "tags": [
+        "parser",
+        "docx",
+        "markdown"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        27,
+        39
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:parse_table",
+      "type": "function",
+      "name": "parse_table",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "从 Markdown 表格行解析表头和二维数据行。",
+      "tags": [
+        "parser",
+        "markdown",
+        "table"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        50
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:add_table",
+      "type": "function",
+      "name": "add_table",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "向 Word 文档写入网格表格，并分别格式化表头与数据单元格字体。",
+      "tags": [
+        "renderer",
+        "docx",
+        "table"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        53,
+        68
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:convert",
+      "type": "function",
+      "name": "convert",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "逐行解析 Markdown 标题、分隔线、表格、引用和列表，构建带页面边距与中文排版的 Word 文档。",
+      "tags": [
+        "converter",
+        "markdown",
+        "docx",
+        "parser"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        71,
+        173
+      ]
+    },
+    {
+      "id": "function:scripts/md_resume_to_docx.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/md_resume_to_docx.py",
+      "summary": "读取简历 Markdown 源文件，执行转换并将结果保存为 DOCX。",
+      "tags": [
+        "entry-point",
+        "converter",
+        "file-io"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        176,
+        180
+      ]
+    },
+    {
+      "id": "class:scripts/study.py:State",
+      "type": "class",
+      "name": "State",
+      "filePath": "scripts/study.py",
+      "summary": "定义 LangGraph 示例状态的名称、数值列表、运算类型与结果字段。",
+      "tags": [
+        "state-model",
+        "typeddict",
+        "langgraph"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        4,
+        8
+      ]
+    },
+    {
+      "id": "function:scripts/study.py:calculate_and_format",
+      "type": "function",
+      "name": "calculate_and_format",
+      "filePath": "scripts/study.py",
+      "summary": "根据状态选择求和或乘积运算，将字符串结果写回状态；不支持的运算会抛错。",
+      "tags": [
+        "graph-node",
+        "calculation",
+        "state-transition"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        10,
+        21
+      ]
+    },
+    {
+      "id": "function:tests/conftest.py:pytest_configure",
+      "type": "function",
+      "name": "pytest_configure",
+      "filePath": "tests/conftest.py",
+      "summary": "在 Pytest 配置阶段导入 app.models，确保 ORM 模型在建表前注册。",
+      "tags": [
+        "pytest-hook",
+        "database",
+        "model-registration"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        10,
+        12
+      ]
+    },
+    {
+      "id": "function:tests/conftest.py:_register_all_orm_models",
+      "type": "function",
+      "name": "_register_all_orm_models",
+      "filePath": "tests/conftest.py",
+      "summary": "自动使用的测试夹具，在每个测试上下文再次确保 ORM 模型已注册。",
+      "tags": [
+        "fixture",
+        "database",
+        "model-registration"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        16,
+        17
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/agents/__init__.py",
+      "target": "function:app/agents/__init__.py:__getattr__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/__init__.py",
+      "target": "function:app/agents/__init__.py:__getattr__",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:on_starting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:on_starting",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:on_exit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:on_exit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:worker_init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:gunicorn.conf.py",
+      "target": "function:gunicorn.conf.py:worker_init",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:insert_paragraph_after",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:insert_paragraph_after",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:set_para_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:set_para_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:set_title_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:set_title_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:add_bullets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:add_bullets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:add_numbered_items",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:add_numbered_items",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "function:scripts/fill_user_resume_docx.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:set_cn_font",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:set_cn_font",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:add_rich_paragraph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:add_rich_paragraph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:parse_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:parse_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:add_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:add_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:convert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:convert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "function:scripts/md_resume_to_docx.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/study.py",
+      "target": "function:scripts/study.py:calculate_and_format",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/study.py",
+      "target": "function:scripts/study.py:calculate_and_format",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:pytest_configure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:pytest_configure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:_register_all_orm_models",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:_register_all_orm_models",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/study.py",
+      "target": "class:scripts/study.py:State",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/study.py",
+      "target": "class:scripts/study.py:State",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/fill_user_resume_docx.py",
+      "target": "file:docs/resume_agent_fullstack.docx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/md_resume_to_docx.py",
+      "target": "file:docs/resume_agent_fullstack.docx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:frontend/vite.config.ts",
+      "target": "file:frontend/src/vite-env.d.ts",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:nginx.conf",
+      "target": "file:gunicorn.conf.py",
+      "type": "routes",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "file:tests/__init__.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

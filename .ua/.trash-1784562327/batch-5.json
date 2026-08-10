@@ -1,0 +1,1305 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/lang/embeddings.py",
+      "type": "file",
+      "name": "embeddings.py",
+      "filePath": "app/lang/embeddings.py",
+      "summary": "按配置懒加载并缓存多语言文本嵌入模型，为头条 RAG 提供统一向量化能力。",
+      "tags": [
+        "rag",
+        "向量检索",
+        "内容资产"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/embeddings.py:get_embeddings",
+      "type": "function",
+      "name": "get_embeddings",
+      "filePath": "app/lang/embeddings.py",
+      "lineRange": [
+        25,
+        39
+      ],
+      "summary": "查询并整理 get embeddings 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/graph/ingest_graph.py",
+      "type": "file",
+      "name": "ingest_graph.py",
+      "filePath": "app/lang/graph/ingest_graph.py",
+      "summary": "构建头条文章切块与向量入库的 LangGraph 工作流，并提供同步执行入口。",
+      "tags": [
+        "langgraph",
+        "工作流",
+        "rag"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/graph/ingest_graph.py:_chunk_node",
+      "type": "function",
+      "name": "_chunk_node",
+      "filePath": "app/lang/graph/ingest_graph.py",
+      "lineRange": [
+        34,
+        62
+      ],
+      "summary": "实现 chunk node 对应的核心处理逻辑，是 ingest_graph.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/ingest_graph.py:_index_node",
+      "type": "function",
+      "name": "_index_node",
+      "filePath": "app/lang/graph/ingest_graph.py",
+      "lineRange": [
+        65,
+        86
+      ],
+      "summary": "实现 index node 对应的核心处理逻辑，是 ingest_graph.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/ingest_graph.py:build_ingest_graph",
+      "type": "function",
+      "name": "build_ingest_graph",
+      "filePath": "app/lang/graph/ingest_graph.py",
+      "lineRange": [
+        89,
+        112
+      ],
+      "summary": "构建 build ingest graph 对应对象或流程，并返回可供后续使用的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/ingest_graph.py:run_ingest",
+      "type": "function",
+      "name": "run_ingest",
+      "filePath": "app/lang/graph/ingest_graph.py",
+      "lineRange": [
+        119,
+        159
+      ],
+      "summary": "运行文章切块和向量入库图，返回入库数量或错误状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/graph/query_graph.py",
+      "type": "file",
+      "name": "query_graph.py",
+      "filePath": "app/lang/graph/query_graph.py",
+      "summary": "构建头条参考资料检索与提示词格式化的 LangGraph 查询工作流。",
+      "tags": [
+        "langgraph",
+        "工作流",
+        "rag"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/graph/query_graph.py:_retrieve_node",
+      "type": "function",
+      "name": "_retrieve_node",
+      "filePath": "app/lang/graph/query_graph.py",
+      "lineRange": [
+        35,
+        59
+      ],
+      "summary": "实现 retrieve node 对应的核心处理逻辑，是 query_graph.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/query_graph.py:_format_node",
+      "type": "function",
+      "name": "_format_node",
+      "filePath": "app/lang/graph/query_graph.py",
+      "lineRange": [
+        62,
+        84
+      ],
+      "summary": "实现 format node 对应的核心处理逻辑，是 query_graph.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/query_graph.py:build_query_graph",
+      "type": "function",
+      "name": "build_query_graph",
+      "filePath": "app/lang/graph/query_graph.py",
+      "lineRange": [
+        87,
+        103
+      ],
+      "summary": "构建 build query graph 对应对象或流程，并返回可供后续使用的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/query_graph.py:run_rag_query",
+      "type": "function",
+      "name": "run_rag_query",
+      "filePath": "app/lang/graph/query_graph.py",
+      "lineRange": [
+        110,
+        140
+      ],
+      "summary": "运行语义检索图，将相关文档与格式化引用汇总返回。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/graph/state.py",
+      "type": "file",
+      "name": "state.py",
+      "filePath": "app/lang/graph/state.py",
+      "summary": "定义文章入库和 RAG 查询图共享的 TypedDict 状态结构。",
+      "tags": [
+        "langgraph",
+        "工作流",
+        "rag"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/lang/graph/state.py:IngestState",
+      "type": "class",
+      "name": "IngestState",
+      "filePath": "app/lang/graph/state.py",
+      "lineRange": [
+        24,
+        47
+      ],
+      "summary": "定义 IngestState 的结构、字段与行为，作为 state.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/lang/graph/state.py:QueryState",
+      "type": "class",
+      "name": "QueryState",
+      "filePath": "app/lang/graph/state.py",
+      "lineRange": [
+        50,
+        68
+      ],
+      "summary": "定义 QueryState 的结构、字段与行为，作为 state.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/rag/chunking.py",
+      "type": "file",
+      "name": "chunking.py",
+      "filePath": "app/lang/rag/chunking.py",
+      "summary": "把头条长文按配置切分为带来源元数据的 LangChain 文档块。",
+      "tags": [
+        "rag",
+        "向量检索",
+        "内容资产"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/rag/chunking.py:build_text_splitter",
+      "type": "function",
+      "name": "build_text_splitter",
+      "filePath": "app/lang/rag/chunking.py",
+      "lineRange": [
+        22,
+        38
+      ],
+      "summary": "构建 build text splitter 对应对象或流程，并返回可供后续使用的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/rag/chunking.py:article_to_documents",
+      "type": "function",
+      "name": "article_to_documents",
+      "filePath": "app/lang/rag/chunking.py",
+      "lineRange": [
+        41,
+        94
+      ],
+      "summary": "实现 article to documents 对应的核心处理逻辑，是 chunking.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/lang/rag/ingest.py",
+      "type": "file",
+      "name": "ingest.py",
+      "filePath": "app/lang/rag/ingest.py",
+      "summary": "封装头条文档块的向量入库和按文章删除操作，并记录处理结果。",
+      "tags": [
+        "rag",
+        "向量检索",
+        "内容资产"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/rag/ingest.py:delete_article_chunks",
+      "type": "function",
+      "name": "delete_article_chunks",
+      "filePath": "app/lang/rag/ingest.py",
+      "lineRange": [
+        18,
+        37
+      ],
+      "summary": "删除 delete article chunks 对应资源，并维护相关持久化状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/rag/ingest.py:ingest_documents",
+      "type": "function",
+      "name": "ingest_documents",
+      "filePath": "app/lang/rag/ingest.py",
+      "lineRange": [
+        40,
+        70
+      ],
+      "summary": "实现 ingest documents 对应的核心处理逻辑，是 ingest.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/rag/retriever.py",
+      "type": "file",
+      "name": "retriever.py",
+      "filePath": "app/lang/rag/retriever.py",
+      "summary": "执行头条参考资料的语义检索，并将命中文档整理成可供文案提示词使用的引用文本。",
+      "tags": [
+        "rag",
+        "向量检索",
+        "内容资产"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/rag/retriever.py:retrieve_toutiao_references",
+      "type": "function",
+      "name": "retrieve_toutiao_references",
+      "filePath": "app/lang/rag/retriever.py",
+      "lineRange": [
+        19,
+        48
+      ],
+      "summary": "实现 retrieve toutiao references 对应的核心处理逻辑，是 retriever.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/rag/retriever.py:format_references_for_prompt",
+      "type": "function",
+      "name": "format_references_for_prompt",
+      "filePath": "app/lang/rag/retriever.py",
+      "lineRange": [
+        51,
+        78
+      ],
+      "summary": "实现 format references for prompt 对应的核心处理逻辑，是 retriever.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/lang/toutiao_fetcher.py",
+      "type": "file",
+      "name": "toutiao_fetcher.py",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "summary": "抓取头条文章页面，解析渲染数据并递归提取标题、正文和文章标识。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/toutiao_fetcher.py:extract_article_id",
+      "type": "function",
+      "name": "extract_article_id",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "lineRange": [
+        36,
+        46
+      ],
+      "summary": "实现 extract article id 对应的核心处理逻辑，是 toutiao_fetcher.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/toutiao_fetcher.py:_strip_html",
+      "type": "function",
+      "name": "_strip_html",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "lineRange": [
+        49,
+        54
+      ],
+      "summary": "实现 strip html 对应的核心处理逻辑，是 toutiao_fetcher.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/toutiao_fetcher.py:_find_title_content",
+      "type": "function",
+      "name": "_find_title_content",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "lineRange": [
+        57,
+        80
+      ],
+      "summary": "实现 find title content 对应的核心处理逻辑，是 toutiao_fetcher.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/toutiao_fetcher.py:_parse_render_data",
+      "type": "function",
+      "name": "_parse_render_data",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "lineRange": [
+        83,
+        95
+      ],
+      "summary": "实现 parse render data 对应的核心处理逻辑，是 toutiao_fetcher.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/toutiao_fetcher.py:fetch_toutiao_article",
+      "type": "function",
+      "name": "fetch_toutiao_article",
+      "filePath": "app/lang/toutiao_fetcher.py",
+      "lineRange": [
+        98,
+        159
+      ],
+      "summary": "请求头条页面并从渲染数据中提取文章标题、正文与元信息。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/lang/vectorstore.py",
+      "type": "file",
+      "name": "vectorstore.py",
+      "filePath": "app/lang/vectorstore.py",
+      "summary": "按配置创建并缓存持久化 Chroma 向量库，绑定项目统一嵌入模型。",
+      "tags": [
+        "rag",
+        "向量检索",
+        "内容资产"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/vectorstore.py:get_toutiao_vectorstore",
+      "type": "function",
+      "name": "get_toutiao_vectorstore",
+      "filePath": "app/lang/vectorstore.py",
+      "lineRange": [
+        25,
+        40
+      ],
+      "summary": "查询并整理 get toutiao vectorstore 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/content_asset_service.py",
+      "type": "file",
+      "name": "content_asset_service.py",
+      "filePath": "app/services/content_asset_service.py",
+      "summary": "编排参考文章抓取、入库、重建索引、删除与风格卡提炼，形成可复用内容资产。",
+      "tags": [
+        "service",
+        "业务逻辑",
+        "编排"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "function",
+      "name": "reference_to_dict",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        17,
+        33
+      ],
+      "summary": "实现 reference to dict 对应的核心处理逻辑，是 content_asset_service.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "function",
+      "name": "style_card_to_dict",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        36,
+        47
+      ],
+      "summary": "实现 style card to dict 对应的核心处理逻辑，是 content_asset_service.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:import_reference",
+      "type": "function",
+      "name": "import_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        50,
+        93
+      ],
+      "summary": "抓取并保存参考文章，随后建立向量索引并更新处理状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "function",
+      "name": "reindex_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        96,
+        116
+      ],
+      "summary": "执行 reindex reference 流程并同步更新处理状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "function",
+      "name": "delete_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        119,
+        122
+      ],
+      "summary": "删除 delete reference 对应资源，并维护相关持久化状态。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "function",
+      "name": "build_style_card",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        125,
+        158
+      ],
+      "summary": "聚合选定参考文章的写作模式并保存主题风格卡。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/import_toutiao_article.py",
+      "type": "file",
+      "name": "import_toutiao_article.py",
+      "filePath": "scripts/import_toutiao_article.py",
+      "summary": "提供命令行入口，将指定头条文章抓取、保存并写入 RAG 向量索引。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/import_toutiao_article.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/import_toutiao_article.py",
+      "lineRange": [
+        26,
+        103
+      ],
+      "summary": "执行 import_toutiao_article.py 的命令行主流程并输出处理结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/query_toutiao_rag.py",
+      "type": "file",
+      "name": "query_toutiao_rag.py",
+      "filePath": "scripts/query_toutiao_rag.py",
+      "summary": "提供命令行检索入口，输出与查询主题相关的头条参考资料。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/query_toutiao_rag.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/query_toutiao_rag.py",
+      "lineRange": [
+        23,
+        33
+      ],
+      "summary": "执行 query_toutiao_rag.py 的命令行主流程并输出处理结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/lang/embeddings.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/embeddings.py",
+      "target": "function:app/lang/embeddings.py:get_embeddings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/embeddings.py",
+      "target": "function:app/lang/embeddings.py:get_embeddings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "file:app/lang/graph/state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "file:app/lang/rag/chunking.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "file:app/lang/rag/ingest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:_chunk_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:_chunk_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:_index_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:_index_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:build_ingest_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:build_ingest_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:run_ingest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/ingest_graph.py",
+      "target": "function:app/lang/graph/ingest_graph.py:run_ingest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "file:app/lang/graph/state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "file:app/lang/rag/retriever.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:_retrieve_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:_retrieve_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:_format_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:_format_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:build_query_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:build_query_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:run_rag_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/query_graph.py",
+      "target": "function:app/lang/graph/query_graph.py:run_rag_query",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/state.py",
+      "target": "class:app/lang/graph/state.py:IngestState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/state.py",
+      "target": "class:app/lang/graph/state.py:IngestState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/state.py",
+      "target": "class:app/lang/graph/state.py:QueryState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/state.py",
+      "target": "class:app/lang/graph/state.py:QueryState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/chunking.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/rag/chunking.py",
+      "target": "function:app/lang/rag/chunking.py:build_text_splitter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/chunking.py",
+      "target": "function:app/lang/rag/chunking.py:build_text_splitter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/chunking.py",
+      "target": "function:app/lang/rag/chunking.py:article_to_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/chunking.py",
+      "target": "function:app/lang/rag/chunking.py:article_to_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "file:app/lang/vectorstore.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "function:app/lang/rag/ingest.py:delete_article_chunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "function:app/lang/rag/ingest.py:delete_article_chunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "function:app/lang/rag/ingest.py:ingest_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/ingest.py",
+      "target": "function:app/lang/rag/ingest.py:ingest_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "file:app/lang/vectorstore.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "function:app/lang/rag/retriever.py:retrieve_toutiao_references",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "function:app/lang/rag/retriever.py:retrieve_toutiao_references",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "function:app/lang/rag/retriever.py:format_references_for_prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/rag/retriever.py",
+      "target": "function:app/lang/rag/retriever.py:format_references_for_prompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:extract_article_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:extract_article_id",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_strip_html",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_strip_html",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_find_title_content",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_find_title_content",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_parse_render_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:_parse_render_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:fetch_toutiao_article",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/toutiao_fetcher.py",
+      "target": "function:app/lang/toutiao_fetcher.py:fetch_toutiao_article",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/vectorstore.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/vectorstore.py",
+      "target": "file:app/lang/embeddings.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/vectorstore.py",
+      "target": "function:app/lang/vectorstore.py:get_toutiao_vectorstore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/vectorstore.py",
+      "target": "function:app/lang/vectorstore.py:get_toutiao_vectorstore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/graph/ingest_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/rag/ingest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/toutiao_fetcher.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:import_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:import_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/lang/graph/ingest_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/lang/toutiao_fetcher.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "function:scripts/import_toutiao_article.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "function:scripts/import_toutiao_article.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "file:app/lang/graph/query_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "function:scripts/query_toutiao_rag.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "function:scripts/query_toutiao_rag.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

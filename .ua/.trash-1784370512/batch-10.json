@@ -1,0 +1,97 @@
+{
+  "nodes": [
+    {
+      "id": "config:frontend/.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": "frontend/.env.example",
+      "summary": "前端环境变量示例，声明可选的 VITE_API_BASE；开发环境留空时由 Vite 代理访问本地后端。",
+      "tags": [
+        "configuration",
+        "environment",
+        "vite",
+        "api-base"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:frontend/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "frontend/README.md",
+      "summary": "React + Vite 前端的使用说明，概述鉴权、任务、热榜和管理功能，并给出开发、构建和环境变量配置步骤。",
+      "tags": [
+        "documentation",
+        "frontend",
+        "react",
+        "getting-started"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "frontend/index.html",
+      "summary": "Vite 单页应用的 HTML 外壳，加载中英文字体、提供 root 挂载节点并启动 src/main.tsx。",
+      "tags": [
+        "entry-point",
+        "html",
+        "vite",
+        "react"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "frontend/package.json",
+      "summary": "前端包清单与脚本配置，定义 Vite 开发、TypeScript 校验构建和预览命令，以及 React 运行时依赖。",
+      "tags": [
+        "configuration",
+        "package-manager",
+        "build-system",
+        "react"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "frontend/tsconfig.json",
+      "summary": "前端 TypeScript 严格编译配置，启用 bundler 模块解析、React JSX、未使用代码检查和 @/* 路径别名。",
+      "tags": [
+        "configuration",
+        "typescript",
+        "strict-mode",
+        "build-system"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:frontend/README.md",
+      "target": "file:frontend/index.html",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:frontend/package.json",
+      "target": "config:frontend/tsconfig.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:frontend/.env.example",
+      "target": "config:frontend/package.json",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

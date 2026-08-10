@@ -1,0 +1,28 @@
+{
+    "batchIndex":  7,
+    "files":  [
+                  {
+                      "path":  "Dockerfile",
+                      "language":  "dockerfile",
+                      "sizeLines":  74,
+                      "fileCategory":  "infra"
+                  },
+                  {
+                      "path":  "docker-compose.yml",
+                      "language":  "yaml",
+                      "sizeLines":  83,
+                      "fileCategory":  "infra"
+                  }
+              ],
+    "batchImportData":  {
+                            "Dockerfile":  [
+
+                                           ],
+                            "docker-compose.yml":  [
+
+                                                   ]
+                        },
+    "neighborMap":  {
+
+                    }
+}

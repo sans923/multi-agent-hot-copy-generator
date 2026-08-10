@@ -1,0 +1,731 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 6,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 6,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "app/orchestration/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/orchestration/base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 94,
+      "nonEmptyLines": 77,
+      "classes": [
+        {
+          "name": "OrchestrationEngine",
+          "startLine": 48,
+          "endLine": 94,
+          "methods": [
+            "run",
+            "start",
+            "resume",
+            "get_state"
+          ],
+          "properties": [
+            "name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OrchestrationEngine",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "start",
+          "callee": "NotImplementedError",
+          "lineNumber": 80
+        },
+        {
+          "caller": "resume",
+          "callee": "NotImplementedError",
+          "lineNumber": 86
+        },
+        {
+          "caller": "get_state",
+          "callee": "NotImplementedError",
+          "lineNumber": 92
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/orchestration/factory.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 60,
+      "functions": [
+        {
+          "name": "register_engine",
+          "startLine": 39,
+          "endLine": 50,
+          "params": [
+            "name",
+            "factory"
+          ]
+        },
+        {
+          "name": "get_orchestration_engine",
+          "startLine": 53,
+          "endLine": 76,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_engine",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "get_orchestration_engine",
+          "line": 53,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register_engine",
+          "callee": "logger.warning",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_engine",
+          "callee": "logger.debug",
+          "lineNumber": 50
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "(name or settings.ORCHESTRATION_ENGINE or DEFAULT_ENGINE).strip",
+          "lineNumber": 63
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "_ENGINE_REGISTRY.get",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "logger.warning",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "list",
+          "lineNumber": 69
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "_ENGINE_REGISTRY.keys",
+          "lineNumber": 69
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "factory",
+          "lineNumber": 74
+        },
+        {
+          "caller": "get_orchestration_engine",
+          "callee": "logger.info",
+          "lineNumber": 75
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/orchestration/langgraph_engine.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "LangGraphOrchestrationEngine",
+          "startLine": 17,
+          "endLine": 49,
+          "methods": [
+            "run"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "LangGraphOrchestrationEngine",
+          "line": 17,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 29
+        },
+        {
+          "caller": "run",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 29
+        },
+        {
+          "caller": "run",
+          "callee": "db.query",
+          "lineNumber": 29
+        },
+        {
+          "caller": "run",
+          "callee": "isinstance",
+          "lineNumber": 30
+        },
+        {
+          "caller": "run",
+          "callee": "meta.get",
+          "lineNumber": 31
+        },
+        {
+          "caller": "run",
+          "callee": "resolve_execution_mode",
+          "lineNumber": 33
+        },
+        {
+          "caller": "run",
+          "callee": "(settings.ORCHESTRATION_MODE or \"fixed\").strip().lower",
+          "lineNumber": 35
+        },
+        {
+          "caller": "run",
+          "callee": "(settings.ORCHESTRATION_MODE or \"fixed\").strip",
+          "lineNumber": 35
+        },
+        {
+          "caller": "run",
+          "callee": "run_lead_pipeline_graph",
+          "lineNumber": 40
+        },
+        {
+          "caller": "run",
+          "callee": "run_agentic_pipeline_graph",
+          "lineNumber": 45
+        },
+        {
+          "caller": "run",
+          "callee": "run_copy_pipeline",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/orchestration/native_engine.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "NativeOrchestrationEngine",
+          "startLine": 23,
+          "endLine": 48,
+          "methods": [
+            "run"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "NativeOrchestrationEngine",
+          "line": 23,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run",
+          "callee": "AgentOrchestrator",
+          "lineNumber": 47
+        },
+        {
+          "caller": "run",
+          "callee": "orchestrator.run",
+          "lineNumber": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "tests/test_orchestration.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 249,
+      "nonEmptyLines": 198,
+      "functions": [
+        {
+          "name": "setup_database",
+          "startLine": 37,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "db",
+          "startLine": 46,
+          "endLine": 51,
+          "params": []
+        },
+        {
+          "name": "_create_task",
+          "startLine": 54,
+          "endLine": 73,
+          "params": [
+            "db",
+            "raw_requirement"
+          ]
+        },
+        {
+          "name": "_mock_stage_returns",
+          "startLine": 76,
+          "endLine": 106,
+          "params": []
+        },
+        {
+          "name": "test_factory_registers_langgraph_engine",
+          "startLine": 109,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "test_factory_native_engine",
+          "startLine": 115,
+          "endLine": 118,
+          "params": []
+        },
+        {
+          "name": "test_build_copy_pipeline_graph",
+          "startLine": 121,
+          "endLine": 124,
+          "params": []
+        },
+        {
+          "name": "test_init_pipeline_state_missing_task",
+          "startLine": 127,
+          "endLine": 131,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_init_pipeline_state_success",
+          "startLine": 134,
+          "endLine": 141,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_run_full_pipeline_success",
+          "startLine": 147,
+          "endLine": 163,
+          "params": [
+            "mock_req",
+            "mock_copy",
+            "mock_review",
+            "db"
+          ]
+        },
+        {
+          "name": "test_run_copy_pipeline_success",
+          "startLine": 169,
+          "endLine": 180,
+          "params": [
+            "mock_review",
+            "mock_copy",
+            "mock_req",
+            "db"
+          ]
+        },
+        {
+          "name": "test_run_full_pipeline_copywriter_failure",
+          "startLine": 185,
+          "endLine": 203,
+          "params": [
+            "mock_req",
+            "mock_copy",
+            "db"
+          ]
+        },
+        {
+          "name": "test_run_copy_pipeline_copywriter_failure",
+          "startLine": 208,
+          "endLine": 225,
+          "params": [
+            "mock_req",
+            "mock_copy",
+            "db"
+          ]
+        },
+        {
+          "name": "test_native_engine_delegates_to_orchestrator",
+          "startLine": 229,
+          "endLine": 238,
+          "params": [
+            "mock_orchestrator_cls",
+            "db"
+          ]
+        },
+        {
+          "name": "test_langgraph_engine_delegates_to_graph",
+          "startLine": 242,
+          "endLine": 249,
+          "params": [
+            "mock_run_copy_pipeline",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "setup_database",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "db",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "_create_task",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "_mock_stage_returns",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "test_factory_registers_langgraph_engine",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "test_factory_native_engine",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "test_build_copy_pipeline_graph",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "test_init_pipeline_state_missing_task",
+          "line": 127,
+          "isDefault": false
+        },
+        {
+          "name": "test_init_pipeline_state_success",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "test_run_full_pipeline_success",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "test_run_copy_pipeline_success",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "test_run_full_pipeline_copywriter_failure",
+          "line": 183,
+          "isDefault": false
+        },
+        {
+          "name": "test_run_copy_pipeline_copywriter_failure",
+          "line": 206,
+          "isDefault": false
+        },
+        {
+          "name": "test_native_engine_delegates_to_orchestrator",
+          "line": 228,
+          "isDefault": false
+        },
+        {
+          "name": "test_langgraph_engine_delegates_to_graph",
+          "line": 241,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 40
+        },
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.drop_all",
+          "lineNumber": 42
+        },
+        {
+          "caller": "db",
+          "callee": "TestSessionLocal",
+          "lineNumber": 47
+        },
+        {
+          "caller": "db",
+          "callee": "session.close",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_create_task",
+          "callee": "User",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.add",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.commit",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.refresh",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_create_task",
+          "callee": "Task",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.add",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.commit",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.refresh",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_factory_registers_langgraph_engine",
+          "callee": "get_orchestration_engine",
+          "lineNumber": 110
+        },
+        {
+          "caller": "test_factory_registers_langgraph_engine",
+          "callee": "isinstance",
+          "lineNumber": 111
+        },
+        {
+          "caller": "test_factory_native_engine",
+          "callee": "get_orchestration_engine",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_factory_native_engine",
+          "callee": "isinstance",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_build_copy_pipeline_graph",
+          "callee": "build_copy_pipeline_graph",
+          "lineNumber": 122
+        },
+        {
+          "caller": "test_build_copy_pipeline_graph",
+          "callee": "hasattr",
+          "lineNumber": 124
+        },
+        {
+          "caller": "test_init_pipeline_state_missing_task",
+          "callee": "init_pipeline_state",
+          "lineNumber": 128
+        },
+        {
+          "caller": "test_init_pipeline_state_success",
+          "callee": "_create_task",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_init_pipeline_state_success",
+          "callee": "init_pipeline_state",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_run_full_pipeline_success",
+          "callee": "_mock_stage_returns",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_run_full_pipeline_success",
+          "callee": "_create_task",
+          "lineNumber": 153
+        },
+        {
+          "caller": "test_run_full_pipeline_success",
+          "callee": "run_full_pipeline",
+          "lineNumber": 154
+        },
+        {
+          "caller": "test_run_full_pipeline_success",
+          "callee": "PipelineAgents",
+          "lineNumber": 154
+        },
+        {
+          "caller": "test_run_copy_pipeline_success",
+          "callee": "_mock_stage_returns",
+          "lineNumber": 170
+        },
+        {
+          "caller": "test_run_copy_pipeline_success",
+          "callee": "_create_task",
+          "lineNumber": 175
+        },
+        {
+          "caller": "test_run_copy_pipeline_success",
+          "callee": "run_copy_pipeline",
+          "lineNumber": 176
+        },
+        {
+          "caller": "test_run_full_pipeline_copywriter_failure",
+          "callee": "_mock_stage_returns",
+          "lineNumber": 186
+        },
+        {
+          "caller": "test_run_full_pipeline_copywriter_failure",
+          "callee": "_create_task",
+          "lineNumber": 198
+        },
+        {
+          "caller": "test_run_full_pipeline_copywriter_failure",
+          "callee": "run_full_pipeline",
+          "lineNumber": 199
+        },
+        {
+          "caller": "test_run_full_pipeline_copywriter_failure",
+          "callee": "PipelineAgents",
+          "lineNumber": 199
+        },
+        {
+          "caller": "test_run_copy_pipeline_copywriter_failure",
+          "callee": "_mock_stage_returns",
+          "lineNumber": 209
+        },
+        {
+          "caller": "test_run_copy_pipeline_copywriter_failure",
+          "callee": "_create_task",
+          "lineNumber": 221
+        },
+        {
+          "caller": "test_run_copy_pipeline_copywriter_failure",
+          "callee": "run_copy_pipeline",
+          "lineNumber": 222
+        },
+        {
+          "caller": "test_native_engine_delegates_to_orchestrator",
+          "callee": "NativeOrchestrationEngine",
+          "lineNumber": 233
+        },
+        {
+          "caller": "test_native_engine_delegates_to_orchestrator",
+          "callee": "engine.run",
+          "lineNumber": 234
+        },
+        {
+          "caller": "test_native_engine_delegates_to_orchestrator",
+          "callee": "mock_orchestrator_cls.assert_called_once",
+          "lineNumber": 236
+        },
+        {
+          "caller": "test_native_engine_delegates_to_orchestrator",
+          "callee": "mock_instance.run.assert_called_once_with",
+          "lineNumber": 237
+        },
+        {
+          "caller": "test_langgraph_engine_delegates_to_graph",
+          "callee": "LangGraphOrchestrationEngine",
+          "lineNumber": 245
+        },
+        {
+          "caller": "test_langgraph_engine_delegates_to_graph",
+          "callee": "engine.run",
+          "lineNumber": 246
+        },
+        {
+          "caller": "test_langgraph_engine_delegates_to_graph",
+          "callee": "mock_run_copy_pipeline.assert_called_once_with",
+          "lineNumber": 248
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 15,
+        "functionCount": 15,
+        "classCount": 0
+      }
+    }
+  ]
+}

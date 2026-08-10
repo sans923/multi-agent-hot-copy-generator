@@ -1,0 +1,1651 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/api/v1/users.py",
+      "type": "file",
+      "name": "users.py",
+      "filePath": "app/api/v1/users.py",
+      "summary": "实现 users 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。",
+      "tags": [
+        "api-handler",
+        "fastapi",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/api/v1/users.py:get_my_profile",
+      "type": "function",
+      "name": "get_my_profile",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        31,
+        38
+      ],
+      "summary": "读取 get my profile 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:update_my_profile",
+      "type": "function",
+      "name": "update_my_profile",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        46,
+        74
+      ],
+      "summary": "实现 update my profile 处理逻辑，服务于 users 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:list_users",
+      "type": "function",
+      "name": "list_users",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        83,
+        103
+      ],
+      "summary": "读取 list users 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "function",
+      "name": "get_user_by_id",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        111,
+        126
+      ],
+      "summary": "读取 get user by id 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/core/deps.py",
+      "type": "file",
+      "name": "deps.py",
+      "filePath": "app/core/deps.py",
+      "summary": "提供 FastAPI 鉴权依赖，解析当前用户并执行活跃状态与管理员权限检查。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_user",
+      "type": "function",
+      "name": "get_current_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        40,
+        71
+      ],
+      "summary": "读取 get current user 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_active_user",
+      "type": "function",
+      "name": "get_current_active_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        74,
+        88
+      ],
+      "summary": "读取 get current active user 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_admin_user",
+      "type": "function",
+      "name": "get_current_admin_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        91,
+        109
+      ],
+      "summary": "读取 get current admin user 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/core/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "app/core/security.py",
+      "summary": "实现密码哈希校验、JWT 访问令牌签发和解码等认证安全能力。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/core/security.py:hash_password",
+      "type": "function",
+      "name": "hash_password",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        44,
+        56
+      ],
+      "summary": "实现 hash password 处理逻辑，服务于 security 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:verify_password",
+      "type": "function",
+      "name": "verify_password",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        59,
+        71
+      ],
+      "summary": "检查生成结果是否满足约束，并返回结构化验证结论。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:create_access_token",
+      "type": "function",
+      "name": "create_access_token",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        78,
+        117
+      ],
+      "summary": "创建 create access token 对应的业务对象或产物，并处理相关持久化状态。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:decode_access_token",
+      "type": "function",
+      "name": "decode_access_token",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        120,
+        145
+      ],
+      "summary": "实现 decode access token 处理逻辑，服务于 security 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/database.py",
+      "type": "file",
+      "name": "database.py",
+      "filePath": "app/database.py",
+      "summary": "创建 SQLAlchemy 引擎与会话，兼容不同数据库并提供依赖注入和建表入口。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/database.py:_get_engine_kwargs",
+      "type": "function",
+      "name": "_get_engine_kwargs",
+      "filePath": "app/database.py",
+      "lineRange": [
+        35,
+        64
+      ],
+      "summary": "实现 get engine kwargs 处理逻辑，服务于 database 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "function",
+      "name": "_prepare_sqlite_dir",
+      "filePath": "app/database.py",
+      "lineRange": [
+        67,
+        72
+      ],
+      "summary": "实现 prepare sqlite dir 处理逻辑，服务于 database 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:get_db",
+      "type": "function",
+      "name": "get_db",
+      "filePath": "app/database.py",
+      "lineRange": [
+        119,
+        143
+      ],
+      "summary": "读取 get db 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:create_tables",
+      "type": "function",
+      "name": "create_tables",
+      "filePath": "app/database.py",
+      "lineRange": [
+        146,
+        157
+      ],
+      "summary": "创建 create tables 对应的业务对象或产物，并处理相关持久化状态。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "app/main.py",
+      "summary": "FastAPI 应用入口，注册路由、中间件、生命周期钩子、异常处理器和健康检查。",
+      "tags": [
+        "entry-point",
+        "bootstrap",
+        "application"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/main.py:lifespan",
+      "type": "function",
+      "name": "lifespan",
+      "filePath": "app/main.py",
+      "lineRange": [
+        39,
+        73
+      ],
+      "summary": "实现 lifespan 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:log_requests",
+      "type": "function",
+      "name": "log_requests",
+      "filePath": "app/main.py",
+      "lineRange": [
+        126,
+        161
+      ],
+      "summary": "实现 log requests 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:validation_exception_handler",
+      "type": "function",
+      "name": "validation_exception_handler",
+      "filePath": "app/main.py",
+      "lineRange": [
+        169,
+        193
+      ],
+      "summary": "实现 validation exception handler 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:global_exception_handler",
+      "type": "function",
+      "name": "global_exception_handler",
+      "filePath": "app/main.py",
+      "lineRange": [
+        197,
+        214
+      ],
+      "summary": "实现 global exception handler 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:health_check",
+      "type": "function",
+      "name": "health_check",
+      "filePath": "app/main.py",
+      "lineRange": [
+        240,
+        249
+      ],
+      "summary": "实现 health check 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:root",
+      "type": "function",
+      "name": "root",
+      "filePath": "app/main.py",
+      "lineRange": [
+        253,
+        259
+      ],
+      "summary": "实现 root 处理逻辑，服务于 main 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/models/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/models/__init__.py",
+      "summary": "定义 init 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/models/agent_log.py",
+      "type": "file",
+      "name": "agent_log.py",
+      "filePath": "app/models/agent_log.py",
+      "summary": "定义 agent log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/agent_log.py:AgentLog",
+      "type": "class",
+      "name": "AgentLog",
+      "filePath": "app/models/agent_log.py",
+      "lineRange": [
+        24,
+        89
+      ],
+      "summary": "封装 Agent Log 的状态与行为，是 agent log 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/copy.py",
+      "type": "file",
+      "name": "copy.py",
+      "filePath": "app/models/copy.py",
+      "summary": "定义 copy 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/copy.py:Copy",
+      "type": "class",
+      "name": "Copy",
+      "filePath": "app/models/copy.py",
+      "lineRange": [
+        20,
+        85
+      ],
+      "summary": "封装 Copy 的状态与行为，是 copy 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/document.py",
+      "type": "file",
+      "name": "document.py",
+      "filePath": "app/models/document.py",
+      "summary": "定义 document 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/document.py:Document",
+      "type": "class",
+      "name": "Document",
+      "filePath": "app/models/document.py",
+      "lineRange": [
+        20,
+        75
+      ],
+      "summary": "封装 Document 的状态与行为，是 document 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/hotlist_sync.py",
+      "type": "file",
+      "name": "hotlist_sync.py",
+      "filePath": "app/models/hotlist_sync.py",
+      "summary": "定义 hotlist sync 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/hotlist_sync.py:HotlistSync",
+      "type": "class",
+      "name": "HotlistSync",
+      "filePath": "app/models/hotlist_sync.py",
+      "lineRange": [
+        21,
+        89
+      ],
+      "summary": "执行外部热点数据同步，并维护数据库中的最新状态。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/orchestration_audit_log.py",
+      "type": "file",
+      "name": "orchestration_audit_log.py",
+      "filePath": "app/models/orchestration_audit_log.py",
+      "summary": "定义 orchestration audit log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/orchestration_audit_log.py:OrchestrationAuditLog",
+      "type": "class",
+      "name": "OrchestrationAuditLog",
+      "filePath": "app/models/orchestration_audit_log.py",
+      "lineRange": [
+        16,
+        73
+      ],
+      "summary": "记录或读取编排审计信息，使任务执行过程可追踪。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/style_card.py",
+      "type": "file",
+      "name": "style_card.py",
+      "filePath": "app/models/style_card.py",
+      "summary": "定义 style card 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models/style_card.py:StyleCard",
+      "type": "class",
+      "name": "StyleCard",
+      "filePath": "app/models/style_card.py",
+      "lineRange": [
+        14,
+        30
+      ],
+      "summary": "封装 Style Card 的状态与行为，是 style card 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/models/system_log.py",
+      "type": "file",
+      "name": "system_log.py",
+      "filePath": "app/models/system_log.py",
+      "summary": "定义 system log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/system_log.py:SystemLog",
+      "type": "class",
+      "name": "SystemLog",
+      "filePath": "app/models/system_log.py",
+      "lineRange": [
+        26,
+        92
+      ],
+      "summary": "封装 System Log 的状态与行为，是 system log 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/user.py",
+      "type": "file",
+      "name": "user.py",
+      "filePath": "app/models/user.py",
+      "summary": "定义 user 的 SQLAlchemy 持久化模型、字段约束及数据库关系。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/user.py:User",
+      "type": "class",
+      "name": "User",
+      "filePath": "app/models/user.py",
+      "lineRange": [
+        22,
+        111
+      ],
+      "summary": "封装 User 的状态与行为，是 user 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/schemas/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/schemas/__init__.py",
+      "summary": "定义 init 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。",
+      "tags": [
+        "validation",
+        "serialization",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/schemas/common.py",
+      "type": "file",
+      "name": "common.py",
+      "filePath": "app/schemas/common.py",
+      "summary": "定义 common 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。",
+      "tags": [
+        "validation",
+        "serialization",
+        "type-definition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/schemas/common.py:ApiResponse",
+      "type": "class",
+      "name": "ApiResponse",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        35,
+        45
+      ],
+      "summary": "封装 Api Response 的状态与行为，是 common 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/common.py:PaginationResponse",
+      "type": "class",
+      "name": "PaginationResponse",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        48,
+        65
+      ],
+      "summary": "封装 Pagination Response 的状态与行为，是 common 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/common.py:PaginationParams",
+      "type": "class",
+      "name": "PaginationParams",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        68,
+        83
+      ],
+      "summary": "封装 Pagination Params 的状态与行为，是 common 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/schemas/content_asset.py",
+      "type": "file",
+      "name": "content_asset.py",
+      "filePath": "app/schemas/content_asset.py",
+      "summary": "定义 content asset 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。",
+      "tags": [
+        "validation",
+        "serialization",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "class",
+      "name": "ReferenceImportRequest",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        9,
+        14
+      ],
+      "summary": "封装 Reference Import Request 的状态与行为，是 content asset 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "class",
+      "name": "ReferenceResponse",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        17,
+        31
+      ],
+      "summary": "封装 Reference Response 的状态与行为，是 content asset 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "class",
+      "name": "StyleCardBuildRequest",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        34,
+        36
+      ],
+      "summary": "封装 Style Card Build Request 的状态与行为，是 content asset 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "class",
+      "name": "StyleCardResponse",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        39,
+        48
+      ],
+      "summary": "封装 Style Card Response 的状态与行为，是 content asset 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_my_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_my_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:update_my_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:update_my_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:list_users",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:list_users",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/core/deps.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/core/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/schemas/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/schemas/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_active_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_active_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_admin_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_admin_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/core/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:hash_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:hash_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:verify_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:verify_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:create_access_token",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:create_access_token",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:decode_access_token",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:decode_access_token",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_get_engine_kwargs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_get_engine_kwargs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:get_db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:get_db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:create_tables",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:create_tables",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:lifespan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:lifespan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:log_requests",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:log_requests",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:validation_exception_handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:validation_exception_handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:global_exception_handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:global_exception_handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:health_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:health_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:root",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:root",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/content_assets.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/hotlist.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/logs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/tasks.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/users.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/agent_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/copy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/document.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/hotlist_sync.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/orchestration_audit_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/system_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/agent_log.py",
+      "target": "class:app/models/agent_log.py:AgentLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/agent_log.py",
+      "target": "class:app/models/agent_log.py:AgentLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/agent_log.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/copy.py",
+      "target": "class:app/models/copy.py:Copy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/copy.py",
+      "target": "class:app/models/copy.py:Copy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/copy.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/document.py",
+      "target": "class:app/models/document.py:Document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/document.py",
+      "target": "class:app/models/document.py:Document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/document.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/hotlist_sync.py",
+      "target": "class:app/models/hotlist_sync.py:HotlistSync",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/hotlist_sync.py",
+      "target": "class:app/models/hotlist_sync.py:HotlistSync",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/hotlist_sync.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/orchestration_audit_log.py",
+      "target": "class:app/models/orchestration_audit_log.py:OrchestrationAuditLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/orchestration_audit_log.py",
+      "target": "class:app/models/orchestration_audit_log.py:OrchestrationAuditLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/orchestration_audit_log.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/style_card.py",
+      "target": "class:app/models/style_card.py:StyleCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/style_card.py",
+      "target": "class:app/models/style_card.py:StyleCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/style_card.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "class:app/models/system_log.py:SystemLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "class:app/models/system_log.py:SystemLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "class:app/models/user.py:User",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "class:app/models/user.py:User",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:ApiResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:ApiResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationParams",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationParams",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

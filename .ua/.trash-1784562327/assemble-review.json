@@ -1,0 +1,15 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Reviewed 23 physical batch files representing 12 logical batches.",
+    "Batch input and assembled output counts both match at 680 nodes and 1448 edges.",
+    "No missing node IDs, unknown node types, unknown complexity values, duplicate IDs or edge keys, or dangling edges were found.",
+    "All 430 importMap relationships already have corresponding imports edges; recovered 0 imports.",
+    "No semantic repairs to assembled-graph.json were required."
+  ]
+}

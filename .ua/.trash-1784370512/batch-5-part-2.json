@@ -1,0 +1,1281 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/models/toutiao_reference.py",
+      "type": "file",
+      "name": "toutiao_reference.py",
+      "filePath": "app/models/toutiao_reference.py",
+      "summary": "定义头条参考文章的数据库模型，保存来源、正文、互动数据及向量索引状态。",
+      "tags": [
+        "data-model",
+        "database",
+        "sqlalchemy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "class",
+      "name": "ToutiaoReference",
+      "filePath": "app/models/toutiao_reference.py",
+      "lineRange": [
+        26,
+        60
+      ],
+      "summary": "表示持久化的头条参考文章及其索引元数据。",
+      "tags": [
+        "data-model",
+        "domain",
+        "class"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/content_asset_service.py",
+      "type": "file",
+      "name": "content_asset_service.py",
+      "filePath": "app/services/content_asset_service.py",
+      "summary": "编排参考文章导入、重建索引、删除和风格卡生成，连接抓取、数据库、RAG 与写作模式服务。",
+      "tags": [
+        "service",
+        "business-logic",
+        "python"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "function",
+      "name": "reference_to_dict",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        17,
+        33
+      ],
+      "summary": "将参考文章模型序列化为字典。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "function",
+      "name": "style_card_to_dict",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        36,
+        47
+      ],
+      "summary": "将风格卡模型序列化为字典。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:import_reference",
+      "type": "function",
+      "name": "import_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        50,
+        93
+      ],
+      "summary": "导入参考文章并同步数据库与索引。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "function",
+      "name": "reindex_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        96,
+        116
+      ],
+      "summary": "为已有参考文章重建向量索引。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "function",
+      "name": "delete_reference",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        119,
+        122
+      ],
+      "summary": "删除参考文章资产。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "function",
+      "name": "build_style_card",
+      "filePath": "app/services/content_asset_service.py",
+      "lineRange": [
+        125,
+        158
+      ],
+      "summary": "从选定素材提炼并保存风格卡。",
+      "tags": [
+        "factory",
+        "workflow",
+        "builder"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/writing_pattern_service.py",
+      "type": "file",
+      "name": "writing_pattern_service.py",
+      "filePath": "app/services/writing_pattern_service.py",
+      "summary": "从多篇文章中去标识化内容、抽取结构模式并合并为可复用写作风格，同时检测文本复用风险。",
+      "tags": [
+        "service",
+        "business-logic",
+        "python"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "function",
+      "name": "deidentify_text",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        68,
+        86
+      ],
+      "summary": "遮蔽文本中的身份和来源特征。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "function",
+      "name": "build_structure_summary",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        89,
+        103
+      ],
+      "summary": "按段落归纳文章结构与功能。",
+      "tags": [
+        "factory",
+        "workflow",
+        "builder"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "function",
+      "name": "_guess_paragraph_function",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        106,
+        118
+      ],
+      "summary": "启发式判断段落在文章中的作用。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "function",
+      "name": "_extract_json_from_response",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        121,
+        133
+      ],
+      "summary": "从模型响应中提取并解析 JSON。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "function",
+      "name": "has_ngram_overlap",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        136,
+        146
+      ],
+      "summary": "检测文本之间是否存在明显 n-gram 重合。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "function",
+      "name": "extract_writing_pattern_from_articles",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        149,
+        223
+      ],
+      "summary": "调用模型从多篇素材提取结构化写作模式。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "function",
+      "name": "merge_writing_patterns",
+      "filePath": "app/services/writing_pattern_service.py",
+      "lineRange": [
+        226,
+        243
+      ],
+      "summary": "合并多份写作模式为统一结果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/skills/style_skills.py",
+      "type": "file",
+      "name": "style_skills.py",
+      "filePath": "app/skills/style_skills.py",
+      "summary": "提供搜索热门文章、抽取写作模式、读取和保存风格卡的 Agent 技能实现。",
+      "tags": [
+        "agent-skill",
+        "service",
+        "tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/skills/style_skills.py:_article_to_dict",
+      "type": "function",
+      "name": "_article_to_dict",
+      "filePath": "app/skills/style_skills.py",
+      "lineRange": [
+        22,
+        32
+      ],
+      "summary": "把文章模型转换为技能可消费的数据结构。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/skills/style_skills.py:SearchHotArticlesByTopicSkill",
+      "type": "class",
+      "name": "SearchHotArticlesByTopicSkill",
+      "filePath": "app/skills/style_skills.py",
+      "lineRange": [
+        35,
+        133
+      ],
+      "summary": "按主题搜索并排序热门参考文章的 Agent 技能。",
+      "tags": [
+        "agent-skill",
+        "service",
+        "tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/style_skills.py:ExtractWritingPatternSkill",
+      "type": "class",
+      "name": "ExtractWritingPatternSkill",
+      "filePath": "app/skills/style_skills.py",
+      "lineRange": [
+        136,
+        215
+      ],
+      "summary": "从选定文章中抽取结构化写作模式的 Agent 技能。",
+      "tags": [
+        "agent-skill",
+        "service",
+        "tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/style_skills.py:GetStyleCardSkill",
+      "type": "class",
+      "name": "GetStyleCardSkill",
+      "filePath": "app/skills/style_skills.py",
+      "lineRange": [
+        218,
+        276
+      ],
+      "summary": "读取已保存风格卡的 Agent 技能。",
+      "tags": [
+        "agent-skill",
+        "service",
+        "tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/style_skills.py:SaveStyleCardSkill",
+      "type": "class",
+      "name": "SaveStyleCardSkill",
+      "filePath": "app/skills/style_skills.py",
+      "lineRange": [
+        279,
+        347
+      ],
+      "summary": "持久化风格卡及其来源关系的 Agent 技能。",
+      "tags": [
+        "agent-skill",
+        "service",
+        "tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/build_style_cards.py",
+      "type": "file",
+      "name": "build_style_cards.py",
+      "filePath": "scripts/build_style_cards.py",
+      "summary": "命令行批量按关键词检索素材、提炼写作模式并生成风格卡。",
+      "tags": [
+        "entry-point",
+        "automation",
+        "cli"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/build_style_cards.py:build_for_keyword",
+      "type": "function",
+      "name": "build_for_keyword",
+      "filePath": "scripts/build_style_cards.py",
+      "lineRange": [
+        26,
+        61
+      ],
+      "summary": "围绕关键词批量构建风格卡。",
+      "tags": [
+        "factory",
+        "workflow",
+        "builder"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/build_style_cards.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/build_style_cards.py",
+      "lineRange": [
+        64,
+        91
+      ],
+      "summary": "解析命令行参数并执行脚本主流程。",
+      "tags": [
+        "entry-point",
+        "cli",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/import_toutiao_article.py",
+      "type": "file",
+      "name": "import_toutiao_article.py",
+      "filePath": "scripts/import_toutiao_article.py",
+      "summary": "命令行导入单篇头条文章，持久化引用记录并触发向量与图式索引。",
+      "tags": [
+        "entry-point",
+        "automation",
+        "cli"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/import_toutiao_article.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/import_toutiao_article.py",
+      "lineRange": [
+        26,
+        103
+      ],
+      "summary": "解析命令行参数并执行脚本主流程。",
+      "tags": [
+        "entry-point",
+        "cli",
+        "automation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/query_toutiao_rag.py",
+      "type": "file",
+      "name": "query_toutiao_rag.py",
+      "filePath": "scripts/query_toutiao_rag.py",
+      "summary": "提供轻量命令行入口，用于对头条文章知识库执行 RAG 查询。",
+      "tags": [
+        "entry-point",
+        "automation",
+        "cli"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/query_toutiao_rag.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/query_toutiao_rag.py",
+      "lineRange": [
+        23,
+        33
+      ],
+      "summary": "解析命令行参数并执行脚本主流程。",
+      "tags": [
+        "entry-point",
+        "cli",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_writing_pattern.py",
+      "type": "file",
+      "name": "test_writing_pattern.py",
+      "filePath": "tests/test_writing_pattern.py",
+      "summary": "覆盖去标识化、结构摘要、重复检测、热门文章排序、风格抽取和大纲生成的测试。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        35,
+        40
+      ],
+      "summary": "为测试创建并初始化隔离数据库。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        44,
+        49
+      ],
+      "summary": "向测试提供数据库会话夹具。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_deidentify_text_masks_urls",
+      "type": "function",
+      "name": "test_deidentify_text_masks_urls",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        52,
+        56
+      ],
+      "summary": "验证 deidentify text masks urls 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_build_structure_summary_has_paragraph_labels",
+      "type": "function",
+      "name": "test_build_structure_summary_has_paragraph_labels",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        59,
+        65
+      ],
+      "summary": "验证 build structure summary has paragraph labels 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_has_ngram_overlap_detects_copy",
+      "type": "function",
+      "name": "test_has_ngram_overlap_detects_copy",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        68,
+        71
+      ],
+      "summary": "验证 has ngram overlap detects copy 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_search_hot_articles_by_topic_sorts_by_likes",
+      "type": "function",
+      "name": "test_search_hot_articles_by_topic_sorts_by_likes",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        74,
+        92
+      ],
+      "summary": "验证 search hot articles by topic sorts by likes 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_extract_writing_pattern_skill",
+      "type": "function",
+      "name": "test_extract_writing_pattern_skill",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        96,
+        123
+      ],
+      "summary": "验证 extract writing pattern skill 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_writing_pattern.py:test_generate_outline_from_pattern",
+      "type": "function",
+      "name": "test_generate_outline_from_pattern",
+      "filePath": "tests/test_writing_pattern.py",
+      "lineRange": [
+        126,
+        148
+      ],
+      "summary": "验证 generate outline from pattern 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "class:app/models/toutiao_reference.py:ToutiaoReference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/toutiao_reference.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reference_to_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:style_card_to_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:import_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:import_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:reindex_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:delete_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "function:app/services/content_asset_service.py:build_style_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/graph/ingest_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/rag/ingest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/lang/toutiao_fetcher.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/content_asset_service.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:deidentify_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:build_structure_summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_guess_paragraph_function",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:_extract_json_from_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:has_ngram_overlap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:extract_writing_pattern_from_articles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "function:app/services/writing_pattern_service.py:merge_writing_patterns",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/llm_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/writing_pattern_service.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "function:app/skills/style_skills.py:_article_to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "function:app/skills/style_skills.py:_article_to_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:SearchHotArticlesByTopicSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:SearchHotArticlesByTopicSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:ExtractWritingPatternSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:ExtractWritingPatternSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:GetStyleCardSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:GetStyleCardSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:SaveStyleCardSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "class:app/skills/style_skills.py:SaveStyleCardSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/style_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "function:scripts/build_style_cards.py:build_for_keyword",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "function:scripts/build_style_cards.py:build_for_keyword",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "function:scripts/build_style_cards.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "function:scripts/build_style_cards.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/build_style_cards.py",
+      "target": "file:app/skills/style_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "function:scripts/import_toutiao_article.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "function:scripts/import_toutiao_article.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/lang/graph/ingest_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/lang/toutiao_fetcher.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/import_toutiao_article.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "function:scripts/query_toutiao_rag.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "function:scripts/query_toutiao_rag.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/query_toutiao_rag.py",
+      "target": "file:app/lang/graph/query_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_deidentify_text_masks_urls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_deidentify_text_masks_urls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_build_structure_summary_has_paragraph_labels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_build_structure_summary_has_paragraph_labels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_has_ngram_overlap_detects_copy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_has_ngram_overlap_detects_copy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_search_hot_articles_by_topic_sorts_by_likes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_search_hot_articles_by_topic_sorts_by_likes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_extract_writing_pattern_skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_extract_writing_pattern_skill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_generate_outline_from_pattern",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "function:tests/test_writing_pattern.py:test_generate_outline_from_pattern",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/skills/copy_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_writing_pattern.py",
+      "target": "file:app/skills/style_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

@@ -1,0 +1,966 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/api/v1/users.py",
+      "type": "file",
+      "name": "users.py",
+      "filePath": "app/api/v1/users.py",
+      "summary": "提供个人资料维护和管理员用户查询接口，统一处理密码更新与权限校验。",
+      "tags": [
+        "api-handler",
+        "接口路由",
+        "权限控制"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/api/v1/users.py:get_my_profile",
+      "type": "function",
+      "name": "get_my_profile",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        31,
+        38
+      ],
+      "summary": "查询并整理 get my profile 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:update_my_profile",
+      "type": "function",
+      "name": "update_my_profile",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        46,
+        74
+      ],
+      "summary": "实现 update my profile 对应的核心处理逻辑，是 users.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:list_users",
+      "type": "function",
+      "name": "list_users",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        83,
+        103
+      ],
+      "summary": "查询并整理 list users 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "function",
+      "name": "get_user_by_id",
+      "filePath": "app/api/v1/users.py",
+      "lineRange": [
+        111,
+        126
+      ],
+      "summary": "查询并整理 get user by id 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/core/deps.py",
+      "type": "file",
+      "name": "deps.py",
+      "filePath": "app/core/deps.py",
+      "summary": "定义 FastAPI 认证依赖，从 JWT 解析当前用户并逐级校验启用状态和管理员权限。",
+      "tags": [
+        "security",
+        "基础设施",
+        "认证"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_user",
+      "type": "function",
+      "name": "get_current_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        40,
+        71
+      ],
+      "summary": "解码 Bearer Token、查询用户并拒绝无效认证。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_active_user",
+      "type": "function",
+      "name": "get_current_active_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        74,
+        88
+      ],
+      "summary": "查询并整理 get current active user 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/deps.py:get_current_admin_user",
+      "type": "function",
+      "name": "get_current_admin_user",
+      "filePath": "app/core/deps.py",
+      "lineRange": [
+        91,
+        109
+      ],
+      "summary": "查询并整理 get current admin user 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/core/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "app/core/security.py",
+      "summary": "封装密码哈希校验与 JWT 访问令牌的签发、解析，是认证链路的安全基础。",
+      "tags": [
+        "security",
+        "基础设施",
+        "认证"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/core/security.py:hash_password",
+      "type": "function",
+      "name": "hash_password",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        44,
+        56
+      ],
+      "summary": "实现 hash password 对应的核心处理逻辑，是 security.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:verify_password",
+      "type": "function",
+      "name": "verify_password",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        59,
+        71
+      ],
+      "summary": "实现 verify password 对应的核心处理逻辑，是 security.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:create_access_token",
+      "type": "function",
+      "name": "create_access_token",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        78,
+        117
+      ],
+      "summary": "按配置生成带过期时间和签发信息的 JWT 访问令牌。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/core/security.py:decode_access_token",
+      "type": "function",
+      "name": "decode_access_token",
+      "filePath": "app/core/security.py",
+      "lineRange": [
+        120,
+        145
+      ],
+      "summary": "解析并校验 JWT，失败时返回空结果供认证依赖处理。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/database.py",
+      "type": "file",
+      "name": "database.py",
+      "filePath": "app/database.py",
+      "summary": "集中创建 SQLAlchemy 引擎、会话和声明基类，兼容 SQLite 与 MySQL，并提供建表入口。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/database.py:_get_engine_kwargs",
+      "type": "function",
+      "name": "_get_engine_kwargs",
+      "filePath": "app/database.py",
+      "lineRange": [
+        35,
+        64
+      ],
+      "summary": "实现 get engine kwargs 对应的核心处理逻辑，是 database.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "function",
+      "name": "_prepare_sqlite_dir",
+      "filePath": "app/database.py",
+      "lineRange": [
+        67,
+        72
+      ],
+      "summary": "实现 prepare sqlite dir 对应的核心处理逻辑，是 database.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "内部函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:get_db",
+      "type": "function",
+      "name": "get_db",
+      "filePath": "app/database.py",
+      "lineRange": [
+        119,
+        143
+      ],
+      "summary": "查询并整理 get db 所需数据，返回符合接口契约的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/database.py:create_tables",
+      "type": "function",
+      "name": "create_tables",
+      "filePath": "app/database.py",
+      "lineRange": [
+        146,
+        157
+      ],
+      "summary": "构建 create tables 对应对象或流程，并返回可供后续使用的结果。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "app/main.py",
+      "summary": "创建并配置 FastAPI 应用，注册路由、中间件、异常处理、生命周期任务和健康检查。",
+      "tags": [
+        "entry-point",
+        "应用基础",
+        "模块组织"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/main.py:lifespan",
+      "type": "function",
+      "name": "lifespan",
+      "filePath": "app/main.py",
+      "lineRange": [
+        39,
+        73
+      ],
+      "summary": "在应用启动和关闭阶段初始化数据库、调度器及相关资源。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:log_requests",
+      "type": "function",
+      "name": "log_requests",
+      "filePath": "app/main.py",
+      "lineRange": [
+        126,
+        161
+      ],
+      "summary": "记录请求耗时、状态与异常，形成统一 HTTP 访问日志。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:validation_exception_handler",
+      "type": "function",
+      "name": "validation_exception_handler",
+      "filePath": "app/main.py",
+      "lineRange": [
+        169,
+        193
+      ],
+      "summary": "实现 validation exception handler 对应的核心处理逻辑，是 main.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:global_exception_handler",
+      "type": "function",
+      "name": "global_exception_handler",
+      "filePath": "app/main.py",
+      "lineRange": [
+        197,
+        214
+      ],
+      "summary": "实现 global exception handler 对应的核心处理逻辑，是 main.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:health_check",
+      "type": "function",
+      "name": "health_check",
+      "filePath": "app/main.py",
+      "lineRange": [
+        240,
+        249
+      ],
+      "summary": "实现 health check 对应的核心处理逻辑，是 main.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/main.py:root",
+      "type": "function",
+      "name": "root",
+      "filePath": "app/main.py",
+      "lineRange": [
+        253,
+        259
+      ],
+      "summary": "实现 root 对应的核心处理逻辑，是 main.py 中的显著可调用单元。",
+      "tags": [
+        "业务逻辑",
+        "可调用单元",
+        "公开函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/models/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/models/__init__.py",
+      "summary": "汇总导入项目的 SQLAlchemy 模型，确保元数据建表时包含全部业务实体。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "持久化"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/core/deps.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/core/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/schemas/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/schemas/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_my_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_my_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:update_my_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:update_my_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:list_users",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:list_users",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/api/v1/users.py",
+      "target": "function:app/api/v1/users.py:get_user_by_id",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/core/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_active_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_active_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_admin_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/deps.py",
+      "target": "function:app/core/deps.py:get_current_admin_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:hash_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:hash_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:verify_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:verify_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:create_access_token",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:create_access_token",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:decode_access_token",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/core/security.py",
+      "target": "function:app/core/security.py:decode_access_token",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_get_engine_kwargs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_get_engine_kwargs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:_prepare_sqlite_dir",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:get_db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:get_db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:create_tables",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/database.py",
+      "target": "function:app/database.py:create_tables",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/auth.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/content_assets.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/hotlist.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/logs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/tasks.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/api/v1/users.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:lifespan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:lifespan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:log_requests",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:log_requests",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:validation_exception_handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:validation_exception_handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:global_exception_handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:global_exception_handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:health_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:health_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:root",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/main.py",
+      "target": "function:app/main.py:root",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/agent_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/copy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/document.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/hotlist_sync.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/orchestration_audit_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/style_card.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/system_log.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/__init__.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

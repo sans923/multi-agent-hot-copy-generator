@@ -1,0 +1,98 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/TOUTIAO_RAG_GUIDE.md",
+      "type": "document",
+      "name": "TOUTIAO_RAG_GUIDE.md",
+      "filePath": "docs/TOUTIAO_RAG_GUIDE.md",
+      "summary": "头条长文 RAG 实战指南，说明 LangChain 与 LangGraph 的职责分工、入库和检索步骤、相关文件清单及故障排查。",
+      "tags": [
+        "documentation",
+        "rag",
+        "langgraph",
+        "onboarding"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/resume_agent_fullstack.md",
+      "type": "document",
+      "name": "resume_agent_fullstack.md",
+      "filePath": "docs/resume_agent_fullstack.md",
+      "summary": "面向 AI 全栈工程师岗位的 Markdown 简历源稿，覆盖技能、经历、项目亮点、教育背景与投递前说明。",
+      "tags": [
+        "documentation",
+        "resume",
+        "project-overview",
+        "markdown"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:docs/template_doc.xml",
+      "type": "config",
+      "name": "template_doc.xml",
+      "filePath": "docs/template_doc.xml",
+      "summary": "从 Word 简历模板提取的 WordprocessingML 文档主体，保留段落、字体、边框和版式属性供模板分析或复用。",
+      "tags": [
+        "configuration",
+        "wordprocessingml",
+        "document-template",
+        "formatting"
+      ],
+      "complexity": "complex",
+      "languageNotes": "文件虽只有一条物理行，但包含完整的 WordprocessingML 文档树。"
+    },
+    {
+      "id": "document:docs/template_lines.txt",
+      "type": "document",
+      "name": "template_lines.txt",
+      "filePath": "docs/template_lines.txt",
+      "summary": "按段落索引列出的简历模板纯文本快照，用于确认 python-docx 修改时所依赖的段落位置和内容。",
+      "tags": [
+        "documentation",
+        "resume-template",
+        "paragraph-index",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/template_structure.txt",
+      "type": "document",
+      "name": "template_structure.txt",
+      "filePath": "docs/template_structure.txt",
+      "summary": "记录简历模板各段落样式与文本结构的诊断快照，辅助验证列表、普通段落和空段落布局。",
+      "tags": [
+        "documentation",
+        "resume-template",
+        "document-structure",
+        "debugging"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/template_lines.txt",
+      "target": "config:docs/template_doc.xml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/template_structure.txt",
+      "target": "config:docs/template_doc.xml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/resume_agent_fullstack.md",
+      "target": "document:docs/template_lines.txt",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

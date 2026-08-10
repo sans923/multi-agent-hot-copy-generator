@@ -1,0 +1,1601 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/agents/base_agent.py",
+      "type": "file",
+      "name": "base_agent.py",
+      "filePath": "app/agents/base_agent.py",
+      "summary": "实现 base agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。",
+      "tags": [
+        "agent",
+        "orchestration",
+        "llm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "class",
+      "name": "BaseAgent",
+      "filePath": "app/agents/base_agent.py",
+      "lineRange": [
+        51,
+        377
+      ],
+      "summary": "封装 Base Agent 的状态与行为，是 base agent 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "orchestration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/agents/copywriter_agent.py",
+      "type": "file",
+      "name": "copywriter_agent.py",
+      "filePath": "app/agents/copywriter_agent.py",
+      "summary": "实现 copywriter agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。",
+      "tags": [
+        "agent",
+        "orchestration",
+        "llm"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "class",
+      "name": "CopywriterAgent",
+      "filePath": "app/agents/copywriter_agent.py",
+      "lineRange": [
+        16,
+        175
+      ],
+      "summary": "封装 Copywriter Agent 的状态与行为，是 copywriter agent 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "orchestration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/requirement_agent.py",
+      "type": "file",
+      "name": "requirement_agent.py",
+      "filePath": "app/agents/requirement_agent.py",
+      "summary": "实现 requirement agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。",
+      "tags": [
+        "agent",
+        "orchestration",
+        "llm"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "class",
+      "name": "RequirementAgent",
+      "filePath": "app/agents/requirement_agent.py",
+      "lineRange": [
+        26,
+        155
+      ],
+      "summary": "封装 Requirement Agent 的状态与行为，是 requirement agent 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "orchestration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/reviewer_agent.py",
+      "type": "file",
+      "name": "reviewer_agent.py",
+      "filePath": "app/agents/reviewer_agent.py",
+      "summary": "实现 reviewer agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。",
+      "tags": [
+        "agent",
+        "orchestration",
+        "llm"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "class",
+      "name": "ReviewerAgent",
+      "filePath": "app/agents/reviewer_agent.py",
+      "lineRange": [
+        18,
+        214
+      ],
+      "summary": "封装 Reviewer Agent 的状态与行为，是 reviewer agent 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "orchestration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/skills/__init__.py",
+      "summary": "汇总并导出项目内置技能，使编排器能够从统一包入口加载技能实现。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/skills/__init__.py:create_skill_registry",
+      "type": "function",
+      "name": "create_skill_registry",
+      "filePath": "app/skills/__init__.py",
+      "lineRange": [
+        54,
+        100
+      ],
+      "summary": "创建 create skill registry 对应的业务对象或产物，并处理相关持久化状态。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/__init__.py:get_skill_registry",
+      "type": "function",
+      "name": "get_skill_registry",
+      "filePath": "app/skills/__init__.py",
+      "lineRange": [
+        142,
+        147
+      ],
+      "summary": "读取 get skill registry 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/__init__.py:get_skill_executor",
+      "type": "function",
+      "name": "get_skill_executor",
+      "filePath": "app/skills/__init__.py",
+      "lineRange": [
+        150,
+        152
+      ],
+      "summary": "读取 get skill executor 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/skills/base.py",
+      "type": "file",
+      "name": "base.py",
+      "filePath": "app/skills/base.py",
+      "summary": "定义技能抽象、注册表和执行器，为具体文案技能提供统一调用与审计协议。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/skills/base.py:_truncate_dict",
+      "type": "function",
+      "name": "_truncate_dict",
+      "filePath": "app/skills/base.py",
+      "lineRange": [
+        336,
+        348
+      ],
+      "summary": "实现 truncate dict 处理逻辑，服务于 base 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/base.py:_save_agent_log",
+      "type": "function",
+      "name": "_save_agent_log",
+      "filePath": "app/skills/base.py",
+      "lineRange": [
+        351,
+        378
+      ],
+      "summary": "实现 save agent log 处理逻辑，服务于 base 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/skills/base.py:BaseSkill",
+      "type": "class",
+      "name": "BaseSkill",
+      "filePath": "app/skills/base.py",
+      "lineRange": [
+        47,
+        135
+      ],
+      "summary": "封装 Base Skill 的状态与行为，是 base 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/base.py:SkillRegistry",
+      "type": "class",
+      "name": "SkillRegistry",
+      "filePath": "app/skills/base.py",
+      "lineRange": [
+        142,
+        199
+      ],
+      "summary": "封装 Skill Registry 的状态与行为，是 base 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/base.py:SkillExecutor",
+      "type": "class",
+      "name": "SkillExecutor",
+      "filePath": "app/skills/base.py",
+      "lineRange": [
+        206,
+        333
+      ],
+      "summary": "封装 Skill Executor 的状态与行为，是 base 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/compliance_skills.py",
+      "type": "file",
+      "name": "compliance_skills.py",
+      "filePath": "app/skills/compliance_skills.py",
+      "summary": "实现 compliance skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/skills/compliance_skills.py:_load_sensitive_words",
+      "type": "function",
+      "name": "_load_sensitive_words",
+      "filePath": "app/skills/compliance_skills.py",
+      "lineRange": [
+        39,
+        53
+      ],
+      "summary": "实现 load sensitive words 处理逻辑，服务于 compliance skills 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/compliance_skills.py:_find_sensitive_hits",
+      "type": "function",
+      "name": "_find_sensitive_hits",
+      "filePath": "app/skills/compliance_skills.py",
+      "lineRange": [
+        56,
+        64
+      ],
+      "summary": "实现 find sensitive hits 处理逻辑，服务于 compliance skills 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/compliance_skills.py:_compute_overlap_metrics",
+      "type": "function",
+      "name": "_compute_overlap_metrics",
+      "filePath": "app/skills/compliance_skills.py",
+      "lineRange": [
+        67,
+        107
+      ],
+      "summary": "实现 compute overlap metrics 处理逻辑，服务于 compliance skills 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/skills/compliance_skills.py:CheckSensitiveWordsSkill",
+      "type": "class",
+      "name": "CheckSensitiveWordsSkill",
+      "filePath": "app/skills/compliance_skills.py",
+      "lineRange": [
+        110,
+        165
+      ],
+      "summary": "检查 Check Sensitive Words Skill 对应的规则或输入，并返回可供流水线判断的结果。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/compliance_skills.py:CheckPlagiarismOverlapSkill",
+      "type": "class",
+      "name": "CheckPlagiarismOverlapSkill",
+      "filePath": "app/skills/compliance_skills.py",
+      "lineRange": [
+        168,
+        250
+      ],
+      "summary": "检查 Check Plagiarism Overlap Skill 对应的规则或输入，并返回可供流水线判断的结果。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/copy_skills.py",
+      "type": "file",
+      "name": "copy_skills.py",
+      "filePath": "app/skills/copy_skills.py",
+      "summary": "实现 copy skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/skills/copy_skills.py:GenerateOutlineSkill",
+      "type": "class",
+      "name": "GenerateOutlineSkill",
+      "filePath": "app/skills/copy_skills.py",
+      "lineRange": [
+        28,
+        291
+      ],
+      "summary": "封装 Generate Outline Skill 的状态与行为，是 copy skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/skills/copy_skills.py:WriteCopyDraftSkill",
+      "type": "class",
+      "name": "WriteCopyDraftSkill",
+      "filePath": "app/skills/copy_skills.py",
+      "lineRange": [
+        294,
+        432
+      ],
+      "summary": "封装 Write Copy Draft Skill 的状态与行为，是 copy skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/copy_skills.py:AddHashtagsSkill",
+      "type": "class",
+      "name": "AddHashtagsSkill",
+      "filePath": "app/skills/copy_skills.py",
+      "lineRange": [
+        435,
+        554
+      ],
+      "summary": "封装 Add Hashtags Skill 的状态与行为，是 copy skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/copy_skills.py:SaveFinalCopySkill",
+      "type": "class",
+      "name": "SaveFinalCopySkill",
+      "filePath": "app/skills/copy_skills.py",
+      "lineRange": [
+        557,
+        690
+      ],
+      "summary": "封装 Save Final Copy Skill 的状态与行为，是 copy skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/platform_skills.py",
+      "type": "file",
+      "name": "platform_skills.py",
+      "filePath": "app/skills/platform_skills.py",
+      "summary": "实现 platform skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/platform_skills.py:GetPlatformRulesSkill",
+      "type": "class",
+      "name": "GetPlatformRulesSkill",
+      "filePath": "app/skills/platform_skills.py",
+      "lineRange": [
+        134,
+        192
+      ],
+      "summary": "读取 Get Platform Rules Skill 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/rag_skills.py",
+      "type": "file",
+      "name": "rag_skills.py",
+      "filePath": "app/skills/rag_skills.py",
+      "summary": "实现 rag skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/rag_skills.py:SearchSimilarCopiesSkill",
+      "type": "class",
+      "name": "SearchSimilarCopiesSkill",
+      "filePath": "app/skills/rag_skills.py",
+      "lineRange": [
+        30,
+        187
+      ],
+      "summary": "封装 Search Similar Copies Skill 的状态与行为，是 rag skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/requirement_skills.py",
+      "type": "file",
+      "name": "requirement_skills.py",
+      "filePath": "app/skills/requirement_skills.py",
+      "summary": "实现 requirement skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/skills/requirement_skills.py:ParseRequirementSkill",
+      "type": "class",
+      "name": "ParseRequirementSkill",
+      "filePath": "app/skills/requirement_skills.py",
+      "lineRange": [
+        23,
+        134
+      ],
+      "summary": "封装 Parse Requirement Skill 的状态与行为，是 requirement skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/requirement_skills.py:SearchHotlistSkill",
+      "type": "class",
+      "name": "SearchHotlistSkill",
+      "filePath": "app/skills/requirement_skills.py",
+      "lineRange": [
+        137,
+        239
+      ],
+      "summary": "封装 Search Hotlist Skill 的状态与行为，是 requirement skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/review_skills.py",
+      "type": "file",
+      "name": "review_skills.py",
+      "filePath": "app/skills/review_skills.py",
+      "summary": "实现 review skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/skills/review_skills.py:ReviewCopyQualitySkill",
+      "type": "class",
+      "name": "ReviewCopyQualitySkill",
+      "filePath": "app/skills/review_skills.py",
+      "lineRange": [
+        94,
+        324
+      ],
+      "summary": "封装 Review Copy Quality Skill 的状态与行为，是 review skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:app/skills/review_skills.py:OptimizeCopySkill",
+      "type": "class",
+      "name": "OptimizeCopySkill",
+      "filePath": "app/skills/review_skills.py",
+      "lineRange": [
+        327,
+        432
+      ],
+      "summary": "封装 Optimize Copy Skill 的状态与行为，是 review skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/skills/skill_response.py",
+      "type": "file",
+      "name": "skill_response.py",
+      "filePath": "app/skills/skill_response.py",
+      "summary": "定义技能执行结果的标准信封和兼容旧格式的归一化逻辑。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/skills/skill_response.py:skill_ok",
+      "type": "function",
+      "name": "skill_ok",
+      "filePath": "app/skills/skill_response.py",
+      "lineRange": [
+        23,
+        33
+      ],
+      "summary": "实现 skill ok 处理逻辑，服务于 skill response 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/skill_response.py:skill_fail",
+      "type": "function",
+      "name": "skill_fail",
+      "filePath": "app/skills/skill_response.py",
+      "lineRange": [
+        36,
+        43
+      ],
+      "summary": "实现 skill fail 处理逻辑，服务于 skill response 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/skills/skill_response.py:normalize_skill_result",
+      "type": "function",
+      "name": "normalize_skill_result",
+      "filePath": "app/skills/skill_response.py",
+      "lineRange": [
+        46,
+        85
+      ],
+      "summary": "实现 normalize skill result 处理逻辑，服务于 skill response 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "agent-tool"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/skills/toutiao_rag_skills.py",
+      "type": "file",
+      "name": "toutiao_rag_skills.py",
+      "filePath": "app/skills/toutiao_rag_skills.py",
+      "summary": "实现 toutiao rag skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。",
+      "tags": [
+        "skill",
+        "plugin-system",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/skills/toutiao_rag_skills.py:SearchToutiaoReferencesSkill",
+      "type": "class",
+      "name": "SearchToutiaoReferencesSkill",
+      "filePath": "app/skills/toutiao_rag_skills.py",
+      "lineRange": [
+        27,
+        118
+      ],
+      "summary": "封装 Search Toutiao References Skill 的状态与行为，是 toutiao rag skills 模块的核心类型。",
+      "tags": [
+        "class",
+        "domain-logic",
+        "agent-tool"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/utils/log_writer.py",
+      "type": "file",
+      "name": "log_writer.py",
+      "filePath": "app/utils/log_writer.py",
+      "summary": "提供 log writer 通用辅助能力，供后端多个模块复用。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/utils/log_writer.py:write_log",
+      "type": "function",
+      "name": "write_log",
+      "filePath": "app/utils/log_writer.py",
+      "lineRange": [
+        31,
+        83
+      ],
+      "summary": "实现 write log 处理逻辑，服务于 log writer 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/utils/logger.py",
+      "type": "file",
+      "name": "logger.py",
+      "filePath": "app/utils/logger.py",
+      "summary": "提供 logger 通用辅助能力，供后端多个模块复用。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/utils/logger.py:setup_logger",
+      "type": "function",
+      "name": "setup_logger",
+      "filePath": "app/utils/logger.py",
+      "lineRange": [
+        26,
+        60
+      ],
+      "summary": "实现 setup logger 处理逻辑，服务于 logger 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "class:app/agents/base_agent.py:BaseAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/llm_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/base_agent.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "class:app/agents/copywriter_agent.py:CopywriterAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/copywriter_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "class:app/agents/requirement_agent.py:RequirementAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/requirement_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "class:app/agents/reviewer_agent.py:ReviewerAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/models/copy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/reviewer_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:create_skill_registry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:create_skill_registry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:get_skill_registry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:get_skill_registry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:get_skill_executor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "function:app/skills/__init__.py:get_skill_executor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/compliance_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/copy_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/platform_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/rag_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/requirement_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/review_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/skill_response.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/style_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/__init__.py",
+      "target": "file:app/skills/toutiao_rag_skills.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "function:app/skills/base.py:_truncate_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "function:app/skills/base.py:_truncate_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "function:app/skills/base.py:_save_agent_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "function:app/skills/base.py:_save_agent_log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:BaseSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:BaseSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:SkillRegistry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:SkillRegistry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:SkillExecutor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "class:app/skills/base.py:SkillExecutor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "file:app/skills/skill_response.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/base.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_load_sensitive_words",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_load_sensitive_words",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_find_sensitive_hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_find_sensitive_hits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_compute_overlap_metrics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "function:app/skills/compliance_skills.py:_compute_overlap_metrics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "class:app/skills/compliance_skills.py:CheckSensitiveWordsSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "class:app/skills/compliance_skills.py:CheckSensitiveWordsSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "class:app/skills/compliance_skills.py:CheckPlagiarismOverlapSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "class:app/skills/compliance_skills.py:CheckPlagiarismOverlapSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "file:app/models/toutiao_reference.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "file:app/services/writing_pattern_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "file:app/skills/skill_response.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/compliance_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:GenerateOutlineSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:GenerateOutlineSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:WriteCopyDraftSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:WriteCopyDraftSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:AddHashtagsSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:AddHashtagsSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:SaveFinalCopySkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "class:app/skills/copy_skills.py:SaveFinalCopySkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/copy_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/platform_skills.py",
+      "target": "class:app/skills/platform_skills.py:GetPlatformRulesSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/platform_skills.py",
+      "target": "class:app/skills/platform_skills.py:GetPlatformRulesSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/platform_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/platform_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/rag_skills.py",
+      "target": "class:app/skills/rag_skills.py:SearchSimilarCopiesSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/rag_skills.py",
+      "target": "class:app/skills/rag_skills.py:SearchSimilarCopiesSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/rag_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/rag_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "class:app/skills/requirement_skills.py:ParseRequirementSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "class:app/skills/requirement_skills.py:ParseRequirementSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "class:app/skills/requirement_skills.py:SearchHotlistSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "class:app/skills/requirement_skills.py:SearchHotlistSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "file:app/models/hotlist_sync.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/requirement_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "class:app/skills/review_skills.py:ReviewCopyQualitySkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "class:app/skills/review_skills.py:ReviewCopyQualitySkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "class:app/skills/review_skills.py:OptimizeCopySkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "class:app/skills/review_skills.py:OptimizeCopySkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/review_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:skill_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:skill_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:skill_fail",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:skill_fail",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:normalize_skill_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/skill_response.py",
+      "target": "function:app/skills/skill_response.py:normalize_skill_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/toutiao_rag_skills.py",
+      "target": "class:app/skills/toutiao_rag_skills.py:SearchToutiaoReferencesSkill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/skills/toutiao_rag_skills.py",
+      "target": "class:app/skills/toutiao_rag_skills.py:SearchToutiaoReferencesSkill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/skills/toutiao_rag_skills.py",
+      "target": "file:app/lang/graph/query_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/toutiao_rag_skills.py",
+      "target": "file:app/skills/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/skills/toutiao_rag_skills.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/utils/log_writer.py",
+      "target": "function:app/utils/log_writer.py:write_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/log_writer.py",
+      "target": "function:app/utils/log_writer.py:write_log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/log_writer.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/utils/logger.py",
+      "target": "function:app/utils/logger.py:setup_logger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/logger.py",
+      "target": "function:app/utils/logger.py:setup_logger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/logger.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

@@ -43,6 +43,7 @@ from sqlalchemy.orm import Session
 from app.utils.model_roles import get_model_for_role
 from app.config import settings
 from app.skills import SkillRegistry, SkillExecutor, get_skill_registry
+from app.agents.prompt_policy import build_agent_system_prompt
 from app.services.audit_service import write_audit_log
 from app.utils.llm_client import get_deepseek_client, format_llm_error
 from app.utils.logger import logger
@@ -151,7 +152,10 @@ class BaseAgent(ABC):
 
         # 构建初始消息列表
         messages = [
-            {"role": "system", "content": self.system_prompt}
+            {
+                "role": "system",
+                "content": build_agent_system_prompt(self.system_prompt),
+            }
         ]
 
         # 加入额外上下文（如上一个 Agent 的输出）

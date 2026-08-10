@@ -1,0 +1,1178 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/lang/graph/copy_pipeline_graph.py",
+      "type": "file",
+      "name": "copy_pipeline_graph.py",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "summary": "构建文案生产 LangGraph，将需求分析、写作、审阅、质量收口及失败处理连接为可路由流程。",
+      "tags": [
+        "langgraph",
+        "workflow",
+        "state-machine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_get_agents",
+      "type": "function",
+      "name": "_get_agents",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        41,
+        45
+      ],
+      "summary": "取得当前图运行所需的 Agent 集合。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_requirement_node",
+      "type": "function",
+      "name": "_requirement_node",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        48,
+        51
+      ],
+      "summary": "执行需求分析阶段。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_copywriter_node",
+      "type": "function",
+      "name": "_copywriter_node",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        54,
+        57
+      ],
+      "summary": "执行文案生成阶段。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_reviewer_node",
+      "type": "function",
+      "name": "_reviewer_node",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        60,
+        63
+      ],
+      "summary": "执行审阅阶段。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_finalize_node",
+      "type": "function",
+      "name": "_finalize_node",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        66,
+        73
+      ],
+      "summary": "完成质量收口并生成最终结果。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_mark_failed_node",
+      "type": "function",
+      "name": "_mark_failed_node",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        76,
+        83
+      ],
+      "summary": "将异常流程标记为失败。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:_route_after_copywriter",
+      "type": "function",
+      "name": "_route_after_copywriter",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        86,
+        92
+      ],
+      "summary": "依据写作阶段结果选择后续图分支。",
+      "tags": [
+        "internal",
+        "workflow",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:build_copy_pipeline_graph",
+      "type": "function",
+      "name": "build_copy_pipeline_graph",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        95,
+        124
+      ],
+      "summary": "组装文案生产状态图与条件路由。",
+      "tags": [
+        "factory",
+        "workflow",
+        "builder"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/lang/graph/copy_pipeline_graph.py:run_copy_pipeline",
+      "type": "function",
+      "name": "run_copy_pipeline",
+      "filePath": "app/lang/graph/copy_pipeline_graph.py",
+      "lineRange": [
+        127,
+        159
+      ],
+      "summary": "初始化状态并执行完整文案图。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/orchestration/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/orchestration/__init__.py",
+      "summary": "作为编排子系统的公共入口，集中导出引擎协议、工厂和具体引擎实现。",
+      "tags": [
+        "orchestration",
+        "factory",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/orchestration/base.py",
+      "type": "file",
+      "name": "base.py",
+      "filePath": "app/orchestration/base.py",
+      "summary": "定义编排引擎抽象接口和运行契约，统一启动、恢复、查询状态与直接运行能力。",
+      "tags": [
+        "orchestration",
+        "factory",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/orchestration/base.py:OrchestrationEngine",
+      "type": "class",
+      "name": "OrchestrationEngine",
+      "filePath": "app/orchestration/base.py",
+      "lineRange": [
+        48,
+        94
+      ],
+      "summary": "规定所有编排后端必须实现的统一抽象协议。",
+      "tags": [
+        "orchestration",
+        "adapter",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/orchestration/factory.py",
+      "type": "file",
+      "name": "factory.py",
+      "filePath": "app/orchestration/factory.py",
+      "summary": "维护编排引擎注册表，并依据配置或显式名称创建 Native 或 LangGraph 引擎。",
+      "tags": [
+        "orchestration",
+        "factory",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/orchestration/factory.py:register_engine",
+      "type": "function",
+      "name": "register_engine",
+      "filePath": "app/orchestration/factory.py",
+      "lineRange": [
+        39,
+        50
+      ],
+      "summary": "向编排引擎注册表登记实现。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/orchestration/factory.py:get_orchestration_engine",
+      "type": "function",
+      "name": "get_orchestration_engine",
+      "filePath": "app/orchestration/factory.py",
+      "lineRange": [
+        53,
+        76
+      ],
+      "summary": "依据配置解析并实例化编排引擎。",
+      "tags": [
+        "service",
+        "business-logic",
+        "function"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/orchestration/langgraph_engine.py",
+      "type": "file",
+      "name": "langgraph_engine.py",
+      "filePath": "app/orchestration/langgraph_engine.py",
+      "summary": "以 LangGraph 文案流程实现统一编排引擎接口，将任务执行委托给图运行器。",
+      "tags": [
+        "orchestration",
+        "factory",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/orchestration/langgraph_engine.py:LangGraphOrchestrationEngine",
+      "type": "class",
+      "name": "LangGraphOrchestrationEngine",
+      "filePath": "app/orchestration/langgraph_engine.py",
+      "lineRange": [
+        17,
+        49
+      ],
+      "summary": "通过 LangGraph 图执行任务的编排引擎适配器。",
+      "tags": [
+        "orchestration",
+        "adapter",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/orchestration/native_engine.py",
+      "type": "file",
+      "name": "native_engine.py",
+      "filePath": "app/orchestration/native_engine.py",
+      "summary": "以原生 Agent 流程实现统一编排引擎接口，作为不依赖 LangGraph 的执行后端。",
+      "tags": [
+        "orchestration",
+        "factory",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/orchestration/native_engine.py:NativeOrchestrationEngine",
+      "type": "class",
+      "name": "NativeOrchestrationEngine",
+      "filePath": "app/orchestration/native_engine.py",
+      "lineRange": [
+        23,
+        48
+      ],
+      "summary": "通过原生 Agent 流程执行任务的编排引擎适配器。",
+      "tags": [
+        "orchestration",
+        "adapter",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_orchestration.py",
+      "type": "file",
+      "name": "test_orchestration.py",
+      "filePath": "tests/test_orchestration.py",
+      "summary": "验证引擎工厂、状态初始化、成功与失败流程，以及 Native 和 LangGraph 引擎的委托行为。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        37,
+        42
+      ],
+      "summary": "为测试创建并初始化隔离数据库。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        46,
+        51
+      ],
+      "summary": "向测试提供数据库会话夹具。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:_create_task",
+      "type": "function",
+      "name": "_create_task",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        54,
+        73
+      ],
+      "summary": "创建测试所需的任务记录。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:_mock_stage_returns",
+      "type": "function",
+      "name": "_mock_stage_returns",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        76,
+        106
+      ],
+      "summary": "构造各流水线阶段的模拟返回值。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_factory_registers_langgraph_engine",
+      "type": "function",
+      "name": "test_factory_registers_langgraph_engine",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        109,
+        112
+      ],
+      "summary": "验证 factory registers langgraph engine 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_factory_native_engine",
+      "type": "function",
+      "name": "test_factory_native_engine",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        115,
+        118
+      ],
+      "summary": "验证 factory native engine 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_build_copy_pipeline_graph",
+      "type": "function",
+      "name": "test_build_copy_pipeline_graph",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        121,
+        124
+      ],
+      "summary": "验证 build copy pipeline graph 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_init_pipeline_state_missing_task",
+      "type": "function",
+      "name": "test_init_pipeline_state_missing_task",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        127,
+        131
+      ],
+      "summary": "验证 init pipeline state missing task 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_init_pipeline_state_success",
+      "type": "function",
+      "name": "test_init_pipeline_state_success",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        134,
+        141
+      ],
+      "summary": "验证 init pipeline state success 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_run_full_pipeline_success",
+      "type": "function",
+      "name": "test_run_full_pipeline_success",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        147,
+        163
+      ],
+      "summary": "验证 run full pipeline success 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_run_copy_pipeline_success",
+      "type": "function",
+      "name": "test_run_copy_pipeline_success",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        169,
+        180
+      ],
+      "summary": "验证 run copy pipeline success 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_run_full_pipeline_copywriter_failure",
+      "type": "function",
+      "name": "test_run_full_pipeline_copywriter_failure",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        185,
+        203
+      ],
+      "summary": "验证 run full pipeline copywriter failure 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_run_copy_pipeline_copywriter_failure",
+      "type": "function",
+      "name": "test_run_copy_pipeline_copywriter_failure",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        208,
+        225
+      ],
+      "summary": "验证 run copy pipeline copywriter failure 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_native_engine_delegates_to_orchestrator",
+      "type": "function",
+      "name": "test_native_engine_delegates_to_orchestrator",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        229,
+        238
+      ],
+      "summary": "验证 native engine delegates to orchestrator 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_orchestration.py:test_langgraph_engine_delegates_to_graph",
+      "type": "function",
+      "name": "test_langgraph_engine_delegates_to_graph",
+      "filePath": "tests/test_orchestration.py",
+      "lineRange": [
+        242,
+        249
+      ],
+      "summary": "验证 langgraph engine delegates to graph 场景的行为与回归约束。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_get_agents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_get_agents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_requirement_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_requirement_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_copywriter_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_copywriter_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_reviewer_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_reviewer_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_finalize_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_finalize_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_mark_failed_node",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_mark_failed_node",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_route_after_copywriter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:_route_after_copywriter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:build_copy_pipeline_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:build_copy_pipeline_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:run_copy_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "function:app/lang/graph/copy_pipeline_graph.py:run_copy_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/lang/graph/copy_pipeline_graph.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/__init__.py",
+      "target": "file:app/orchestration/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/__init__.py",
+      "target": "file:app/orchestration/factory.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/__init__.py",
+      "target": "file:app/orchestration/langgraph_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/__init__.py",
+      "target": "file:app/orchestration/native_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/base.py",
+      "target": "class:app/orchestration/base.py:OrchestrationEngine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/orchestration/base.py",
+      "target": "class:app/orchestration/base.py:OrchestrationEngine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "function:app/orchestration/factory.py:register_engine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "function:app/orchestration/factory.py:register_engine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "function:app/orchestration/factory.py:get_orchestration_engine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "function:app/orchestration/factory.py:get_orchestration_engine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "file:app/orchestration/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "file:app/orchestration/langgraph_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "file:app/orchestration/native_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/factory.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "class:app/orchestration/langgraph_engine.py:LangGraphOrchestrationEngine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "class:app/orchestration/langgraph_engine.py:LangGraphOrchestrationEngine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "file:app/orchestration/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/langgraph_engine.py",
+      "target": "file:app/services/orchestration_policy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/orchestration/native_engine.py",
+      "target": "class:app/orchestration/native_engine.py:NativeOrchestrationEngine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/orchestration/native_engine.py",
+      "target": "class:app/orchestration/native_engine.py:NativeOrchestrationEngine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/orchestration/native_engine.py",
+      "target": "file:app/orchestration/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:_create_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:_create_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:_mock_stage_returns",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:_mock_stage_returns",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_factory_registers_langgraph_engine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_factory_registers_langgraph_engine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_factory_native_engine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_factory_native_engine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_build_copy_pipeline_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_build_copy_pipeline_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_init_pipeline_state_missing_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_init_pipeline_state_missing_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_init_pipeline_state_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_init_pipeline_state_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_full_pipeline_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_full_pipeline_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_copy_pipeline_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_copy_pipeline_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_full_pipeline_copywriter_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_full_pipeline_copywriter_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_copy_pipeline_copywriter_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_run_copy_pipeline_copywriter_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_native_engine_delegates_to_orchestrator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_native_engine_delegates_to_orchestrator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_langgraph_engine_delegates_to_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "function:tests/test_orchestration.py:test_langgraph_engine_delegates_to_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/lang/graph/copy_pipeline_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/orchestration/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/orchestration/langgraph_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_orchestration.py",
+      "target": "file:app/orchestration/native_engine.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

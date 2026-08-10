@@ -1,0 +1,42 @@
+{
+  "projectRoot": "D:/workspace/demo_project/multi-agent-hot-copy-generator",
+  "batchFiles": [
+    {
+      "path": "scripts/init_mysql.sql",
+      "language": "sql",
+      "sizeLines": 14,
+      "fileCategory": "data"
+    },
+    {
+      "path": "scripts/migrate_add_toutiao_platform.sql",
+      "language": "sql",
+      "sizeLines": 5,
+      "fileCategory": "data"
+    },
+    {
+      "path": "scripts/migrate_agentic_phase2.sql",
+      "language": "sql",
+      "sizeLines": 10,
+      "fileCategory": "data"
+    },
+    {
+      "path": "scripts/migrate_audit_logs.sql",
+      "language": "sql",
+      "sizeLines": 21,
+      "fileCategory": "data"
+    },
+    {
+      "path": "scripts/migrate_style_pattern.sql",
+      "language": "sql",
+      "sizeLines": 25,
+      "fileCategory": "data"
+    }
+  ],
+  "batchImportData": {
+    "scripts/init_mysql.sql": [],
+    "scripts/migrate_add_toutiao_platform.sql": [],
+    "scripts/migrate_agentic_phase2.sql": [],
+    "scripts/migrate_audit_logs.sql": [],
+    "scripts/migrate_style_pattern.sql": []
+  }
+}

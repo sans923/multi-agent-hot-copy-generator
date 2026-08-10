@@ -1,0 +1,53 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'document:docs/TOUTIAO_RAG_GUIDE.md' has no edges (orphan)",
+    "Node 'document:docs/resume_agent_fullstack.md' has no edges (orphan)",
+    "Node 'config:docs/template_doc.xml' has no edges (orphan)",
+    "Node 'document:docs/template_lines.txt' has no edges (orphan)",
+    "Node 'document:docs/template_structure.txt' has no edges (orphan)",
+    "Node 'config:frontend/.env.example' has no edges (orphan)",
+    "Node 'table:scripts/init_mysql.sql' has no edges (orphan)",
+    "Node 'table:scripts/migrate_add_toutiao_platform.sql' has no edges (orphan)",
+    "Node 'table:scripts/migrate_agentic_phase2.sql' has no edges (orphan)",
+    "Node 'file:app/__init__.py' has no edges (orphan)",
+    "Node 'file:app/api/__init__.py' has no edges (orphan)",
+    "Node 'file:app/core/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/graph/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/rag/__init__.py' has no edges (orphan)",
+    "Node 'file:app/services/__init__.py' has no edges (orphan)",
+    "Node 'file:app/utils/__init__.py' has no edges (orphan)",
+    "Node 'file:frontend/src/vite-env.d.ts' has no edges (orphan)",
+    "Node 'file:frontend/tsconfig.tsbuildinfo' has no edges (orphan)",
+    "Node 'file:frontend/vite.config.ts' has no edges (orphan)",
+    "Node 'file:nginx.conf' has no edges (orphan)",
+    "Node 'file:tests/__init__.py' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 680,
+    "totalEdges": 1448,
+    "totalLayers": 10,
+    "tourSteps": 12,
+    "nodeTypes": {
+      "file": 154,
+      "function": 417,
+      "class": 85,
+      "service": 4,
+      "config": 6,
+      "document": 7,
+      "table": 7
+    },
+    "edgeTypes": {
+      "imports": 430,
+      "contains": 504,
+      "exports": 501,
+      "depends_on": 2,
+      "deploys": 1,
+      "documents": 4,
+      "related": 2,
+      "configures": 2,
+      "migrates": 2
+    }
+  }
+}

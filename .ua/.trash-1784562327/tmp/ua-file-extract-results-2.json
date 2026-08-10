@@ -1,0 +1,6357 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 32,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 32,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 32,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "app/api/v1/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/v1/auth.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 250,
+      "nonEmptyLines": 217,
+      "functions": [
+        {
+          "name": "register",
+          "startLine": 55,
+          "endLine": 106,
+          "params": [
+            "user_data",
+            "db"
+          ]
+        },
+        {
+          "name": "login",
+          "startLine": 115,
+          "endLine": 164,
+          "params": [
+            "login_data",
+            "db"
+          ]
+        },
+        {
+          "name": "login_form",
+          "startLine": 173,
+          "endLine": 210,
+          "params": [
+            "form_data",
+            "db"
+          ]
+        },
+        {
+          "name": "get_me",
+          "startLine": 219,
+          "endLine": 229,
+          "params": [
+            "current_user"
+          ]
+        },
+        {
+          "name": "logout",
+          "startLine": 238,
+          "endLine": 250,
+          "params": [
+            "current_user"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "login",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "login_form",
+          "line": 167,
+          "isDefault": false
+        },
+        {
+          "name": "get_me",
+          "line": 213,
+          "isDefault": false
+        },
+        {
+          "name": "logout",
+          "line": 232,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register",
+          "callee": "Depends",
+          "lineNumber": 57
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter(\r\n        User.username == user_data.username\r\n    ).first",
+          "lineNumber": 69
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter",
+          "lineNumber": 69
+        },
+        {
+          "caller": "register",
+          "callee": "db.query",
+          "lineNumber": 69
+        },
+        {
+          "caller": "register",
+          "callee": "HTTPException",
+          "lineNumber": 73
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter(\r\n        User.email == user_data.email\r\n    ).first",
+          "lineNumber": 79
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter",
+          "lineNumber": 79
+        },
+        {
+          "caller": "register",
+          "callee": "db.query",
+          "lineNumber": 79
+        },
+        {
+          "caller": "register",
+          "callee": "HTTPException",
+          "lineNumber": 83
+        },
+        {
+          "caller": "register",
+          "callee": "User",
+          "lineNumber": 89
+        },
+        {
+          "caller": "register",
+          "callee": "hash_password",
+          "lineNumber": 92
+        },
+        {
+          "caller": "register",
+          "callee": "db.add",
+          "lineNumber": 96
+        },
+        {
+          "caller": "register",
+          "callee": "db.commit",
+          "lineNumber": 97
+        },
+        {
+          "caller": "register",
+          "callee": "db.refresh",
+          "lineNumber": 98
+        },
+        {
+          "caller": "register",
+          "callee": "logger.info",
+          "lineNumber": 100
+        },
+        {
+          "caller": "register",
+          "callee": "ApiResponse",
+          "lineNumber": 102
+        },
+        {
+          "caller": "register",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 105
+        },
+        {
+          "caller": "login",
+          "callee": "Depends",
+          "lineNumber": 117
+        },
+        {
+          "caller": "login",
+          "callee": "db.query(User).filter(User.email == login_data.email).first",
+          "lineNumber": 131
+        },
+        {
+          "caller": "login",
+          "callee": "db.query(User).filter",
+          "lineNumber": 131
+        },
+        {
+          "caller": "login",
+          "callee": "db.query",
+          "lineNumber": 131
+        },
+        {
+          "caller": "login",
+          "callee": "verify_password",
+          "lineNumber": 134
+        },
+        {
+          "caller": "login",
+          "callee": "HTTPException",
+          "lineNumber": 135
+        },
+        {
+          "caller": "login",
+          "callee": "HTTPException",
+          "lineNumber": 142
+        },
+        {
+          "caller": "login",
+          "callee": "create_access_token",
+          "lineNumber": 148
+        },
+        {
+          "caller": "login",
+          "callee": "timedelta",
+          "lineNumber": 150
+        },
+        {
+          "caller": "login",
+          "callee": "logger.info",
+          "lineNumber": 153
+        },
+        {
+          "caller": "login",
+          "callee": "ApiResponse",
+          "lineNumber": 155
+        },
+        {
+          "caller": "login",
+          "callee": "TokenResponse",
+          "lineNumber": 158
+        },
+        {
+          "caller": "login",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 162
+        },
+        {
+          "caller": "login_form",
+          "callee": "Depends",
+          "lineNumber": 174
+        },
+        {
+          "caller": "login_form",
+          "callee": "Depends",
+          "lineNumber": 175
+        },
+        {
+          "caller": "login_form",
+          "callee": "db.query(User).filter(User.email == form_data.username).first",
+          "lineNumber": 184
+        },
+        {
+          "caller": "login_form",
+          "callee": "db.query(User).filter",
+          "lineNumber": 184
+        },
+        {
+          "caller": "login_form",
+          "callee": "db.query",
+          "lineNumber": 184
+        },
+        {
+          "caller": "login_form",
+          "callee": "verify_password",
+          "lineNumber": 186
+        },
+        {
+          "caller": "login_form",
+          "callee": "HTTPException",
+          "lineNumber": 187
+        },
+        {
+          "caller": "login_form",
+          "callee": "HTTPException",
+          "lineNumber": 194
+        },
+        {
+          "caller": "login_form",
+          "callee": "create_access_token",
+          "lineNumber": 199
+        },
+        {
+          "caller": "login_form",
+          "callee": "ApiResponse",
+          "lineNumber": 201
+        },
+        {
+          "caller": "login_form",
+          "callee": "TokenResponse",
+          "lineNumber": 204
+        },
+        {
+          "caller": "login_form",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 208
+        },
+        {
+          "caller": "get_me",
+          "callee": "Depends",
+          "lineNumber": 220
+        },
+        {
+          "caller": "get_me",
+          "callee": "ApiResponse",
+          "lineNumber": 225
+        },
+        {
+          "caller": "get_me",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 228
+        },
+        {
+          "caller": "logout",
+          "callee": "Depends",
+          "lineNumber": 239
+        },
+        {
+          "caller": "logout",
+          "callee": "logger.info",
+          "lineNumber": 249
+        },
+        {
+          "caller": "logout",
+          "callee": "ApiResponse",
+          "lineNumber": 250
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/v1/content_assets.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 140,
+      "nonEmptyLines": 122,
+      "functions": [
+        {
+          "name": "list_references",
+          "startLine": 33,
+          "endLine": 55,
+          "params": [
+            "page",
+            "page_size",
+            "q",
+            "embedding_status",
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "create_reference",
+          "startLine": 59,
+          "endLine": 77,
+          "params": [
+            "body",
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "reindex_reference_route",
+          "startLine": 81,
+          "endLine": 93,
+          "params": [
+            "reference_id",
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "remove_reference",
+          "startLine": 97,
+          "endLine": 105,
+          "params": [
+            "reference_id",
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "list_style_cards",
+          "startLine": 109,
+          "endLine": 114,
+          "params": [
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "create_style_card",
+          "startLine": 118,
+          "endLine": 127,
+          "params": [
+            "body",
+            "_",
+            "db"
+          ]
+        },
+        {
+          "name": "remove_style_card",
+          "startLine": 131,
+          "endLine": 140,
+          "params": [
+            "card_id",
+            "_",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "list_references",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "create_reference",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "reindex_reference_route",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "remove_reference",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "list_style_cards",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "create_style_card",
+          "line": 117,
+          "isDefault": false
+        },
+        {
+          "name": "remove_style_card",
+          "line": 130,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "list_references",
+          "callee": "Query",
+          "lineNumber": 34
+        },
+        {
+          "caller": "list_references",
+          "callee": "Query",
+          "lineNumber": 35
+        },
+        {
+          "caller": "list_references",
+          "callee": "Depends",
+          "lineNumber": 38
+        },
+        {
+          "caller": "list_references",
+          "callee": "Depends",
+          "lineNumber": 39
+        },
+        {
+          "caller": "list_references",
+          "callee": "db.query",
+          "lineNumber": 41
+        },
+        {
+          "caller": "list_references",
+          "callee": "q.strip",
+          "lineNumber": 42
+        },
+        {
+          "caller": "list_references",
+          "callee": "q.strip",
+          "lineNumber": 43
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.filter",
+          "lineNumber": 44
+        },
+        {
+          "caller": "list_references",
+          "callee": "or_",
+          "lineNumber": 44
+        },
+        {
+          "caller": "list_references",
+          "callee": "ToutiaoReference.title.like",
+          "lineNumber": 44
+        },
+        {
+          "caller": "list_references",
+          "callee": "ToutiaoReference.keyword.like",
+          "lineNumber": 44
+        },
+        {
+          "caller": "list_references",
+          "callee": "embedding_status.strip",
+          "lineNumber": 45
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.filter",
+          "lineNumber": 46
+        },
+        {
+          "caller": "list_references",
+          "callee": "embedding_status.strip",
+          "lineNumber": 46
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.count",
+          "lineNumber": 47
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.order_by(ToutiaoReference.created_at.desc()).offset((page - 1) * page_size).limit(page_size).all",
+          "lineNumber": 48
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.order_by(ToutiaoReference.created_at.desc()).offset((page - 1) * page_size).limit",
+          "lineNumber": 48
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.order_by(ToutiaoReference.created_at.desc()).offset",
+          "lineNumber": 48
+        },
+        {
+          "caller": "list_references",
+          "callee": "query.order_by",
+          "lineNumber": 48
+        },
+        {
+          "caller": "list_references",
+          "callee": "ToutiaoReference.created_at.desc",
+          "lineNumber": 48
+        },
+        {
+          "caller": "list_references",
+          "callee": "ApiResponse",
+          "lineNumber": 49
+        },
+        {
+          "caller": "list_references",
+          "callee": "PaginationResponse",
+          "lineNumber": 49
+        },
+        {
+          "caller": "list_references",
+          "callee": "ReferenceResponse",
+          "lineNumber": 50
+        },
+        {
+          "caller": "list_references",
+          "callee": "reference_to_dict",
+          "lineNumber": 50
+        },
+        {
+          "caller": "create_reference",
+          "callee": "Depends",
+          "lineNumber": 61
+        },
+        {
+          "caller": "create_reference",
+          "callee": "Depends",
+          "lineNumber": 62
+        },
+        {
+          "caller": "create_reference",
+          "callee": "import_reference",
+          "lineNumber": 65
+        },
+        {
+          "caller": "create_reference",
+          "callee": "str",
+          "lineNumber": 67
+        },
+        {
+          "caller": "create_reference",
+          "callee": "body.keyword.strip",
+          "lineNumber": 68
+        },
+        {
+          "caller": "create_reference",
+          "callee": "HTTPException",
+          "lineNumber": 74
+        },
+        {
+          "caller": "create_reference",
+          "callee": "str",
+          "lineNumber": 74
+        },
+        {
+          "caller": "create_reference",
+          "callee": "HTTPException",
+          "lineNumber": 76
+        },
+        {
+          "caller": "create_reference",
+          "callee": "ApiResponse",
+          "lineNumber": 77
+        },
+        {
+          "caller": "create_reference",
+          "callee": "ReferenceResponse",
+          "lineNumber": 77
+        },
+        {
+          "caller": "create_reference",
+          "callee": "reference_to_dict",
+          "lineNumber": 77
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "Depends",
+          "lineNumber": 83
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "Depends",
+          "lineNumber": 84
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "db.query(ToutiaoReference).filter_by(id=reference_id).first",
+          "lineNumber": 86
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "db.query(ToutiaoReference).filter_by",
+          "lineNumber": 86
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "db.query",
+          "lineNumber": 86
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "HTTPException",
+          "lineNumber": 88
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "reindex_reference",
+          "lineNumber": 90
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "HTTPException",
+          "lineNumber": 92
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "ApiResponse",
+          "lineNumber": 93
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "ReferenceResponse",
+          "lineNumber": 93
+        },
+        {
+          "caller": "reindex_reference_route",
+          "callee": "reference_to_dict",
+          "lineNumber": 93
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "Depends",
+          "lineNumber": 99
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "Depends",
+          "lineNumber": 100
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "db.query(ToutiaoReference).filter_by(id=reference_id).first",
+          "lineNumber": 102
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "db.query(ToutiaoReference).filter_by",
+          "lineNumber": 102
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "db.query",
+          "lineNumber": 102
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "HTTPException",
+          "lineNumber": 104
+        },
+        {
+          "caller": "remove_reference",
+          "callee": "delete_reference",
+          "lineNumber": 105
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "Depends",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "Depends",
+          "lineNumber": 111
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "db.query(StyleCard).order_by(StyleCard.updated_at.desc()).all",
+          "lineNumber": 113
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "db.query(StyleCard).order_by",
+          "lineNumber": 113
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "db.query",
+          "lineNumber": 113
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "StyleCard.updated_at.desc",
+          "lineNumber": 113
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "ApiResponse",
+          "lineNumber": 114
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "StyleCardResponse",
+          "lineNumber": 114
+        },
+        {
+          "caller": "list_style_cards",
+          "callee": "style_card_to_dict",
+          "lineNumber": 114
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "Depends",
+          "lineNumber": 120
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "Depends",
+          "lineNumber": 121
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "build_style_card",
+          "lineNumber": 124
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "body.topic_cluster.strip",
+          "lineNumber": 124
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "HTTPException",
+          "lineNumber": 126
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "str",
+          "lineNumber": 126
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "ApiResponse",
+          "lineNumber": 127
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "StyleCardResponse",
+          "lineNumber": 127
+        },
+        {
+          "caller": "create_style_card",
+          "callee": "style_card_to_dict",
+          "lineNumber": 127
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "Depends",
+          "lineNumber": 133
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "Depends",
+          "lineNumber": 134
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "db.query(StyleCard).filter_by(id=card_id).first",
+          "lineNumber": 136
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "db.query(StyleCard).filter_by",
+          "lineNumber": 136
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "db.query",
+          "lineNumber": 136
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "HTTPException",
+          "lineNumber": 138
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "db.delete",
+          "lineNumber": 139
+        },
+        {
+          "caller": "remove_style_card",
+          "callee": "db.commit",
+          "lineNumber": 140
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/v1/hotlist.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 307,
+      "nonEmptyLines": 263,
+      "functions": [
+        {
+          "name": "get_platforms",
+          "startLine": 80,
+          "endLine": 89,
+          "params": []
+        },
+        {
+          "name": "list_hotlist",
+          "startLine": 98,
+          "endLine": 146,
+          "params": [
+            "platform",
+            "page",
+            "page_size",
+            "db",
+            "current_user"
+          ]
+        },
+        {
+          "name": "search_hotlist_semantic",
+          "startLine": 155,
+          "endLine": 194,
+          "params": [
+            "query",
+            "platform",
+            "n_results",
+            "current_user"
+          ]
+        },
+        {
+          "name": "trigger_full_sync",
+          "startLine": 203,
+          "endLine": 225,
+          "params": [
+            "background_tasks",
+            "current_admin"
+          ]
+        },
+        {
+          "name": "_run_sync_all",
+          "startLine": 228,
+          "endLine": 234,
+          "params": []
+        },
+        {
+          "name": "trigger_platform_sync",
+          "startLine": 242,
+          "endLine": 258,
+          "params": [
+            "platform",
+            "current_admin"
+          ]
+        },
+        {
+          "name": "get_hotlist_stats",
+          "startLine": 266,
+          "endLine": 307,
+          "params": [
+            "current_admin",
+            "db"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "HotlistItemResponse",
+          "startLine": 44,
+          "endLine": 58,
+          "methods": [],
+          "properties": [
+            "id",
+            "source_platform",
+            "rank",
+            "title",
+            "description",
+            "hot_value",
+            "url",
+            "image_url",
+            "embedding_status",
+            "fetched_at"
+          ]
+        },
+        {
+          "name": "HotlistSearchResult",
+          "startLine": 61,
+          "endLine": 68,
+          "methods": [],
+          "properties": [
+            "title",
+            "platform",
+            "rank",
+            "hot_value",
+            "similarity",
+            "distance"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HotlistItemResponse",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "HotlistSearchResult",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "get_platforms",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "list_hotlist",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "search_hotlist_semantic",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "trigger_full_sync",
+          "line": 197,
+          "isDefault": false
+        },
+        {
+          "name": "_run_sync_all",
+          "line": 228,
+          "isDefault": false
+        },
+        {
+          "name": "trigger_platform_sync",
+          "line": 237,
+          "isDefault": false
+        },
+        {
+          "name": "get_hotlist_stats",
+          "line": 261,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_platforms",
+          "callee": "ApiResponse",
+          "lineNumber": 89
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "Query",
+          "lineNumber": 99
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "Query",
+          "lineNumber": 103
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "Query",
+          "lineNumber": 104
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "Depends",
+          "lineNumber": 105
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "Depends",
+          "lineNumber": 106
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "HTTPException",
+          "lineNumber": 117
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "db.query(HotlistSync).filter",
+          "lineNumber": 122
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "db.query",
+          "lineNumber": 122
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query.filter",
+          "lineNumber": 125
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query.count",
+          "lineNumber": 127
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query\n        .order_by(HotlistSync.fetched_at.desc(), HotlistSync.rank.asc())\n        .offset((page - 1) * page_size)\n        .limit(page_size)\n        .all",
+          "lineNumber": 129
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query\n        .order_by(HotlistSync.fetched_at.desc(), HotlistSync.rank.asc())\n        .offset((page - 1) * page_size)\n        .limit",
+          "lineNumber": 129
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query\n        .order_by(HotlistSync.fetched_at.desc(), HotlistSync.rank.asc())\n        .offset",
+          "lineNumber": 129
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "query\n        .order_by",
+          "lineNumber": 129
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "HotlistSync.fetched_at.desc",
+          "lineNumber": 130
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "HotlistSync.rank.asc",
+          "lineNumber": 130
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "ApiResponse",
+          "lineNumber": 136
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "PaginationResponse",
+          "lineNumber": 139
+        },
+        {
+          "caller": "list_hotlist",
+          "callee": "HotlistItemResponse.model_validate",
+          "lineNumber": 140
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "Query",
+          "lineNumber": 156
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "Query",
+          "lineNumber": 157
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "Query",
+          "lineNumber": 158
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "Depends",
+          "lineNumber": 159
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "query.strip",
+          "lineNumber": 169
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "HTTPException",
+          "lineNumber": 170
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "search_hotlist",
+          "lineNumber": 178
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "logger.error",
+          "lineNumber": 184
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "HTTPException",
+          "lineNumber": 185
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "str",
+          "lineNumber": 187
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "ApiResponse",
+          "lineNumber": 190
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "len",
+          "lineNumber": 192
+        },
+        {
+          "caller": "search_hotlist_semantic",
+          "callee": "HotlistSearchResult",
+          "lineNumber": 193
+        },
+        {
+          "caller": "trigger_full_sync",
+          "callee": "Depends",
+          "lineNumber": 205
+        },
+        {
+          "caller": "trigger_full_sync",
+          "callee": "background_tasks.add_task",
+          "lineNumber": 218
+        },
+        {
+          "caller": "trigger_full_sync",
+          "callee": "logger.info",
+          "lineNumber": 220
+        },
+        {
+          "caller": "trigger_full_sync",
+          "callee": "ApiResponse",
+          "lineNumber": 221
+        },
+        {
+          "caller": "_run_sync_all",
+          "callee": "sync_all_hotlists",
+          "lineNumber": 231
+        },
+        {
+          "caller": "_run_sync_all",
+          "callee": "logger.info",
+          "lineNumber": 232
+        },
+        {
+          "caller": "_run_sync_all",
+          "callee": "logger.error",
+          "lineNumber": 234
+        },
+        {
+          "caller": "trigger_platform_sync",
+          "callee": "Depends",
+          "lineNumber": 244
+        },
+        {
+          "caller": "trigger_platform_sync",
+          "callee": "sync_single_platform",
+          "lineNumber": 248
+        },
+        {
+          "caller": "trigger_platform_sync",
+          "callee": "ApiResponse",
+          "lineNumber": 249
+        },
+        {
+          "caller": "trigger_platform_sync",
+          "callee": "HTTPException",
+          "lineNumber": 255
+        },
+        {
+          "caller": "trigger_platform_sync",
+          "callee": "str",
+          "lineNumber": 257
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "Depends",
+          "lineNumber": 267
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "Depends",
+          "lineNumber": 268
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(HotlistSync.source_platform, func.count(HotlistSync.id))\n        .filter(HotlistSync.is_expired == 0)\n        .group_by(HotlistSync.source_platform)\n        .all",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(HotlistSync.source_platform, func.count(HotlistSync.id))\n        .filter(HotlistSync.is_expired == 0)\n        .group_by",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(HotlistSync.source_platform, func.count(HotlistSync.id))\n        .filter",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "func.count",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(func.count(HotlistSync.id))\n        .filter(HotlistSync.embedding_status == \"pending\", HotlistSync.is_expired == 0)\n        .scalar",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(func.count(HotlistSync.id))\n        .filter",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "func.count",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(func.max(HotlistSync.fetched_at))\n        .scalar",
+          "lineNumber": 291
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query",
+          "lineNumber": 291
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "func.max",
+          "lineNumber": 291
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query(func.count(HotlistSync.id)).scalar",
+          "lineNumber": 296
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "db.query",
+          "lineNumber": 296
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "func.count",
+          "lineNumber": 296
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "ApiResponse",
+          "lineNumber": 298
+        },
+        {
+          "caller": "get_hotlist_stats",
+          "callee": "latest_sync.isoformat",
+          "lineNumber": 304
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 9,
+        "functionCount": 7,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "app/api/v1/logs.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 466,
+      "nonEmptyLines": 410,
+      "functions": [
+        {
+          "name": "get_audit_trail",
+          "startLine": 58,
+          "endLine": 115,
+          "params": [
+            "task_id",
+            "step_type",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_agent_logs",
+          "startLine": 128,
+          "endLine": 218,
+          "params": [
+            "task_id",
+            "agent_name",
+            "skill_name",
+            "status",
+            "page",
+            "page_size",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_task_logs",
+          "startLine": 231,
+          "endLine": 330,
+          "params": [
+            "status",
+            "start_date",
+            "end_date",
+            "page",
+            "page_size",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_get_task_overview",
+          "startLine": 333,
+          "endLine": 361,
+          "params": [
+            "db",
+            "user"
+          ]
+        },
+        {
+          "name": "get_system_logs",
+          "startLine": 374,
+          "endLine": 466,
+          "params": [
+            "category",
+            "level",
+            "user_id",
+            "is_success",
+            "start_date",
+            "end_date",
+            "page",
+            "page_size",
+            "current_admin",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_audit_trail",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "get_agent_logs",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "get_task_logs",
+          "line": 225,
+          "isDefault": false
+        },
+        {
+          "name": "_get_task_overview",
+          "line": 333,
+          "isDefault": false
+        },
+        {
+          "name": "get_system_logs",
+          "line": 368,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_audit_trail",
+          "callee": "Query",
+          "lineNumber": 59
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "Query",
+          "lineNumber": 60
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "Depends",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "Depends",
+          "lineNumber": 62
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query",
+          "lineNumber": 65
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "ApiResponse",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "ApiResponse",
+          "lineNumber": 70
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(OrchestrationAuditLog).filter",
+          "lineNumber": 72
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query",
+          "lineNumber": 72
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "query.filter",
+          "lineNumber": 76
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "query.order_by(OrchestrationAuditLog.sequence_no.asc()).all",
+          "lineNumber": 78
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "query.order_by",
+          "lineNumber": 78
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "OrchestrationAuditLog.sequence_no.asc",
+          "lineNumber": 78
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "log.created_at.isoformat",
+          "lineNumber": 94
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(OrchestrationAuditLog.step_type, func.count(OrchestrationAuditLog.id))\r\n        .filter(OrchestrationAuditLog.task_id == task_id)\r\n        .group_by(OrchestrationAuditLog.step_type)\r\n        .all",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(OrchestrationAuditLog.step_type, func.count(OrchestrationAuditLog.id))\r\n        .filter(OrchestrationAuditLog.task_id == task_id)\r\n        .group_by",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query(OrchestrationAuditLog.step_type, func.count(OrchestrationAuditLog.id))\r\n        .filter",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "db.query",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "func.count",
+          "lineNumber": 100
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "ApiResponse",
+          "lineNumber": 106
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "len",
+          "lineNumber": 108
+        },
+        {
+          "caller": "get_audit_trail",
+          "callee": "len",
+          "lineNumber": 111
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 129
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 130
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 131
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 132
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 133
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Query",
+          "lineNumber": 134
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Depends",
+          "lineNumber": 135
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "Depends",
+          "lineNumber": 136
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "db.query",
+          "lineNumber": 161
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "db.query(Task.id).filter(Task.user_id == current_user.id).subquery",
+          "lineNumber": 166
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "db.query(Task.id).filter",
+          "lineNumber": 166
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "db.query",
+          "lineNumber": 166
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.filter",
+          "lineNumber": 167
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "AgentLog.task_id.in_",
+          "lineNumber": 167
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.filter",
+          "lineNumber": 171
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.filter",
+          "lineNumber": 173
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.filter",
+          "lineNumber": 175
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.filter",
+          "lineNumber": 177
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query.count",
+          "lineNumber": 179
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query\r\n        .order_by(desc(AgentLog.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit(page_size)\r\n        .all",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query\r\n        .order_by(desc(AgentLog.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query\r\n        .order_by(desc(AgentLog.created_at))\r\n        .offset",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "query\r\n        .order_by",
+          "lineNumber": 181
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "desc",
+          "lineNumber": 182
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "log.created_at.isoformat",
+          "lineNumber": 201
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "logger.info",
+          "lineNumber": 206
+        },
+        {
+          "caller": "get_agent_logs",
+          "callee": "ApiResponse",
+          "lineNumber": 208
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Query",
+          "lineNumber": 232
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Query",
+          "lineNumber": 233
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Query",
+          "lineNumber": 234
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Query",
+          "lineNumber": 235
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Query",
+          "lineNumber": 236
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Depends",
+          "lineNumber": 237
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "Depends",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query",
+          "lineNumber": 247
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query.filter",
+          "lineNumber": 251
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query.filter",
+          "lineNumber": 255
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "TaskStatus",
+          "lineNumber": 255
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "datetime.strptime",
+          "lineNumber": 261
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query.filter",
+          "lineNumber": 262
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "datetime.strptime",
+          "lineNumber": 268
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "timedelta",
+          "lineNumber": 268
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query.filter",
+          "lineNumber": 269
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query.count",
+          "lineNumber": 273
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query\r\n        .order_by(desc(Task.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit(page_size)\r\n        .all",
+          "lineNumber": 275
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query\r\n        .order_by(desc(Task.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit",
+          "lineNumber": 275
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query\r\n        .order_by(desc(Task.created_at))\r\n        .offset",
+          "lineNumber": 275
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "query\r\n        .order_by",
+          "lineNumber": 275
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "desc",
+          "lineNumber": 276
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query(\r\n                func.count(Copy.id).label(\"copy_count\"),\r\n                func.max(Copy.review_score).label(\"best_score\"),\r\n                func.sum(Copy.tokens_used).label(\"total_tokens\"),\r\n            )\r\n            .filter(Copy.task_id == task.id)\r\n            .first",
+          "lineNumber": 286
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query(\r\n                func.count(Copy.id).label(\"copy_count\"),\r\n                func.max(Copy.review_score).label(\"best_score\"),\r\n                func.sum(Copy.tokens_used).label(\"total_tokens\"),\r\n            )\r\n            .filter",
+          "lineNumber": 286
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query",
+          "lineNumber": 286
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.count(Copy.id).label",
+          "lineNumber": 287
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.count",
+          "lineNumber": 287
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.max(Copy.review_score).label",
+          "lineNumber": 288
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.max",
+          "lineNumber": 288
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.sum(Copy.tokens_used).label",
+          "lineNumber": 289
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.sum",
+          "lineNumber": 289
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query(func.count(AgentLog.id))\r\n            .filter(AgentLog.task_id == task.id)\r\n            .scalar",
+          "lineNumber": 297
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query(func.count(AgentLog.id))\r\n            .filter",
+          "lineNumber": 297
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "db.query",
+          "lineNumber": 297
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "func.count",
+          "lineNumber": 297
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "items.append",
+          "lineNumber": 302
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "len",
+          "lineNumber": 306
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "task.created_at.isoformat",
+          "lineNumber": 312
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "task.updated_at.isoformat",
+          "lineNumber": 313
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "_get_task_overview",
+          "lineNumber": 317
+        },
+        {
+          "caller": "get_task_logs",
+          "callee": "ApiResponse",
+          "lineNumber": 319
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "db.query",
+          "lineNumber": 335
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter",
+          "lineNumber": 337
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.count",
+          "lineNumber": 339
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter(Task.status == TaskStatus.COMPLETED).count",
+          "lineNumber": 340
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter",
+          "lineNumber": 340
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter(Task.status == TaskStatus.FAILED).count",
+          "lineNumber": 341
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter",
+          "lineNumber": 341
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter(Task.status.in_([TaskStatus.PENDING, TaskStatus.PROCESSING])).count",
+          "lineNumber": 342
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "base_query.filter",
+          "lineNumber": 342
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "Task.status.in_",
+          "lineNumber": 342
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "db.query(func.avg(Copy.review_score))\r\n        .join(Task, Copy.task_id == Task.id)\r\n        .filter",
+          "lineNumber": 346
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "db.query(func.avg(Copy.review_score))\r\n        .join",
+          "lineNumber": 346
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "db.query",
+          "lineNumber": 346
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "func.avg",
+          "lineNumber": 346
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "Copy.review_score.isnot",
+          "lineNumber": 348
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "avg_score.filter",
+          "lineNumber": 351
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "avg_score.scalar",
+          "lineNumber": 352
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "round",
+          "lineNumber": 359
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "round",
+          "lineNumber": 360
+        },
+        {
+          "caller": "_get_task_overview",
+          "callee": "float",
+          "lineNumber": 360
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 375
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 376
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 377
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 378
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 379
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 380
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 381
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Query",
+          "lineNumber": 382
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Depends",
+          "lineNumber": 383
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "Depends",
+          "lineNumber": 384
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "db.query",
+          "lineNumber": 395
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 398
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 400
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "level.upper",
+          "lineNumber": 400
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 402
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 404
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 408
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "datetime.strptime",
+          "lineNumber": 409
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "datetime.strptime",
+          "lineNumber": 416
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "timedelta",
+          "lineNumber": 416
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.filter",
+          "lineNumber": 417
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query.count",
+          "lineNumber": 421
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query\r\n        .order_by(desc(SystemLog.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit(page_size)\r\n        .all",
+          "lineNumber": 423
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query\r\n        .order_by(desc(SystemLog.created_at))\r\n        .offset((page - 1) * page_size)\r\n        .limit",
+          "lineNumber": 423
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query\r\n        .order_by(desc(SystemLog.created_at))\r\n        .offset",
+          "lineNumber": 423
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "query\r\n        .order_by",
+          "lineNumber": 423
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "desc",
+          "lineNumber": 424
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "db.query(SystemLog.level, func.count(SystemLog.id))\r\n        .group_by(SystemLog.level)\r\n        .all",
+          "lineNumber": 432
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "db.query(SystemLog.level, func.count(SystemLog.id))\r\n        .group_by",
+          "lineNumber": 432
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "db.query",
+          "lineNumber": 432
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "func.count",
+          "lineNumber": 432
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "bool",
+          "lineNumber": 449
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "log.created_at.isoformat",
+          "lineNumber": 450
+        },
+        {
+          "caller": "get_system_logs",
+          "callee": "ApiResponse",
+          "lineNumber": 455
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/v1/tasks.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 400,
+      "nonEmptyLines": 354,
+      "functions": [
+        {
+          "name": "_run_agents_background",
+          "startLine": 44,
+          "endLine": 89,
+          "params": [
+            "task_id"
+          ]
+        },
+        {
+          "name": "create_task",
+          "startLine": 99,
+          "endLine": 170,
+          "params": [
+            "task_data",
+            "background_tasks",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "list_tasks",
+          "startLine": 178,
+          "endLine": 213,
+          "params": [
+            "page",
+            "page_size",
+            "status_filter",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_task",
+          "startLine": 222,
+          "endLine": 268,
+          "params": [
+            "task_id",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_task_copies",
+          "startLine": 276,
+          "endLine": 304,
+          "params": [
+            "task_id",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_resume_task_background",
+          "startLine": 307,
+          "endLine": 335,
+          "params": [
+            "task_id",
+            "action"
+          ]
+        },
+        {
+          "name": "resume_task",
+          "startLine": 344,
+          "endLine": 400,
+          "params": [
+            "task_id",
+            "body",
+            "background_tasks",
+            "current_user",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_run_agents_background",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "create_task",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "list_tasks",
+          "line": 173,
+          "isDefault": false
+        },
+        {
+          "name": "get_task",
+          "line": 216,
+          "isDefault": false
+        },
+        {
+          "name": "get_task_copies",
+          "line": 271,
+          "isDefault": false
+        },
+        {
+          "name": "_resume_task_background",
+          "line": 307,
+          "isDefault": false
+        },
+        {
+          "name": "resume_task",
+          "line": 338,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_run_agents_background",
+          "callee": "SessionLocal",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "isinstance",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "meta.get",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "get_orchestration_engine",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "engine.run",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "logger.info",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "write_log",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "bool",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "result.get",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "logger.exception",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "write_log",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "str",
+          "lineNumber": 77
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.query",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "str",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.commit",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_run_agents_background",
+          "callee": "db.close",
+          "lineNumber": 89
+        },
+        {
+          "caller": "create_task",
+          "callee": "Depends",
+          "lineNumber": 102
+        },
+        {
+          "caller": "create_task",
+          "callee": "Depends",
+          "lineNumber": 103
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.query(StyleCard).filter(StyleCard.id == task_data.style_card_id).first",
+          "lineNumber": 116
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.query(StyleCard).filter",
+          "lineNumber": 116
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.query",
+          "lineNumber": 116
+        },
+        {
+          "caller": "create_task",
+          "callee": "HTTPException",
+          "lineNumber": 118
+        },
+        {
+          "caller": "create_task",
+          "callee": "HTTPException",
+          "lineNumber": 120
+        },
+        {
+          "caller": "create_task",
+          "callee": "Task",
+          "lineNumber": 125
+        },
+        {
+          "caller": "create_task",
+          "callee": "resolve_execution_mode",
+          "lineNumber": 133
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.add",
+          "lineNumber": 138
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.commit",
+          "lineNumber": 139
+        },
+        {
+          "caller": "create_task",
+          "callee": "db.refresh",
+          "lineNumber": 140
+        },
+        {
+          "caller": "create_task",
+          "callee": "write_log",
+          "lineNumber": 142
+        },
+        {
+          "caller": "create_task",
+          "callee": "logger.info",
+          "lineNumber": 156
+        },
+        {
+          "caller": "create_task",
+          "callee": "background_tasks.add_task",
+          "lineNumber": 164
+        },
+        {
+          "caller": "create_task",
+          "callee": "ApiResponse",
+          "lineNumber": 166
+        },
+        {
+          "caller": "create_task",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 169
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "Depends",
+          "lineNumber": 182
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "Depends",
+          "lineNumber": 183
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 186
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "db.query",
+          "lineNumber": 186
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query.filter",
+          "lineNumber": 190
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "TaskStatus",
+          "lineNumber": 190
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query.count",
+          "lineNumber": 194
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query\n        .order_by(Task.created_at.desc())\n        .offset((page - 1) * page_size)\n        .limit(page_size)\n        .all",
+          "lineNumber": 196
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query\n        .order_by(Task.created_at.desc())\n        .offset((page - 1) * page_size)\n        .limit",
+          "lineNumber": 196
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query\n        .order_by(Task.created_at.desc())\n        .offset",
+          "lineNumber": 196
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "query\n        .order_by",
+          "lineNumber": 196
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "Task.created_at.desc",
+          "lineNumber": 197
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "ApiResponse",
+          "lineNumber": 203
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "PaginationResponse",
+          "lineNumber": 206
+        },
+        {
+          "caller": "list_tasks",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 207
+        },
+        {
+          "caller": "get_task",
+          "callee": "Depends",
+          "lineNumber": 224
+        },
+        {
+          "caller": "get_task",
+          "callee": "Depends",
+          "lineNumber": 225
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query(Task).filter(\n        Task.id == task_id,\n        Task.user_id == current_user.id  # 只能查自己的任务\n    ).first",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_task",
+          "callee": "HTTPException",
+          "lineNumber": 244
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query(Copy)\n        .filter(Copy.task_id == task_id)\n        .order_by(Copy.version)\n        .all",
+          "lineNumber": 251
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query(Copy)\n        .filter(Copy.task_id == task_id)\n        .order_by",
+          "lineNumber": 251
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query(Copy)\n        .filter",
+          "lineNumber": 251
+        },
+        {
+          "caller": "get_task",
+          "callee": "db.query",
+          "lineNumber": 251
+        },
+        {
+          "caller": "get_task",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 258
+        },
+        {
+          "caller": "get_task",
+          "callee": "TaskDetailResponse",
+          "lineNumber": 259
+        },
+        {
+          "caller": "get_task",
+          "callee": "task_base.model_dump",
+          "lineNumber": 260
+        },
+        {
+          "caller": "get_task",
+          "callee": "TaskCopySummary.model_validate",
+          "lineNumber": 261
+        },
+        {
+          "caller": "get_task",
+          "callee": "ApiResponse",
+          "lineNumber": 264
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "Depends",
+          "lineNumber": 278
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "Depends",
+          "lineNumber": 279
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query(Task).filter(\n        Task.id == task_id,\n        Task.user_id == current_user.id\n    ).first",
+          "lineNumber": 282
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 282
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query",
+          "lineNumber": 282
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "HTTPException",
+          "lineNumber": 288
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query(Copy)\n        .filter(Copy.task_id == task_id)\n        .order_by(Copy.version)\n        .all",
+          "lineNumber": 294
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query(Copy)\n        .filter(Copy.task_id == task_id)\n        .order_by",
+          "lineNumber": 294
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query(Copy)\n        .filter",
+          "lineNumber": 294
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "db.query",
+          "lineNumber": 294
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "ApiResponse",
+          "lineNumber": 300
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "len",
+          "lineNumber": 302
+        },
+        {
+          "caller": "get_task_copies",
+          "callee": "CopyResponse.model_validate",
+          "lineNumber": 303
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "SessionLocal",
+          "lineNumber": 309
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 314
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 314
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query",
+          "lineNumber": 314
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "isinstance",
+          "lineNumber": 315
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "meta.get",
+          "lineNumber": 316
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "(settings.ORCHESTRATION_MODE or \"fixed\").strip().lower",
+          "lineNumber": 316
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "(settings.ORCHESTRATION_MODE or \"fixed\").strip",
+          "lineNumber": 316
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 318
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 318
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query",
+          "lineNumber": 318
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.commit",
+          "lineNumber": 322
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "resume_agentic_pipeline",
+          "lineNumber": 325
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "logger.info",
+          "lineNumber": 326
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "result.get",
+          "lineNumber": 326
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "logger.exception",
+          "lineNumber": 328
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter(Task.id == task_id).first",
+          "lineNumber": 329
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 329
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.query",
+          "lineNumber": 329
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "str",
+          "lineNumber": 332
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.commit",
+          "lineNumber": 333
+        },
+        {
+          "caller": "_resume_task_background",
+          "callee": "db.close",
+          "lineNumber": 335
+        },
+        {
+          "caller": "resume_task",
+          "callee": "Depends",
+          "lineNumber": 348
+        },
+        {
+          "caller": "resume_task",
+          "callee": "Depends",
+          "lineNumber": 349
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.query(Task).filter(\n        Task.id == task_id,\n        Task.user_id == current_user.id,\n    ).first",
+          "lineNumber": 352
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.query(Task).filter",
+          "lineNumber": 352
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.query",
+          "lineNumber": 352
+        },
+        {
+          "caller": "resume_task",
+          "callee": "HTTPException",
+          "lineNumber": 358
+        },
+        {
+          "caller": "resume_task",
+          "callee": "HTTPException",
+          "lineNumber": 364
+        },
+        {
+          "caller": "resume_task",
+          "callee": "resume_agentic_pipeline",
+          "lineNumber": 372
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.refresh",
+          "lineNumber": 373
+        },
+        {
+          "caller": "resume_task",
+          "callee": "ApiResponse",
+          "lineNumber": 374
+        },
+        {
+          "caller": "resume_task",
+          "callee": "result.get",
+          "lineNumber": 375
+        },
+        {
+          "caller": "resume_task",
+          "callee": "result.get",
+          "lineNumber": 376
+        },
+        {
+          "caller": "resume_task",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 377
+        },
+        {
+          "caller": "resume_task",
+          "callee": "resume_agentic_pipeline",
+          "lineNumber": 383
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.refresh",
+          "lineNumber": 384
+        },
+        {
+          "caller": "resume_task",
+          "callee": "ApiResponse",
+          "lineNumber": 385
+        },
+        {
+          "caller": "resume_task",
+          "callee": "result.get",
+          "lineNumber": 386
+        },
+        {
+          "caller": "resume_task",
+          "callee": "result.get",
+          "lineNumber": 387
+        },
+        {
+          "caller": "resume_task",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 388
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.commit",
+          "lineNumber": 393
+        },
+        {
+          "caller": "resume_task",
+          "callee": "background_tasks.add_task",
+          "lineNumber": 394
+        },
+        {
+          "caller": "resume_task",
+          "callee": "db.refresh",
+          "lineNumber": 395
+        },
+        {
+          "caller": "resume_task",
+          "callee": "ApiResponse",
+          "lineNumber": 396
+        },
+        {
+          "caller": "resume_task",
+          "callee": "TaskResponse.model_validate",
+          "lineNumber": 399
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/v1/users.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 126,
+      "nonEmptyLines": 108,
+      "functions": [
+        {
+          "name": "get_my_profile",
+          "startLine": 31,
+          "endLine": 38,
+          "params": [
+            "current_user"
+          ]
+        },
+        {
+          "name": "update_my_profile",
+          "startLine": 46,
+          "endLine": 74,
+          "params": [
+            "update_data",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "list_users",
+          "startLine": 83,
+          "endLine": 103,
+          "params": [
+            "page",
+            "page_size",
+            "current_admin",
+            "db"
+          ]
+        },
+        {
+          "name": "get_user_by_id",
+          "startLine": 111,
+          "endLine": 126,
+          "params": [
+            "user_id",
+            "current_admin",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_my_profile",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "update_my_profile",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "list_users",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "get_user_by_id",
+          "line": 106,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_my_profile",
+          "callee": "Depends",
+          "lineNumber": 32
+        },
+        {
+          "caller": "get_my_profile",
+          "callee": "ApiResponse",
+          "lineNumber": 34
+        },
+        {
+          "caller": "get_my_profile",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 37
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "Depends",
+          "lineNumber": 48
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "Depends",
+          "lineNumber": 49
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "update_data.model_dump",
+          "lineNumber": 55
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "hash_password",
+          "lineNumber": 59
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "update_fields.pop",
+          "lineNumber": 59
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "update_fields.items",
+          "lineNumber": 62
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "setattr",
+          "lineNumber": 63
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "db.commit",
+          "lineNumber": 65
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "db.refresh",
+          "lineNumber": 66
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "logger.info",
+          "lineNumber": 68
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "list",
+          "lineNumber": 68
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "update_fields.keys",
+          "lineNumber": 68
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "ApiResponse",
+          "lineNumber": 70
+        },
+        {
+          "caller": "update_my_profile",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 73
+        },
+        {
+          "caller": "list_users",
+          "callee": "Depends",
+          "lineNumber": 86
+        },
+        {
+          "caller": "list_users",
+          "callee": "Depends",
+          "lineNumber": 87
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query(User).count",
+          "lineNumber": 90
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query",
+          "lineNumber": 90
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query(User).offset((page - 1) * page_size).limit(page_size).all",
+          "lineNumber": 91
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query(User).offset((page - 1) * page_size).limit",
+          "lineNumber": 91
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query(User).offset",
+          "lineNumber": 91
+        },
+        {
+          "caller": "list_users",
+          "callee": "db.query",
+          "lineNumber": 91
+        },
+        {
+          "caller": "list_users",
+          "callee": "ApiResponse",
+          "lineNumber": 93
+        },
+        {
+          "caller": "list_users",
+          "callee": "PaginationResponse",
+          "lineNumber": 96
+        },
+        {
+          "caller": "list_users",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 97
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "Depends",
+          "lineNumber": 113
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "Depends",
+          "lineNumber": 114
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "db.query(User).filter(User.id == user_id).first",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "db.query(User).filter",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "db.query",
+          "lineNumber": 116
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "HTTPException",
+          "lineNumber": 118
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "ApiResponse",
+          "lineNumber": 122
+        },
+        {
+          "caller": "get_user_by_id",
+          "callee": "UserResponse.model_validate",
+          "lineNumber": 125
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/core/deps.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 109,
+      "nonEmptyLines": 88,
+      "functions": [
+        {
+          "name": "get_current_user",
+          "startLine": 40,
+          "endLine": 71,
+          "params": [
+            "credentials",
+            "db"
+          ]
+        },
+        {
+          "name": "get_current_active_user",
+          "startLine": 74,
+          "endLine": 88,
+          "params": [
+            "current_user"
+          ]
+        },
+        {
+          "name": "get_current_admin_user",
+          "startLine": 91,
+          "endLine": 109,
+          "params": [
+            "current_user"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_current_user",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "get_current_active_user",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "get_current_admin_user",
+          "line": 91,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_current_user",
+          "callee": "Depends",
+          "lineNumber": 41
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "Depends",
+          "lineNumber": 42
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "HTTPException",
+          "lineNumber": 53
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "decode_access_token",
+          "lineNumber": 63
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query(User).filter(User.id == int(user_id)).first",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query(User).filter",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "int",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_current_active_user",
+          "callee": "Depends",
+          "lineNumber": 75
+        },
+        {
+          "caller": "get_current_active_user",
+          "callee": "HTTPException",
+          "lineNumber": 84
+        },
+        {
+          "caller": "get_current_admin_user",
+          "callee": "Depends",
+          "lineNumber": 92
+        },
+        {
+          "caller": "get_current_admin_user",
+          "callee": "HTTPException",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/core/security.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 145,
+      "nonEmptyLines": 117,
+      "functions": [
+        {
+          "name": "hash_password",
+          "startLine": 44,
+          "endLine": 56,
+          "params": [
+            "plain_password"
+          ]
+        },
+        {
+          "name": "verify_password",
+          "startLine": 59,
+          "endLine": 71,
+          "params": [
+            "plain_password",
+            "hashed_password"
+          ]
+        },
+        {
+          "name": "create_access_token",
+          "startLine": 78,
+          "endLine": 117,
+          "params": [
+            "subject",
+            "expires_delta"
+          ]
+        },
+        {
+          "name": "decode_access_token",
+          "startLine": 120,
+          "endLine": 145,
+          "params": [
+            "token"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "hash_password",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "verify_password",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "create_access_token",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "decode_access_token",
+          "line": 120,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "hash_password",
+          "callee": "plain_password.encode",
+          "lineNumber": 54
+        },
+        {
+          "caller": "hash_password",
+          "callee": "_bcrypt.gensalt",
+          "lineNumber": 55
+        },
+        {
+          "caller": "hash_password",
+          "callee": "_bcrypt.hashpw(password_bytes, salt).decode",
+          "lineNumber": 56
+        },
+        {
+          "caller": "hash_password",
+          "callee": "_bcrypt.hashpw",
+          "lineNumber": 56
+        },
+        {
+          "caller": "verify_password",
+          "callee": "plain_password.encode",
+          "lineNumber": 70
+        },
+        {
+          "caller": "verify_password",
+          "callee": "_bcrypt.checkpw",
+          "lineNumber": 71
+        },
+        {
+          "caller": "verify_password",
+          "callee": "hashed_password.encode",
+          "lineNumber": 71
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "datetime.utcnow",
+          "lineNumber": 97
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "datetime.utcnow",
+          "lineNumber": 99
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "timedelta",
+          "lineNumber": 99
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "str",
+          "lineNumber": 105
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "datetime.utcnow",
+          "lineNumber": 107
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "jwt.encode",
+          "lineNumber": 112
+        },
+        {
+          "caller": "decode_access_token",
+          "callee": "jwt.decode",
+          "lineNumber": 134
+        },
+        {
+          "caller": "decode_access_token",
+          "callee": "payload.get",
+          "lineNumber": 139
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/database.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 157,
+      "nonEmptyLines": 126,
+      "functions": [
+        {
+          "name": "_get_engine_kwargs",
+          "startLine": 35,
+          "endLine": 64,
+          "params": []
+        },
+        {
+          "name": "_prepare_sqlite_dir",
+          "startLine": 67,
+          "endLine": 72,
+          "params": []
+        },
+        {
+          "name": "get_db",
+          "startLine": 119,
+          "endLine": 143,
+          "params": []
+        },
+        {
+          "name": "create_tables",
+          "startLine": 146,
+          "endLine": 157,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_get_engine_kwargs",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "_prepare_sqlite_dir",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "get_db",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "create_tables",
+          "line": 146,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_get_engine_kwargs",
+          "callee": "settings.DATABASE_URL.startswith",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_get_engine_kwargs",
+          "callee": "settings.DATABASE_URL.startswith",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_prepare_sqlite_dir",
+          "callee": "settings.DATABASE_URL.startswith",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_prepare_sqlite_dir",
+          "callee": "settings.DATABASE_URL.replace",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_prepare_sqlite_dir",
+          "callee": "Path(db_path).parent.mkdir",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_prepare_sqlite_dir",
+          "callee": "Path",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_set_sqlite_pragma",
+          "callee": "dbapi_conn.cursor",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_set_sqlite_pragma",
+          "callee": "cursor.execute",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_set_sqlite_pragma",
+          "callee": "cursor.close",
+          "lineNumber": 89
+        },
+        {
+          "caller": "get_db",
+          "callee": "SessionLocal",
+          "lineNumber": 135
+        },
+        {
+          "caller": "get_db",
+          "callee": "logger.error",
+          "lineNumber": 139
+        },
+        {
+          "caller": "get_db",
+          "callee": "db.rollback",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_db",
+          "callee": "db.close",
+          "lineNumber": 143
+        },
+        {
+          "caller": "create_tables",
+          "callee": "logger.info",
+          "lineNumber": 155
+        },
+        {
+          "caller": "create_tables",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 156
+        },
+        {
+          "caller": "create_tables",
+          "callee": "logger.info",
+          "lineNumber": 157
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/main.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 259,
+      "nonEmptyLines": 209,
+      "functions": [
+        {
+          "name": "lifespan",
+          "startLine": 39,
+          "endLine": 73,
+          "params": [
+            "app"
+          ]
+        },
+        {
+          "name": "log_requests",
+          "startLine": 126,
+          "endLine": 161,
+          "params": [
+            "request",
+            "call_next"
+          ]
+        },
+        {
+          "name": "validation_exception_handler",
+          "startLine": 169,
+          "endLine": 193,
+          "params": [
+            "request",
+            "exc"
+          ]
+        },
+        {
+          "name": "global_exception_handler",
+          "startLine": 197,
+          "endLine": 214,
+          "params": [
+            "request",
+            "exc"
+          ]
+        },
+        {
+          "name": "health_check",
+          "startLine": 240,
+          "endLine": 249,
+          "params": []
+        },
+        {
+          "name": "root",
+          "startLine": 253,
+          "endLine": 259,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "lifespan",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "log_requests",
+          "line": 125,
+          "isDefault": false
+        },
+        {
+          "name": "validation_exception_handler",
+          "line": 168,
+          "isDefault": false
+        },
+        {
+          "name": "global_exception_handler",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "health_check",
+          "line": 239,
+          "isDefault": false
+        },
+        {
+          "name": "root",
+          "line": 252,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "lifespan",
+          "callee": "setup_logger",
+          "lineNumber": 51
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 52
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 53
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 54
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 55
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 56
+        },
+        {
+          "caller": "lifespan",
+          "callee": "create_tables",
+          "lineNumber": 60
+        },
+        {
+          "caller": "lifespan",
+          "callee": "start_scheduler",
+          "lineNumber": 64
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 66
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 71
+        },
+        {
+          "caller": "lifespan",
+          "callee": "stop_scheduler",
+          "lineNumber": 72
+        },
+        {
+          "caller": "lifespan",
+          "callee": "logger.info",
+          "lineNumber": 73
+        },
+        {
+          "caller": "log_requests",
+          "callee": "time.time",
+          "lineNumber": 136
+        },
+        {
+          "caller": "log_requests",
+          "callee": "call_next",
+          "lineNumber": 139
+        },
+        {
+          "caller": "log_requests",
+          "callee": "round",
+          "lineNumber": 142
+        },
+        {
+          "caller": "log_requests",
+          "callee": "time.time",
+          "lineNumber": 142
+        },
+        {
+          "caller": "log_requests",
+          "callee": "logger.error",
+          "lineNumber": 146
+        },
+        {
+          "caller": "log_requests",
+          "callee": "logger.warning",
+          "lineNumber": 151
+        },
+        {
+          "caller": "log_requests",
+          "callee": "logger.info",
+          "lineNumber": 156
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "exc.errors",
+          "lineNumber": 180
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "\" -> \".join",
+          "lineNumber": 181
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "str",
+          "lineNumber": 181
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "errors.append",
+          "lineNumber": 182
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "logger.warning",
+          "lineNumber": 184
+        },
+        {
+          "caller": "validation_exception_handler",
+          "callee": "JSONResponse",
+          "lineNumber": 186
+        },
+        {
+          "caller": "global_exception_handler",
+          "callee": "logger.exception",
+          "lineNumber": 204
+        },
+        {
+          "caller": "global_exception_handler",
+          "callee": "JSONResponse",
+          "lineNumber": 206
+        },
+        {
+          "caller": "global_exception_handler",
+          "callee": "str",
+          "lineNumber": 211
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/models/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/models/agent_log.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 89,
+      "nonEmptyLines": 68,
+      "classes": [
+        {
+          "name": "AgentLog",
+          "startLine": 24,
+          "endLine": 89,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AgentLog",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/copy.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 64,
+      "classes": [
+        {
+          "name": "Copy",
+          "startLine": 20,
+          "endLine": 85,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Copy",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/document.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 75,
+      "nonEmptyLines": 56,
+      "classes": [
+        {
+          "name": "Document",
+          "startLine": 20,
+          "endLine": 75,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Document",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/hotlist_sync.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 89,
+      "nonEmptyLines": 67,
+      "classes": [
+        {
+          "name": "HotlistSync",
+          "startLine": 21,
+          "endLine": 89,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HotlistSync",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/orchestration_audit_log.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 54,
+      "classes": [
+        {
+          "name": "OrchestrationAuditLog",
+          "startLine": 16,
+          "endLine": 73,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "OrchestrationAuditLog",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/style_card.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 22,
+      "classes": [
+        {
+          "name": "StyleCard",
+          "startLine": 14,
+          "endLine": 30,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "StyleCard",
+          "line": 14,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/system_log.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 92,
+      "nonEmptyLines": 71,
+      "classes": [
+        {
+          "name": "SystemLog",
+          "startLine": 26,
+          "endLine": 92,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SystemLog",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/models/task.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 126,
+      "nonEmptyLines": 103,
+      "classes": [
+        {
+          "name": "TaskStatus",
+          "startLine": 19,
+          "endLine": 35,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TaskPlatform",
+          "startLine": 38,
+          "endLine": 45,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Task",
+          "startLine": 48,
+          "endLine": 126,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TaskStatus",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "TaskPlatform",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "Task",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "app/models/user.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 111,
+      "nonEmptyLines": 94,
+      "classes": [
+        {
+          "name": "User",
+          "startLine": 22,
+          "endLine": 111,
+          "methods": [
+            "__repr__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "User",
+          "line": 22,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "app/schemas/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 17,
+      "nonEmptyLines": 16,
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/schemas/common.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 67,
+      "classes": [
+        {
+          "name": "ApiResponse",
+          "startLine": 35,
+          "endLine": 45,
+          "methods": [],
+          "properties": [
+            "success",
+            "message",
+            "data"
+          ]
+        },
+        {
+          "name": "PaginationResponse",
+          "startLine": 48,
+          "endLine": 65,
+          "methods": [],
+          "properties": [
+            "items",
+            "total",
+            "page",
+            "page_size",
+            "total_pages"
+          ]
+        },
+        {
+          "name": "PaginationParams",
+          "startLine": 68,
+          "endLine": 83,
+          "methods": [
+            "offset"
+          ],
+          "properties": [
+            "page",
+            "page_size"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ApiResponse",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "PaginationResponse",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "PaginationParams",
+          "line": 68,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "app/schemas/content_asset.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 38,
+      "classes": [
+        {
+          "name": "ReferenceImportRequest",
+          "startLine": 9,
+          "endLine": 14,
+          "methods": [],
+          "properties": [
+            "url",
+            "keyword",
+            "like_count",
+            "read_count",
+            "comment_count"
+          ]
+        },
+        {
+          "name": "ReferenceResponse",
+          "startLine": 17,
+          "endLine": 31,
+          "methods": [],
+          "properties": [
+            "id",
+            "article_id",
+            "title",
+            "author_name",
+            "keyword",
+            "source_url",
+            "like_count",
+            "read_count",
+            "comment_count",
+            "embedding_status",
+            "chunk_count",
+            "content_length",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "StyleCardBuildRequest",
+          "startLine": 34,
+          "endLine": 36,
+          "methods": [],
+          "properties": [
+            "topic_cluster",
+            "reference_ids"
+          ]
+        },
+        {
+          "name": "StyleCardResponse",
+          "startLine": 39,
+          "endLine": 48,
+          "methods": [],
+          "properties": [
+            "id",
+            "topic_cluster",
+            "platform",
+            "pattern_json",
+            "avg_like_count",
+            "source_article_ids",
+            "confidence",
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ReferenceImportRequest",
+          "line": 9,
+          "isDefault": false
+        },
+        {
+          "name": "ReferenceResponse",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "StyleCardBuildRequest",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "StyleCardResponse",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "app/schemas/task.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 106,
+      "nonEmptyLines": 89,
+      "classes": [
+        {
+          "name": "TaskCreate",
+          "startLine": 11,
+          "endLine": 43,
+          "methods": [
+            "zero_to_none"
+          ],
+          "properties": [
+            "raw_requirement",
+            "platform",
+            "hotlist_id",
+            "execution_mode",
+            "style_card_id"
+          ]
+        },
+        {
+          "name": "TaskResponse",
+          "startLine": 46,
+          "endLine": 60,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "raw_requirement",
+            "platform",
+            "status",
+            "parsed_requirement",
+            "orchestration_meta",
+            "error_message",
+            "created_at",
+            "updated_at"
+          ]
+        },
+        {
+          "name": "TaskResumeRequest",
+          "startLine": 63,
+          "endLine": 67,
+          "methods": [],
+          "properties": [
+            "action"
+          ]
+        },
+        {
+          "name": "TaskCopySummary",
+          "startLine": 70,
+          "endLine": 81,
+          "methods": [],
+          "properties": [
+            "id",
+            "version",
+            "title",
+            "content",
+            "hashtags",
+            "review_score",
+            "is_final"
+          ]
+        },
+        {
+          "name": "TaskDetailResponse",
+          "startLine": 84,
+          "endLine": 86,
+          "methods": [],
+          "properties": [
+            "copies"
+          ]
+        },
+        {
+          "name": "CopyResponse",
+          "startLine": 89,
+          "endLine": 106,
+          "methods": [],
+          "properties": [
+            "id",
+            "task_id",
+            "version",
+            "title",
+            "content",
+            "hashtags",
+            "platform",
+            "review_score",
+            "review_comment",
+            "is_final",
+            "tone",
+            "tokens_used",
+            "created_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TaskCreate",
+          "line": 11,
+          "isDefault": false
+        },
+        {
+          "name": "TaskResponse",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "TaskResumeRequest",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "TaskCopySummary",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "TaskDetailResponse",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "CopyResponse",
+          "line": 89,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 6,
+        "functionCount": 0,
+        "classCount": 6
+      }
+    },
+    {
+      "path": "app/schemas/user.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 145,
+      "nonEmptyLines": 122,
+      "classes": [
+        {
+          "name": "UserCreate",
+          "startLine": 26,
+          "endLine": 79,
+          "methods": [
+            "password_strength",
+            "username_alphanumeric"
+          ],
+          "properties": [
+            "username",
+            "email",
+            "password",
+            "nickname"
+          ]
+        },
+        {
+          "name": "UserLogin",
+          "startLine": 82,
+          "endLine": 90,
+          "methods": [],
+          "properties": [
+            "email",
+            "password"
+          ]
+        },
+        {
+          "name": "UserResponse",
+          "startLine": 93,
+          "endLine": 116,
+          "methods": [],
+          "properties": [
+            "id",
+            "username",
+            "email",
+            "nickname",
+            "avatar_url",
+            "is_active",
+            "is_admin",
+            "created_at"
+          ]
+        },
+        {
+          "name": "UserUpdate",
+          "startLine": 119,
+          "endLine": 123,
+          "methods": [],
+          "properties": [
+            "nickname",
+            "avatar_url",
+            "password"
+          ]
+        },
+        {
+          "name": "TokenResponse",
+          "startLine": 126,
+          "endLine": 140,
+          "methods": [],
+          "properties": [
+            "access_token",
+            "token_type",
+            "expires_in",
+            "user"
+          ]
+        },
+        {
+          "name": "TokenData",
+          "startLine": 143,
+          "endLine": 145,
+          "methods": [],
+          "properties": [
+            "user_id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "UserCreate",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "UserLogin",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "UserResponse",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "UserUpdate",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "TokenResponse",
+          "line": 126,
+          "isDefault": false
+        },
+        {
+          "name": "TokenData",
+          "line": 143,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "password_strength",
+          "callee": "ValueError",
+          "lineNumber": 68
+        },
+        {
+          "caller": "password_strength",
+          "callee": "len",
+          "lineNumber": 69
+        },
+        {
+          "caller": "password_strength",
+          "callee": "v.encode",
+          "lineNumber": 69
+        },
+        {
+          "caller": "password_strength",
+          "callee": "ValueError",
+          "lineNumber": 70
+        },
+        {
+          "caller": "username_alphanumeric",
+          "callee": "all",
+          "lineNumber": 77
+        },
+        {
+          "caller": "username_alphanumeric",
+          "callee": "c.isalnum",
+          "lineNumber": 77
+        },
+        {
+          "caller": "username_alphanumeric",
+          "callee": "ValueError",
+          "lineNumber": 78
+        },
+        {
+          "caller": "username_alphanumeric",
+          "callee": "v.lower",
+          "lineNumber": 79
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 0,
+        "classCount": 6
+      }
+    },
+    {
+      "path": "app/services/hotlist_service.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 323,
+      "nonEmptyLines": 263,
+      "functions": [
+        {
+          "name": "fetch_juhe_hotlist",
+          "startLine": 52,
+          "endLine": 124,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "_clean_juhe_items",
+          "startLine": 127,
+          "endLine": 163,
+          "params": [
+            "raw_items"
+          ]
+        },
+        {
+          "name": "sync_all_hotlists",
+          "startLine": 170,
+          "endLine": 211,
+          "params": []
+        },
+        {
+          "name": "_save_hotlist_to_db",
+          "startLine": 214,
+          "endLine": 254,
+          "params": [
+            "db",
+            "platform_key",
+            "items"
+          ]
+        },
+        {
+          "name": "sync_single_platform",
+          "startLine": 261,
+          "endLine": 287,
+          "params": [
+            "platform_key"
+          ]
+        },
+        {
+          "name": "get_recent_hotlist",
+          "startLine": 294,
+          "endLine": 323,
+          "params": [
+            "db",
+            "platform",
+            "limit",
+            "include_expired"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fetch_juhe_hotlist",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "_clean_juhe_items",
+          "line": 127,
+          "isDefault": false
+        },
+        {
+          "name": "sync_all_hotlists",
+          "line": 170,
+          "isDefault": false
+        },
+        {
+          "name": "_save_hotlist_to_db",
+          "line": 214,
+          "isDefault": false
+        },
+        {
+          "name": "sync_single_platform",
+          "line": 261,
+          "isDefault": false
+        },
+        {
+          "name": "get_recent_hotlist",
+          "line": 294,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.warning",
+          "lineNumber": 63
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.debug",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "client.get",
+          "lineNumber": 71
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "response.raise_for_status",
+          "lineNumber": 72
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "response.json",
+          "lineNumber": 74
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.info",
+          "lineNumber": 75
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "raw_data.get",
+          "lineNumber": 79
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.warning",
+          "lineNumber": 81
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "raw_data.get",
+          "lineNumber": 84
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "raw_data.get",
+          "lineNumber": 89
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "isinstance",
+          "lineNumber": 95
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "isinstance",
+          "lineNumber": 97
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.warning",
+          "lineNumber": 103
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "type",
+          "lineNumber": 103
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.warning",
+          "lineNumber": 107
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.info",
+          "lineNumber": 110
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "len",
+          "lineNumber": 110
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "_clean_juhe_items",
+          "lineNumber": 111
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.error",
+          "lineNumber": 115
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "type",
+          "lineNumber": 115
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "repr",
+          "lineNumber": 115
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.error",
+          "lineNumber": 118
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "repr",
+          "lineNumber": 119
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "logger.error",
+          "lineNumber": 123
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "type",
+          "lineNumber": 123
+        },
+        {
+          "caller": "fetch_juhe_hotlist",
+          "callee": "repr",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "enumerate",
+          "lineNumber": 138
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "(item.get(\"title\") or \"\").strip",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "item.get",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "len",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "item.get",
+          "lineNumber": 146
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "len",
+          "lineNumber": 147
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "str",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "item.get",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_clean_juhe_items",
+          "callee": "cleaned.append",
+          "lineNumber": 152
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.info",
+          "lineNumber": 179
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.info",
+          "lineNumber": 180
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "datetime.utcnow",
+          "lineNumber": 181
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 183
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "fetch_juhe_hotlist",
+          "lineNumber": 187
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "SessionLocal",
+          "lineNumber": 190
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "_save_hotlist_to_db",
+          "lineNumber": 193
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "db.commit",
+          "lineNumber": 198
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.info",
+          "lineNumber": 199
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "db.rollback",
+          "lineNumber": 202
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.error",
+          "lineNumber": 203
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "type",
+          "lineNumber": 203
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "repr",
+          "lineNumber": 203
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "db.close",
+          "lineNumber": 205
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "(datetime.utcnow() - start_time).total_seconds",
+          "lineNumber": 207
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "datetime.utcnow",
+          "lineNumber": 207
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.info",
+          "lineNumber": 208
+        },
+        {
+          "caller": "sync_all_hotlists",
+          "callee": "logger.info",
+          "lineNumber": 209
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "db.query(HotlistSync).filter(\n        HotlistSync.source_platform == platform_key,\n        HotlistSync.is_expired == 0,\n    ).update",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "db.query(HotlistSync).filter",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "db.query",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "HotlistSync",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "item.get",
+          "lineNumber": 240
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "item.get",
+          "lineNumber": 241
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "item.get",
+          "lineNumber": 242
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "item.get",
+          "lineNumber": 243
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "item.get",
+          "lineNumber": 244
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "datetime.utcnow",
+          "lineNumber": 246
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "new_records.append",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "db.add",
+          "lineNumber": 250
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "db.flush",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "logger.debug",
+          "lineNumber": 253
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "len",
+          "lineNumber": 253
+        },
+        {
+          "caller": "_save_hotlist_to_db",
+          "callee": "len",
+          "lineNumber": 254
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 268
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "fetch_juhe_hotlist",
+          "lineNumber": 272
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "SessionLocal",
+          "lineNumber": 277
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "_save_hotlist_to_db",
+          "lineNumber": 279
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "db.commit",
+          "lineNumber": 280
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "db.rollback",
+          "lineNumber": 283
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "logger.error",
+          "lineNumber": 284
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "type",
+          "lineNumber": 284
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "repr",
+          "lineNumber": 284
+        },
+        {
+          "caller": "sync_single_platform",
+          "callee": "db.close",
+          "lineNumber": 287
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "db.query",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "query.filter",
+          "lineNumber": 313
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "query.filter",
+          "lineNumber": 316
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "query\n        .order_by(HotlistSync.fetched_at.desc(), HotlistSync.rank.asc())\n        .limit(limit)\n        .all",
+          "lineNumber": 319
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "query\n        .order_by(HotlistSync.fetched_at.desc(), HotlistSync.rank.asc())\n        .limit",
+          "lineNumber": 319
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "query\n        .order_by",
+          "lineNumber": 319
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "HotlistSync.fetched_at.desc",
+          "lineNumber": 320
+        },
+        {
+          "caller": "get_recent_hotlist",
+          "callee": "HotlistSync.rank.asc",
+          "lineNumber": 320
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/seed_users.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/setup_mysql.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 42,
+      "functions": [
+        {
+          "name": "main",
+          "startLine": 18,
+          "endLine": 48,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "main",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 19
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 20
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 21
+        },
+        {
+          "caller": "main",
+          "callee": "url.split",
+          "lineNumber": 25
+        },
+        {
+          "caller": "main",
+          "callee": "prefix.rsplit",
+          "lineNumber": 27
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 28
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 30
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 32
+        },
+        {
+          "caller": "main",
+          "callee": "engine.connect",
+          "lineNumber": 35
+        },
+        {
+          "caller": "main",
+          "callee": "conn.execute",
+          "lineNumber": 36
+        },
+        {
+          "caller": "main",
+          "callee": "text",
+          "lineNumber": 36
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 37
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 39
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 40
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 41
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 42
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 43
+        },
+        {
+          "caller": "main",
+          "callee": "sys.exit",
+          "lineNumber": 44
+        },
+        {
+          "caller": "main",
+          "callee": "create_tables",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 47
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_audit_trail.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 127,
+      "nonEmptyLines": 102,
+      "functions": [
+        {
+          "name": "setup_database",
+          "startLine": 27,
+          "endLine": 33,
+          "params": []
+        },
+        {
+          "name": "db",
+          "startLine": 37,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "_create_task",
+          "startLine": 45,
+          "endLine": 58,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_write_audit_log_sequence",
+          "startLine": 61,
+          "endLine": 76,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_audit_step_context_manager",
+          "startLine": 79,
+          "endLine": 88,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_skill_executor_writes_audit_log",
+          "startLine": 91,
+          "endLine": 110,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "test_get_audit_trail_api",
+          "startLine": 113,
+          "endLine": 127,
+          "params": [
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "setup_database",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "db",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "_create_task",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "test_write_audit_log_sequence",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "test_audit_step_context_manager",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "test_skill_executor_writes_audit_log",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "test_get_audit_trail_api",
+          "line": 113,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 31
+        },
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.drop_all",
+          "lineNumber": 33
+        },
+        {
+          "caller": "db",
+          "callee": "TestSessionLocal",
+          "lineNumber": 38
+        },
+        {
+          "caller": "db",
+          "callee": "session.close",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_create_task",
+          "callee": "User",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.add",
+          "lineNumber": 47
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.commit",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_create_task",
+          "callee": "Task",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.add",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.commit",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_create_task",
+          "callee": "db.refresh",
+          "lineNumber": 57
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "_create_task",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "write_audit_log",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "write_audit_log",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "db.query(OrchestrationAuditLog)\n        .filter(OrchestrationAuditLog.task_id == task.id)\n        .order_by(OrchestrationAuditLog.sequence_no)\n        .all",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "db.query(OrchestrationAuditLog)\n        .filter(OrchestrationAuditLog.task_id == task.id)\n        .order_by",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "db.query(OrchestrationAuditLog)\n        .filter",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "db.query",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_write_audit_log_sequence",
+          "callee": "len",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_audit_step_context_manager",
+          "callee": "_create_task",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_audit_step_context_manager",
+          "callee": "audit_step",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_audit_step_context_manager",
+          "callee": "db.query(OrchestrationAuditLog).filter_by(task_id=task.id).first",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_audit_step_context_manager",
+          "callee": "db.query(OrchestrationAuditLog).filter_by",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_audit_step_context_manager",
+          "callee": "db.query",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "_create_task",
+          "lineNumber": 92
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "SkillRegistry",
+          "lineNumber": 93
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "registry.register",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "CheckSensitiveWordsSkill",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "SkillExecutor",
+          "lineNumber": 95
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "executor.execute",
+          "lineNumber": 97
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "db.query(OrchestrationAuditLog).filter_by(\n        task_id=task.id, step_type=\"skill\"\n    ).first",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "db.query(OrchestrationAuditLog).filter_by",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_skill_executor_writes_audit_log",
+          "callee": "db.query",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "_create_task",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "db.query(User).filter_by(id=task.user_id).first",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "db.query(User).filter_by",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "db.query",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "write_audit_log",
+          "lineNumber": 118
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "write_audit_log",
+          "lineNumber": 119
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "get_audit_trail",
+          "lineNumber": 121
+        },
+        {
+          "caller": "test_get_audit_trail_api",
+          "callee": "len",
+          "lineNumber": 126
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_auth.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 203,
+      "nonEmptyLines": 160,
+      "functions": [
+        {
+          "name": "override_get_db",
+          "startLine": 40,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "setup_database",
+          "startLine": 54,
+          "endLine": 59,
+          "params": []
+        },
+        {
+          "name": "test_register_success",
+          "startLine": 70,
+          "endLine": 81,
+          "params": []
+        },
+        {
+          "name": "test_register_duplicate_username",
+          "startLine": 84,
+          "endLine": 98,
+          "params": []
+        },
+        {
+          "name": "test_register_duplicate_email",
+          "startLine": 101,
+          "endLine": 113,
+          "params": []
+        },
+        {
+          "name": "test_register_short_password",
+          "startLine": 116,
+          "endLine": 123,
+          "params": []
+        },
+        {
+          "name": "_create_test_user",
+          "startLine": 130,
+          "endLine": 136,
+          "params": []
+        },
+        {
+          "name": "test_login_success",
+          "startLine": 139,
+          "endLine": 150,
+          "params": []
+        },
+        {
+          "name": "test_login_wrong_password",
+          "startLine": 153,
+          "endLine": 160,
+          "params": []
+        },
+        {
+          "name": "test_login_nonexistent_user",
+          "startLine": 163,
+          "endLine": 169,
+          "params": []
+        },
+        {
+          "name": "test_get_me_with_valid_token",
+          "startLine": 176,
+          "endLine": 190,
+          "params": []
+        },
+        {
+          "name": "test_get_me_without_token",
+          "startLine": 193,
+          "endLine": 196,
+          "params": []
+        },
+        {
+          "name": "test_health_check",
+          "startLine": 199,
+          "endLine": 203,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "override_get_db",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "setup_database",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_success",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_duplicate_username",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_duplicate_email",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_short_password",
+          "line": 116,
+          "isDefault": false
+        },
+        {
+          "name": "_create_test_user",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "test_login_success",
+          "line": 139,
+          "isDefault": false
+        },
+        {
+          "name": "test_login_wrong_password",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "test_login_nonexistent_user",
+          "line": 163,
+          "isDefault": false
+        },
+        {
+          "name": "test_get_me_with_valid_token",
+          "line": 176,
+          "isDefault": false
+        },
+        {
+          "name": "test_get_me_without_token",
+          "line": 193,
+          "isDefault": false
+        },
+        {
+          "name": "test_health_check",
+          "line": 199,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "override_get_db",
+          "callee": "TestSessionLocal",
+          "lineNumber": 42
+        },
+        {
+          "caller": "override_get_db",
+          "callee": "db.close",
+          "lineNumber": 46
+        },
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 57
+        },
+        {
+          "caller": "setup_database",
+          "callee": "Base.metadata.drop_all",
+          "lineNumber": 59
+        },
+        {
+          "caller": "test_register_success",
+          "callee": "client.post",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_register_success",
+          "callee": "response.json",
+          "lineNumber": 78
+        },
+        {
+          "caller": "test_register_duplicate_username",
+          "callee": "client.post",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_register_duplicate_username",
+          "callee": "client.post",
+          "lineNumber": 93
+        },
+        {
+          "caller": "test_register_duplicate_email",
+          "callee": "client.post",
+          "lineNumber": 103
+        },
+        {
+          "caller": "test_register_duplicate_email",
+          "callee": "client.post",
+          "lineNumber": 108
+        },
+        {
+          "caller": "test_register_short_password",
+          "callee": "client.post",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_create_test_user",
+          "callee": "client.post",
+          "lineNumber": 132
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "_create_test_user",
+          "lineNumber": 141
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "client.post",
+          "lineNumber": 142
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "response.json",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_login_wrong_password",
+          "callee": "_create_test_user",
+          "lineNumber": 155
+        },
+        {
+          "caller": "test_login_wrong_password",
+          "callee": "client.post",
+          "lineNumber": 156
+        },
+        {
+          "caller": "test_login_nonexistent_user",
+          "callee": "client.post",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_get_me_with_valid_token",
+          "callee": "_create_test_user",
+          "lineNumber": 178
+        },
+        {
+          "caller": "test_get_me_with_valid_token",
+          "callee": "client.post",
+          "lineNumber": 179
+        },
+        {
+          "caller": "test_get_me_with_valid_token",
+          "callee": "login_response.json",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_get_me_with_valid_token",
+          "callee": "client.get",
+          "lineNumber": 185
+        },
+        {
+          "caller": "test_get_me_with_valid_token",
+          "callee": "response.json",
+          "lineNumber": 190
+        },
+        {
+          "caller": "test_get_me_without_token",
+          "callee": "client.get",
+          "lineNumber": 195
+        },
+        {
+          "caller": "test_health_check",
+          "callee": "client.get",
+          "lineNumber": 201
+        },
+        {
+          "caller": "test_health_check",
+          "callee": "response.json",
+          "lineNumber": 203
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 13,
+        "functionCount": 13,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/test_content_assets_api.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 197,
+      "nonEmptyLines": 165,
+      "functions": [
+        {
+          "name": "override_db",
+          "startLine": 32,
+          "endLine": 37,
+          "params": []
+        },
+        {
+          "name": "database",
+          "startLine": 41,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "_admin",
+          "startLine": 51,
+          "endLine": 59,
+          "params": []
+        },
+        {
+          "name": "_as_admin",
+          "startLine": 62,
+          "endLine": 63,
+          "params": []
+        },
+        {
+          "name": "test_content_assets_require_admin_authentication",
+          "startLine": 66,
+          "endLine": 68,
+          "params": []
+        },
+        {
+          "name": "test_list_reference_articles_for_admin",
+          "startLine": 71,
+          "endLine": 93,
+          "params": []
+        },
+        {
+          "name": "test_import_reference_uses_fetch_and_ingest",
+          "startLine": 96,
+          "endLine": 128,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_build_style_card_from_selected_references",
+          "startLine": 131,
+          "endLine": 165,
+          "params": [
+            "monkeypatch"
+          ]
+        },
+        {
+          "name": "test_toutiao_task_persists_selected_style_card",
+          "startLine": 168,
+          "endLine": 197,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "override_db",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "database",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "_admin",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "_as_admin",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "test_content_assets_require_admin_authentication",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "test_list_reference_articles_for_admin",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "test_import_reference_uses_fetch_and_ingest",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "test_build_style_card_from_selected_references",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "test_toutiao_task_persists_selected_style_card",
+          "line": 168,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "override_db",
+          "callee": "Session",
+          "lineNumber": 33
+        },
+        {
+          "caller": "override_db",
+          "callee": "db.close",
+          "lineNumber": 37
+        },
+        {
+          "caller": "database",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 45
+        },
+        {
+          "caller": "database",
+          "callee": "app.dependency_overrides.clear",
+          "lineNumber": 47
+        },
+        {
+          "caller": "database",
+          "callee": "Base.metadata.drop_all",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_admin",
+          "callee": "User",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_content_assets_require_admin_authentication",
+          "callee": "client.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "_as_admin",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "Session",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "db.add",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "ToutiaoReference",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "datetime.utcnow",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "db.commit",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "db.close",
+          "lineNumber": 85
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "client.get",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_list_reference_articles_for_admin",
+          "callee": "response.json",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "_as_admin",
+          "lineNumber": 97
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 108
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "client.post",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "response.json",
+          "lineNumber": 123
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "Session",
+          "lineNumber": 124
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "db.query(ToutiaoReference).filter_by(article_id=\"456\").one",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "db.query(ToutiaoReference).filter_by",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "db.query",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_import_reference_uses_fetch_and_ingest",
+          "callee": "db.close",
+          "lineNumber": 128
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "_as_admin",
+          "lineNumber": 132
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "Session",
+          "lineNumber": 133
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.add",
+          "lineNumber": 134
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "ToutiaoReference",
+          "lineNumber": 134
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.commit",
+          "lineNumber": 142
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.close",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "monkeypatch.setattr",
+          "lineNumber": 144
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "client.post",
+          "lineNumber": 156
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "response.json",
+          "lineNumber": 162
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "Session",
+          "lineNumber": 163
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.query(StyleCard).filter_by(topic_cluster=\"AI就业\").count",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.query(StyleCard).filter_by",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.query",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_build_style_card_from_selected_references",
+          "callee": "db.close",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "Session",
+          "lineNumber": 169
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "_admin",
+          "lineNumber": 170
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.add",
+          "lineNumber": 171
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "StyleCard",
+          "lineNumber": 172
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.add",
+          "lineNumber": 178
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.commit",
+          "lineNumber": 179
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.refresh",
+          "lineNumber": 180
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "create_task",
+          "lineNumber": 182
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "TaskCreate",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "BackgroundTasks",
+          "lineNumber": 189
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.query(Task).filter_by(id=result.data.id).one",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.query(Task).filter_by",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.query",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_toutiao_task_persists_selected_style_card",
+          "callee": "db.close",
+          "lineNumber": 197
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    }
+  ]
+}

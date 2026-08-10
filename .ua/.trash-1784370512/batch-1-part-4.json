@@ -1,0 +1,1405 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/utils/llm_client.py",
+      "type": "file",
+      "name": "llm_client.py",
+      "filePath": "app/utils/llm_client.py",
+      "summary": "统一封装大模型客户端创建、请求调用、响应解析和异常处理。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/utils/llm_client.py:get_deepseek_client",
+      "type": "function",
+      "name": "get_deepseek_client",
+      "filePath": "app/utils/llm_client.py",
+      "lineRange": [
+        15,
+        37
+      ],
+      "summary": "读取 get deepseek client 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/utils/llm_client.py:reset_deepseek_client",
+      "type": "function",
+      "name": "reset_deepseek_client",
+      "filePath": "app/utils/llm_client.py",
+      "lineRange": [
+        40,
+        43
+      ],
+      "summary": "实现 reset deepseek client 处理逻辑，服务于 llm client 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/utils/llm_client.py:format_llm_error",
+      "type": "function",
+      "name": "format_llm_error",
+      "filePath": "app/utils/llm_client.py",
+      "lineRange": [
+        46,
+        62
+      ],
+      "summary": "实现 format llm error 处理逻辑，服务于 llm client 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/utils/model_roles.py",
+      "type": "file",
+      "name": "model_roles.py",
+      "filePath": "app/utils/model_roles.py",
+      "summary": "根据任务阶段解析模型角色并返回对应的大模型配置。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/utils/model_roles.py:get_model_for_role",
+      "type": "function",
+      "name": "get_model_for_role",
+      "filePath": "app/utils/model_roles.py",
+      "lineRange": [
+        10,
+        27
+      ],
+      "summary": "读取 get model for role 对应的数据，完成必要的筛选、转换和响应组装。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:quick_view.py",
+      "type": "file",
+      "name": "quick_view.py",
+      "filePath": "quick_view.py",
+      "summary": "实现 quick view 模块的核心职责，并为项目其他组件提供可复用接口。",
+      "tags": [
+        "backend",
+        "module",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:run.py",
+      "type": "file",
+      "name": "run.py",
+      "filePath": "run.py",
+      "summary": "实现 run 模块的核心职责，并为项目其他组件提供可复用接口。",
+      "tags": [
+        "entry-point",
+        "bootstrap",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/setup_mysql.py",
+      "type": "file",
+      "name": "setup_mysql.py",
+      "filePath": "scripts/setup_mysql.py",
+      "summary": "提供 setup mysql 的项目维护脚本，用于初始化、数据准备或外部服务连通性检查。",
+      "tags": [
+        "script",
+        "development",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/setup_mysql.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/setup_mysql.py",
+      "lineRange": [
+        18,
+        48
+      ],
+      "summary": "实现 main 处理逻辑，服务于 setup mysql 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/test_deepseek.py",
+      "type": "file",
+      "name": "test_deepseek.py",
+      "filePath": "scripts/test_deepseek.py",
+      "summary": "提供 test deepseek 的项目维护脚本，用于初始化、数据准备或外部服务连通性检查。",
+      "tags": [
+        "script",
+        "development",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/test_deepseek.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/test_deepseek.py",
+      "lineRange": [
+        15,
+        50
+      ],
+      "summary": "实现 main 处理逻辑，服务于 test deepseek 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_agentic_phase2.py",
+      "type": "file",
+      "name": "test_agentic_phase2.py",
+      "filePath": "tests/test_agentic_phase2.py",
+      "summary": "覆盖 agentic phase2 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。",
+      "tags": [
+        "test",
+        "regression",
+        "quality-assurance"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        35,
+        40
+      ],
+      "summary": "实现 setup database 处理逻辑，服务于 test agentic phase2 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        44,
+        49
+      ],
+      "summary": "实现 db 处理逻辑，服务于 test agentic phase2 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:_create_task",
+      "type": "function",
+      "name": "_create_task",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        52,
+        71
+      ],
+      "summary": "实现 create task 处理逻辑，服务于 test agentic phase2 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_state_to_checkpoint_excludes_db",
+      "type": "function",
+      "name": "test_state_to_checkpoint_excludes_db",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        74,
+        81
+      ],
+      "summary": "验证 state to checkpoint excludes db 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_save_and_load_checkpoint",
+      "type": "function",
+      "name": "test_save_and_load_checkpoint",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        84,
+        94
+      ],
+      "summary": "验证 save and load checkpoint 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_verify_draft_judge_fallback",
+      "type": "function",
+      "name": "test_verify_draft_judge_fallback",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        98,
+        117
+      ],
+      "summary": "验证 verify draft judge fallback 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_judge_goal_alignment_parse",
+      "type": "function",
+      "name": "test_judge_goal_alignment_parse",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        121,
+        131
+      ],
+      "summary": "验证 judge goal alignment parse 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_awaiting_human_persisted",
+      "type": "function",
+      "name": "test_awaiting_human_persisted",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        136,
+        162
+      ],
+      "summary": "验证 awaiting human persisted 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_resume_cancel",
+      "type": "function",
+      "name": "test_resume_cancel",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        165,
+        174
+      ],
+      "summary": "验证 resume cancel 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_phase2.py:test_resume_accept_draft",
+      "type": "function",
+      "name": "test_resume_accept_draft",
+      "filePath": "tests/test_agentic_phase2.py",
+      "lineRange": [
+        177,
+        199
+      ],
+      "summary": "验证 resume accept draft 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_agentic_pipeline.py",
+      "type": "file",
+      "name": "test_agentic_pipeline.py",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "summary": "覆盖 agentic pipeline 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。",
+      "tags": [
+        "test",
+        "regression",
+        "quality-assurance"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:setup_database",
+      "type": "function",
+      "name": "setup_database",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        43,
+        48
+      ],
+      "summary": "实现 setup database 处理逻辑，服务于 test agentic pipeline 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:db",
+      "type": "function",
+      "name": "db",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        52,
+        57
+      ],
+      "summary": "实现 db 处理逻辑，服务于 test agentic pipeline 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:_create_task",
+      "type": "function",
+      "name": "_create_task",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        60,
+        79
+      ],
+      "summary": "实现 create task 处理逻辑，服务于 test agentic pipeline 模块的核心流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_classify_simple_task",
+      "type": "function",
+      "name": "test_classify_simple_task",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        82,
+        85
+      ],
+      "summary": "验证 classify simple task 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_classify_complex_task_multi_platform",
+      "type": "function",
+      "name": "test_classify_complex_task_multi_platform",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        88,
+        94
+      ],
+      "summary": "验证 classify complex task multi platform 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_classify_complex_long_word_count",
+      "type": "function",
+      "name": "test_classify_complex_long_word_count",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        97,
+        99
+      ],
+      "summary": "验证 classify complex long word count 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_default_plan_has_four_steps",
+      "type": "function",
+      "name": "test_default_plan_has_four_steps",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        102,
+        106
+      ],
+      "summary": "验证 default plan has four steps 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_generate_plan_simple_skips_llm",
+      "type": "function",
+      "name": "test_generate_plan_simple_skips_llm",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        109,
+        112
+      ],
+      "summary": "验证 generate plan simple skips llm 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_model_roles_fallback_to_chat",
+      "type": "function",
+      "name": "test_model_roles_fallback_to_chat",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        115,
+        118
+      ],
+      "summary": "验证 model roles fallback to chat 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_verify_draft_passes_good_content",
+      "type": "function",
+      "name": "test_verify_draft_passes_good_content",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        121,
+        132
+      ],
+      "summary": "验证 verify draft passes good content 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_verify_draft_fails_empty",
+      "type": "function",
+      "name": "test_verify_draft_fails_empty",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        135,
+        141
+      ],
+      "summary": "验证 verify draft fails empty 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_advances_on_success",
+      "type": "function",
+      "name": "test_handle_step_outcome_advances_on_success",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        144,
+        153
+      ],
+      "summary": "验证 handle step outcome advances on success 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_retries_on_failure",
+      "type": "function",
+      "name": "test_handle_step_outcome_retries_on_failure",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        156,
+        167
+      ],
+      "summary": "验证 handle step outcome retries on failure 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_plan_has_more_steps",
+      "type": "function",
+      "name": "test_plan_has_more_steps",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        170,
+        174
+      ],
+      "summary": "验证 plan has more steps 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_run_classify_and_plan_stages",
+      "type": "function",
+      "name": "test_run_classify_and_plan_stages",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        177,
+        186
+      ],
+      "summary": "验证 run classify and plan stages 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_agentic_simple_delegates_to_fixed",
+      "type": "function",
+      "name": "test_agentic_simple_delegates_to_fixed",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        190,
+        203
+      ],
+      "summary": "验证 agentic simple delegates to fixed 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_build_agentic_pipeline_graph",
+      "type": "function",
+      "name": "test_build_agentic_pipeline_graph",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        206,
+        209
+      ],
+      "summary": "验证 build agentic pipeline graph 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_agentic_graph_simple_path",
+      "type": "function",
+      "name": "test_agentic_graph_simple_path",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        213,
+        225
+      ],
+      "summary": "验证 agentic graph simple path 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_agentic_pipeline.py:test_agentic_complex_pipeline",
+      "type": "function",
+      "name": "test_agentic_complex_pipeline",
+      "filePath": "tests/test_agentic_pipeline.py",
+      "lineRange": [
+        232,
+        282
+      ],
+      "summary": "验证 agentic complex pipeline 场景，防止相关行为发生回归。",
+      "tags": [
+        "function",
+        "business-logic",
+        "test"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:get_deepseek_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:get_deepseek_client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:reset_deepseek_client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:reset_deepseek_client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:format_llm_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "function:app/utils/llm_client.py:format_llm_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/utils/llm_client.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/utils/model_roles.py",
+      "target": "function:app/utils/model_roles.py:get_model_for_role",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/utils/model_roles.py",
+      "target": "function:app/utils/model_roles.py:get_model_for_role",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/utils/model_roles.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:quick_view.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:run.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "function:scripts/setup_mysql.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "function:scripts/setup_mysql.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/setup_mysql.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/test_deepseek.py",
+      "target": "function:scripts/test_deepseek.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:scripts/test_deepseek.py",
+      "target": "function:scripts/test_deepseek.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/test_deepseek.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/test_deepseek.py",
+      "target": "file:app/utils/llm_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:_create_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:_create_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_state_to_checkpoint_excludes_db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_state_to_checkpoint_excludes_db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_save_and_load_checkpoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_save_and_load_checkpoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_verify_draft_judge_fallback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_verify_draft_judge_fallback",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_judge_goal_alignment_parse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_judge_goal_alignment_parse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_awaiting_human_persisted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_awaiting_human_persisted",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_resume_cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_resume_cancel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_resume_accept_draft",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "function:tests/test_agentic_phase2.py:test_resume_accept_draft",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/agents/agentic_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/services/judge_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/services/orchestration_persistence.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_phase2.py",
+      "target": "file:app/services/verify_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:setup_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:setup_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:db",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:_create_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:_create_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_simple_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_simple_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_complex_task_multi_platform",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_complex_task_multi_platform",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_complex_long_word_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_classify_complex_long_word_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_default_plan_has_four_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_default_plan_has_four_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_generate_plan_simple_skips_llm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_generate_plan_simple_skips_llm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_model_roles_fallback_to_chat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_model_roles_fallback_to_chat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_verify_draft_passes_good_content",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_verify_draft_passes_good_content",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_verify_draft_fails_empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_verify_draft_fails_empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_advances_on_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_advances_on_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_retries_on_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_handle_step_outcome_retries_on_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_plan_has_more_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_plan_has_more_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_run_classify_and_plan_stages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_run_classify_and_plan_stages",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_simple_delegates_to_fixed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_simple_delegates_to_fixed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_build_agentic_pipeline_graph",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_build_agentic_pipeline_graph",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_graph_simple_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_graph_simple_path",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_complex_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "function:tests/test_agentic_pipeline.py:test_agentic_complex_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/agents/agentic_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/lang/graph/agentic_pipeline_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/models/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/services/planner_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/services/task_classifier.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/services/verify_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_agentic_pipeline.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

@@ -1,0 +1,1681 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 12,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 12,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 12,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "app/lang/embeddings.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 29,
+      "functions": [
+        {
+          "name": "get_embeddings",
+          "startLine": 25,
+          "endLine": 39,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_embeddings",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_embeddings",
+          "callee": "HuggingFaceEmbeddings",
+          "lineNumber": 35
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/graph/ingest_graph.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 159,
+      "nonEmptyLines": 124,
+      "functions": [
+        {
+          "name": "_chunk_node",
+          "startLine": 34,
+          "endLine": 62,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "_index_node",
+          "startLine": 65,
+          "endLine": 86,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "build_ingest_graph",
+          "startLine": 89,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "run_ingest",
+          "startLine": 119,
+          "endLine": 159,
+          "params": [
+            "article_id",
+            "title",
+            "content",
+            "source_url",
+            "keyword",
+            "author_name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_chunk_node",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "_index_node",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "build_ingest_graph",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "run_ingest",
+          "line": 119,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_chunk_node",
+          "callee": "article_to_documents",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_chunk_node",
+          "callee": "state.get",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_chunk_node",
+          "callee": "state.get",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_index_node",
+          "callee": "ingest_documents",
+          "lineNumber": 85
+        },
+        {
+          "caller": "_index_node",
+          "callee": "state.get",
+          "lineNumber": 85
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "StateGraph",
+          "lineNumber": 106
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.add_node",
+          "lineNumber": 107
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.add_node",
+          "lineNumber": 108
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.set_entry_point",
+          "lineNumber": 109
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.add_edge",
+          "lineNumber": 110
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.add_edge",
+          "lineNumber": 111
+        },
+        {
+          "caller": "build_ingest_graph",
+          "callee": "graph.compile",
+          "lineNumber": 112
+        },
+        {
+          "caller": "run_ingest",
+          "callee": "build_ingest_graph",
+          "lineNumber": 149
+        },
+        {
+          "caller": "run_ingest",
+          "callee": "_ingest_graph.invoke",
+          "lineNumber": 159
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/graph/query_graph.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 140,
+      "nonEmptyLines": 106,
+      "functions": [
+        {
+          "name": "_retrieve_node",
+          "startLine": 35,
+          "endLine": 59,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "_format_node",
+          "startLine": 62,
+          "endLine": 84,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "build_query_graph",
+          "startLine": 87,
+          "endLine": 103,
+          "params": []
+        },
+        {
+          "name": "run_rag_query",
+          "startLine": 110,
+          "endLine": 140,
+          "params": [
+            "query_text",
+            "top_k"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_retrieve_node",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "_format_node",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "build_query_graph",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "run_rag_query",
+          "line": 110,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_retrieve_node",
+          "callee": "state.get",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_retrieve_node",
+          "callee": "state.get",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_retrieve_node",
+          "callee": "retrieve_toutiao_references",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_format_node",
+          "callee": "state.get",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_format_node",
+          "callee": "format_references_for_prompt",
+          "lineNumber": 84
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "StateGraph",
+          "lineNumber": 97
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.add_node",
+          "lineNumber": 98
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.add_node",
+          "lineNumber": 99
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.set_entry_point",
+          "lineNumber": 100
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.add_edge",
+          "lineNumber": 101
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.add_edge",
+          "lineNumber": 102
+        },
+        {
+          "caller": "build_query_graph",
+          "callee": "graph.compile",
+          "lineNumber": 103
+        },
+        {
+          "caller": "run_rag_query",
+          "callee": "build_query_graph",
+          "lineNumber": 134
+        },
+        {
+          "caller": "run_rag_query",
+          "callee": "_query_graph.invoke",
+          "lineNumber": 140
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/graph/state.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 53,
+      "classes": [
+        {
+          "name": "IngestState",
+          "startLine": 24,
+          "endLine": 47,
+          "methods": [],
+          "properties": [
+            "article_id",
+            "title",
+            "content",
+            "source_url",
+            "keyword",
+            "author_name",
+            "documents",
+            "chunk_count",
+            "error"
+          ]
+        },
+        {
+          "name": "QueryState",
+          "startLine": 50,
+          "endLine": 68,
+          "methods": [],
+          "properties": [
+            "query_text",
+            "top_k",
+            "documents",
+            "references",
+            "error"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "IngestState",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "QueryState",
+          "line": 50,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "app/lang/rag/chunking.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 94,
+      "nonEmptyLines": 77,
+      "functions": [
+        {
+          "name": "build_text_splitter",
+          "startLine": 22,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "article_to_documents",
+          "startLine": 41,
+          "endLine": 94,
+          "params": [
+            "article_id",
+            "title",
+            "content",
+            "source_url",
+            "keyword",
+            "author_name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "build_text_splitter",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "article_to_documents",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "build_text_splitter",
+          "callee": "RecursiveCharacterTextSplitter",
+          "lineNumber": 34
+        },
+        {
+          "caller": "article_to_documents",
+          "callee": "build_text_splitter",
+          "lineNumber": 75
+        },
+        {
+          "caller": "article_to_documents",
+          "callee": "splitter.split_text",
+          "lineNumber": 76
+        },
+        {
+          "caller": "article_to_documents",
+          "callee": "enumerate",
+          "lineNumber": 79
+        },
+        {
+          "caller": "article_to_documents",
+          "callee": "docs.append",
+          "lineNumber": 80
+        },
+        {
+          "caller": "article_to_documents",
+          "callee": "Document",
+          "lineNumber": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/rag/ingest.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 55,
+      "functions": [
+        {
+          "name": "delete_article_chunks",
+          "startLine": 18,
+          "endLine": 37,
+          "params": [
+            "article_id"
+          ]
+        },
+        {
+          "name": "ingest_documents",
+          "startLine": 40,
+          "endLine": 70,
+          "params": [
+            "documents"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "delete_article_chunks",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "ingest_documents",
+          "line": 40,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "delete_article_chunks",
+          "callee": "get_toutiao_vectorstore",
+          "lineNumber": 28
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "collection.get",
+          "lineNumber": 31
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "existing.get",
+          "lineNumber": 32
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "collection.delete",
+          "lineNumber": 34
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "logger.info",
+          "lineNumber": 35
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "len",
+          "lineNumber": 35
+        },
+        {
+          "caller": "delete_article_chunks",
+          "callee": "logger.warning",
+          "lineNumber": 37
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "documents[0].metadata.get",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "delete_article_chunks",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "get_toutiao_vectorstore",
+          "lineNumber": 63
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "doc.metadata.get",
+          "lineNumber": 65
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "enumerate",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "store.add_documents",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "logger.info",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "len",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ingest_documents",
+          "callee": "len",
+          "lineNumber": 70
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/rag/retriever.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 62,
+      "functions": [
+        {
+          "name": "retrieve_toutiao_references",
+          "startLine": 19,
+          "endLine": 48,
+          "params": [
+            "query",
+            "k"
+          ]
+        },
+        {
+          "name": "format_references_for_prompt",
+          "startLine": 51,
+          "endLine": 78,
+          "params": [
+            "docs"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "retrieve_toutiao_references",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "format_references_for_prompt",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "retrieve_toutiao_references",
+          "callee": "get_toutiao_vectorstore",
+          "lineNumber": 39
+        },
+        {
+          "caller": "retrieve_toutiao_references",
+          "callee": "store._collection.count",
+          "lineNumber": 41
+        },
+        {
+          "caller": "retrieve_toutiao_references",
+          "callee": "store.similarity_search",
+          "lineNumber": 44
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "results.append",
+          "lineNumber": 67
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "meta.get",
+          "lineNumber": 69
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "meta.get",
+          "lineNumber": 70
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "meta.get",
+          "lineNumber": 71
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "meta.get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "format_references_for_prompt",
+          "callee": "meta.get",
+          "lineNumber": 73
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/toutiao_fetcher.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 159,
+      "nonEmptyLines": 128,
+      "functions": [
+        {
+          "name": "extract_article_id",
+          "startLine": 36,
+          "endLine": 46,
+          "params": [
+            "url"
+          ]
+        },
+        {
+          "name": "_strip_html",
+          "startLine": 49,
+          "endLine": 54,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "_find_title_content",
+          "startLine": 57,
+          "endLine": 80,
+          "params": [
+            "obj",
+            "title",
+            "content"
+          ]
+        },
+        {
+          "name": "_parse_render_data",
+          "startLine": 83,
+          "endLine": 95,
+          "params": [
+            "html"
+          ]
+        },
+        {
+          "name": "fetch_toutiao_article",
+          "startLine": 98,
+          "endLine": 159,
+          "params": [
+            "url",
+            "timeout"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "extract_article_id",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "_strip_html",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "_find_title_content",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "_parse_render_data",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "fetch_toutiao_article",
+          "line": 98,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "extract_article_id",
+          "callee": "_ARTICLE_ID_RE.search",
+          "lineNumber": 43
+        },
+        {
+          "caller": "extract_article_id",
+          "callee": "ValueError",
+          "lineNumber": 45
+        },
+        {
+          "caller": "extract_article_id",
+          "callee": "m.group",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_strip_html",
+          "callee": "re.sub",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_strip_html",
+          "callee": "re.sub",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_strip_html",
+          "callee": "re.sub",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_strip_html",
+          "callee": "unescape(text).strip",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_strip_html",
+          "callee": "unescape",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "isinstance",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "obj.get",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "isinstance",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "len",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "val.strip",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "val.strip",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "len",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "obj.get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "isinstance",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "len",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "val.strip",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "len",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "_strip_html",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "val.strip",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "obj.values",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "_find_title_content",
+          "lineNumber": 76
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "isinstance",
+          "lineNumber": 77
+        },
+        {
+          "caller": "_find_title_content",
+          "callee": "_find_title_content",
+          "lineNumber": 79
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "_RENDER_DATA_RE.search",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "unquote",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "m.group(1).strip",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "m.group",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "json.loads",
+          "lineNumber": 92
+        },
+        {
+          "caller": "_parse_render_data",
+          "callee": "_find_title_content",
+          "lineNumber": 95
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "extract_article_id",
+          "lineNumber": 114
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "httpx.Client",
+          "lineNumber": 125
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "client.get",
+          "lineNumber": 126
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 127
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "_parse_render_data",
+          "lineNumber": 130
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "re.search",
+          "lineNumber": 133
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "title_m.group(1).split(\"_\")[0].strip",
+          "lineNumber": 135
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "title_m.group(1).split",
+          "lineNumber": 135
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "title_m.group",
+          "lineNumber": 135
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "len",
+          "lineNumber": 137
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "RuntimeError",
+          "lineNumber": 138
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "re.search",
+          "lineNumber": 147
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "author_m.group",
+          "lineNumber": 149
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "logger.info",
+          "lineNumber": 151
+        },
+        {
+          "caller": "fetch_toutiao_article",
+          "callee": "len",
+          "lineNumber": 151
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/lang/vectorstore.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 30,
+      "functions": [
+        {
+          "name": "get_toutiao_vectorstore",
+          "startLine": 25,
+          "endLine": 40,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_toutiao_vectorstore",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_toutiao_vectorstore",
+          "callee": "os.makedirs",
+          "lineNumber": 35
+        },
+        {
+          "caller": "get_toutiao_vectorstore",
+          "callee": "Chroma",
+          "lineNumber": 36
+        },
+        {
+          "caller": "get_toutiao_vectorstore",
+          "callee": "get_embeddings",
+          "lineNumber": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/services/content_asset_service.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 158,
+      "nonEmptyLines": 141,
+      "functions": [
+        {
+          "name": "reference_to_dict",
+          "startLine": 17,
+          "endLine": 33,
+          "params": [
+            "row"
+          ]
+        },
+        {
+          "name": "style_card_to_dict",
+          "startLine": 36,
+          "endLine": 47,
+          "params": [
+            "row"
+          ]
+        },
+        {
+          "name": "import_reference",
+          "startLine": 50,
+          "endLine": 93,
+          "params": [
+            "db",
+            "url",
+            "keyword",
+            "like_count",
+            "read_count",
+            "comment_count"
+          ]
+        },
+        {
+          "name": "reindex_reference",
+          "startLine": 96,
+          "endLine": 116,
+          "params": [
+            "db",
+            "row"
+          ]
+        },
+        {
+          "name": "delete_reference",
+          "startLine": 119,
+          "endLine": 122,
+          "params": [
+            "db",
+            "row"
+          ]
+        },
+        {
+          "name": "build_style_card",
+          "startLine": 125,
+          "endLine": 158,
+          "params": [
+            "db",
+            "topic_cluster",
+            "reference_ids"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "reference_to_dict",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "style_card_to_dict",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "import_reference",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "reindex_reference",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "delete_reference",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "build_style_card",
+          "line": 125,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "reference_to_dict",
+          "callee": "int",
+          "lineNumber": 25
+        },
+        {
+          "caller": "reference_to_dict",
+          "callee": "int",
+          "lineNumber": 26
+        },
+        {
+          "caller": "reference_to_dict",
+          "callee": "int",
+          "lineNumber": 27
+        },
+        {
+          "caller": "reference_to_dict",
+          "callee": "int",
+          "lineNumber": 29
+        },
+        {
+          "caller": "reference_to_dict",
+          "callee": "len",
+          "lineNumber": 30
+        },
+        {
+          "caller": "style_card_to_dict",
+          "callee": "int",
+          "lineNumber": 42
+        },
+        {
+          "caller": "style_card_to_dict",
+          "callee": "float",
+          "lineNumber": 44
+        },
+        {
+          "caller": "import_reference",
+          "callee": "fetch_toutiao_article",
+          "lineNumber": 59
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.query(ToutiaoReference).filter_by(article_id=data[\"article_id\"]).first",
+          "lineNumber": 60
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.query(ToutiaoReference).filter_by",
+          "lineNumber": 60
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.query",
+          "lineNumber": 60
+        },
+        {
+          "caller": "import_reference",
+          "callee": "ToutiaoReference",
+          "lineNumber": 62
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.add",
+          "lineNumber": 63
+        },
+        {
+          "caller": "import_reference",
+          "callee": "data.get",
+          "lineNumber": 66
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.commit",
+          "lineNumber": 73
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.refresh",
+          "lineNumber": 74
+        },
+        {
+          "caller": "import_reference",
+          "callee": "run_ingest",
+          "lineNumber": 77
+        },
+        {
+          "caller": "import_reference",
+          "callee": "int",
+          "lineNumber": 86
+        },
+        {
+          "caller": "import_reference",
+          "callee": "result.get",
+          "lineNumber": 86
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.commit",
+          "lineNumber": 87
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.refresh",
+          "lineNumber": 88
+        },
+        {
+          "caller": "import_reference",
+          "callee": "db.commit",
+          "lineNumber": 92
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "db.commit",
+          "lineNumber": 98
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "run_ingest",
+          "lineNumber": 100
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "int",
+          "lineNumber": 109
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "result.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "db.commit",
+          "lineNumber": 110
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "db.refresh",
+          "lineNumber": 111
+        },
+        {
+          "caller": "reindex_reference",
+          "callee": "db.commit",
+          "lineNumber": 115
+        },
+        {
+          "caller": "delete_reference",
+          "callee": "delete_article_chunks",
+          "lineNumber": 120
+        },
+        {
+          "caller": "delete_reference",
+          "callee": "db.delete",
+          "lineNumber": 121
+        },
+        {
+          "caller": "delete_reference",
+          "callee": "db.commit",
+          "lineNumber": 122
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query(ToutiaoReference).filter(ToutiaoReference.id.in_(reference_ids[:3])).all",
+          "lineNumber": 131
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query(ToutiaoReference).filter",
+          "lineNumber": 131
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query",
+          "lineNumber": 131
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "ToutiaoReference.id.in_",
+          "lineNumber": 131
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "ValueError",
+          "lineNumber": 133
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "int",
+          "lineNumber": 139
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "extract_writing_pattern_from_articles",
+          "lineNumber": 143
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "result.get",
+          "lineNumber": 144
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "ValueError",
+          "lineNumber": 145
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "result.get",
+          "lineNumber": 145
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "sum",
+          "lineNumber": 147
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "len",
+          "lineNumber": 147
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query(StyleCard).filter_by(topic_cluster=topic_cluster, platform=\"toutiao\").first",
+          "lineNumber": 148
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query(StyleCard).filter_by",
+          "lineNumber": 148
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.query",
+          "lineNumber": 148
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "StyleCard",
+          "lineNumber": 150
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.add",
+          "lineNumber": 151
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "float",
+          "lineNumber": 155
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "pattern.get",
+          "lineNumber": 155
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.commit",
+          "lineNumber": 156
+        },
+        {
+          "caller": "build_style_card",
+          "callee": "db.refresh",
+          "lineNumber": 157
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/import_toutiao_article.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 107,
+      "nonEmptyLines": 93,
+      "functions": [
+        {
+          "name": "main",
+          "startLine": 26,
+          "endLine": 103,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "main",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 30
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 31
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 32
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 33
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 34
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 35
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 36
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 39
+        },
+        {
+          "caller": "main",
+          "callee": "fetch_toutiao_article",
+          "lineNumber": 40
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 43
+        },
+        {
+          "caller": "main",
+          "callee": "SessionLocal",
+          "lineNumber": 44
+        },
+        {
+          "caller": "main",
+          "callee": "db.query(ToutiaoReference).filter(\r\n            ToutiaoReference.article_id == data[\"article_id\"]\r\n        ).first",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "db.query(ToutiaoReference).filter",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "db.query",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "data.get",
+          "lineNumber": 53
+        },
+        {
+          "caller": "main",
+          "callee": "ToutiaoReference",
+          "lineNumber": 61
+        },
+        {
+          "caller": "main",
+          "callee": "data.get",
+          "lineNumber": 65
+        },
+        {
+          "caller": "main",
+          "callee": "db.add",
+          "lineNumber": 73
+        },
+        {
+          "caller": "main",
+          "callee": "db.commit",
+          "lineNumber": 74
+        },
+        {
+          "caller": "main",
+          "callee": "db.refresh",
+          "lineNumber": 75
+        },
+        {
+          "caller": "main",
+          "callee": "db.close",
+          "lineNumber": 78
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 81
+        },
+        {
+          "caller": "main",
+          "callee": "run_ingest",
+          "lineNumber": 82
+        },
+        {
+          "caller": "main",
+          "callee": "data.get",
+          "lineNumber": 88
+        },
+        {
+          "caller": "main",
+          "callee": "ingest_result.get",
+          "lineNumber": 90
+        },
+        {
+          "caller": "main",
+          "callee": "SessionLocal",
+          "lineNumber": 93
+        },
+        {
+          "caller": "main",
+          "callee": "db.query(ToutiaoReference).filter(ToutiaoReference.id == ref_id).first",
+          "lineNumber": 95
+        },
+        {
+          "caller": "main",
+          "callee": "db.query(ToutiaoReference).filter",
+          "lineNumber": 95
+        },
+        {
+          "caller": "main",
+          "callee": "db.query",
+          "lineNumber": 95
+        },
+        {
+          "caller": "main",
+          "callee": "db.commit",
+          "lineNumber": 99
+        },
+        {
+          "caller": "main",
+          "callee": "db.close",
+          "lineNumber": 101
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 103
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/query_toutiao_rag.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "main",
+          "startLine": 23,
+          "endLine": 33,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "main",
+          "line": 23,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "\" \".join",
+          "lineNumber": 27
+        },
+        {
+          "caller": "main",
+          "callee": "len",
+          "lineNumber": 27
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 28
+        },
+        {
+          "caller": "main",
+          "callee": "run_rag_query",
+          "lineNumber": 31
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 33
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 33
+        },
+        {
+          "caller": "main",
+          "callee": "result.get",
+          "lineNumber": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

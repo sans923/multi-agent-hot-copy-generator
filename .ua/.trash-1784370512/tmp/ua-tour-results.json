@@ -1,0 +1,1514 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "项目总览文档，介绍多智能体文案系统架构、MVP 能力、技术栈、部署步骤、目录结构与 API。"
+    },
+    {
+      "id": "file:app/main.py",
+      "score": 5,
+      "name": "main.py",
+      "summary": "FastAPI 应用入口，注册路由、中间件、生命周期钩子、异常处理器和健康检查。"
+    },
+    {
+      "id": "file:run.py",
+      "score": 5,
+      "name": "run.py",
+      "summary": "实现 run 模块的核心职责，并为项目其他组件提供可复用接口。"
+    },
+    {
+      "id": "file:tests/test_agentic_phase2.py",
+      "score": 3,
+      "name": "test_agentic_phase2.py",
+      "summary": "覆盖 agentic phase2 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    {
+      "id": "file:tests/test_agentic_pipeline.py",
+      "score": 3,
+      "name": "test_agentic_pipeline.py",
+      "summary": "覆盖 agentic pipeline 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:app/utils/logger.py",
+      "fanIn": 41,
+      "name": "logger.py"
+    },
+    {
+      "id": "file:app/config.py",
+      "fanIn": 32,
+      "name": "config.py"
+    },
+    {
+      "id": "file:app/database.py",
+      "fanIn": 32,
+      "name": "database.py"
+    },
+    {
+      "id": "file:frontend/src/api/client.ts",
+      "fanIn": 17,
+      "name": "client.ts"
+    },
+    {
+      "id": "file:app/models/task.py",
+      "fanIn": 16,
+      "name": "task.py"
+    },
+    {
+      "id": "file:frontend/src/types/api.ts",
+      "fanIn": 16,
+      "name": "api.ts"
+    },
+    {
+      "id": "file:app/models/user.py",
+      "fanIn": 15,
+      "name": "user.py"
+    },
+    {
+      "id": "file:app/agents/pipeline_state.py",
+      "fanIn": 13,
+      "name": "pipeline_state.py"
+    },
+    {
+      "id": "file:app/skills/base.py",
+      "fanIn": 12,
+      "name": "base.py"
+    },
+    {
+      "id": "file:app/agents/pipeline_runners.py",
+      "fanIn": 10,
+      "name": "pipeline_runners.py"
+    },
+    {
+      "id": "file:app/models/toutiao_reference.py",
+      "fanIn": 10,
+      "name": "toutiao_reference.py"
+    },
+    {
+      "id": "file:frontend/src/contexts/AuthContext.tsx",
+      "fanIn": 8,
+      "name": "AuthContext.tsx"
+    },
+    {
+      "id": "file:app/core/deps.py",
+      "fanIn": 7,
+      "name": "deps.py"
+    },
+    {
+      "id": "file:app/models/style_card.py",
+      "fanIn": 7,
+      "name": "style_card.py"
+    },
+    {
+      "id": "file:app/schemas/common.py",
+      "fanIn": 7,
+      "name": "common.py"
+    },
+    {
+      "id": "file:app/services/audit_service.py",
+      "fanIn": 7,
+      "name": "audit_service.py"
+    },
+    {
+      "id": "file:app/utils/model_roles.py",
+      "fanIn": 7,
+      "name": "model_roles.py"
+    },
+    {
+      "id": "file:app/utils/llm_client.py",
+      "fanIn": 6,
+      "name": "llm_client.py"
+    },
+    {
+      "id": "file:app/models/copy.py",
+      "fanIn": 5,
+      "name": "copy.py"
+    },
+    {
+      "id": "file:app/services/writing_pattern_service.py",
+      "fanIn": 5,
+      "name": "writing_pattern_service.py"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:tests/test_agentic_pipeline.py",
+      "fanOut": 50,
+      "name": "test_agentic_pipeline.py"
+    },
+    {
+      "id": "file:app/lang/graph/agentic_pipeline_graph.py",
+      "fanOut": 40,
+      "name": "agentic_pipeline_graph.py"
+    },
+    {
+      "id": "file:tests/test_orchestration.py",
+      "fanOut": 39,
+      "name": "test_orchestration.py"
+    },
+    {
+      "id": "file:app/agents/agentic_runners.py",
+      "fanOut": 38,
+      "name": "agentic_runners.py"
+    },
+    {
+      "id": "file:app/services/longform_mvp_service.py",
+      "fanOut": 32,
+      "name": "longform_mvp_service.py"
+    },
+    {
+      "id": "file:tests/test_lead_agent.py",
+      "fanOut": 30,
+      "name": "test_lead_agent.py"
+    },
+    {
+      "id": "file:tests/test_agentic_phase2.py",
+      "fanOut": 29,
+      "name": "test_agentic_phase2.py"
+    },
+    {
+      "id": "file:tests/test_auth.py",
+      "fanOut": 28,
+      "name": "test_auth.py"
+    },
+    {
+      "id": "file:app/agents/pipeline_runners.py",
+      "fanOut": 27,
+      "name": "pipeline_runners.py"
+    },
+    {
+      "id": "file:tests/test_content_assets_api.py",
+      "fanOut": 27,
+      "name": "test_content_assets_api.py"
+    },
+    {
+      "id": "file:app/api/v1/hotlist.py",
+      "fanOut": 25,
+      "name": "hotlist.py"
+    },
+    {
+      "id": "file:app/api/v1/tasks.py",
+      "fanOut": 24,
+      "name": "tasks.py"
+    },
+    {
+      "id": "file:app/services/embedding_service.py",
+      "fanOut": 24,
+      "name": "embedding_service.py"
+    },
+    {
+      "id": "file:app/api/v1/content_assets.py",
+      "fanOut": 22,
+      "name": "content_assets.py"
+    },
+    {
+      "id": "file:app/main.py",
+      "fanOut": 22,
+      "name": "main.py"
+    },
+    {
+      "id": "file:tests/test_writing_pattern.py",
+      "fanOut": 22,
+      "name": "test_writing_pattern.py"
+    },
+    {
+      "id": "file:app/lang/graph/copy_pipeline_graph.py",
+      "fanOut": 21,
+      "name": "copy_pipeline_graph.py"
+    },
+    {
+      "id": "file:app/services/orchestration_persistence.py",
+      "fanOut": 21,
+      "name": "orchestration_persistence.py"
+    },
+    {
+      "id": "file:tests/test_audit_trail.py",
+      "fanOut": 21,
+      "name": "test_audit_trail.py"
+    },
+    {
+      "id": "file:tests/test_compliance_skills.py",
+      "fanOut": 21,
+      "name": "test_compliance_skills.py"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:app/main.py",
+    "order": [
+      "file:app/main.py",
+      "file:app/api/v1/__init__.py",
+      "file:app/api/v1/auth.py",
+      "file:app/api/v1/content_assets.py",
+      "file:app/api/v1/hotlist.py",
+      "file:app/api/v1/logs.py",
+      "file:app/api/v1/tasks.py",
+      "file:app/api/v1/users.py",
+      "file:app/config.py",
+      "file:app/database.py",
+      "file:app/utils/logger.py",
+      "file:app/core/deps.py",
+      "file:app/core/security.py",
+      "file:app/models/user.py",
+      "file:app/schemas/common.py",
+      "file:app/schemas/user.py",
+      "file:app/models/style_card.py",
+      "file:app/models/toutiao_reference.py",
+      "file:app/schemas/content_asset.py",
+      "file:app/services/content_asset_service.py",
+      "file:app/models/hotlist_sync.py",
+      "file:app/services/hotlist_service.py",
+      "file:app/models/agent_log.py",
+      "file:app/models/copy.py",
+      "file:app/models/orchestration_audit_log.py",
+      "file:app/models/system_log.py",
+      "file:app/models/task.py",
+      "file:app/schemas/task.py",
+      "file:app/utils/log_writer.py",
+      "file:app/lang/graph/ingest_graph.py",
+      "file:app/lang/rag/ingest.py",
+      "file:app/lang/toutiao_fetcher.py",
+      "file:app/services/writing_pattern_service.py",
+      "file:app/lang/graph/state.py",
+      "file:app/lang/rag/chunking.py",
+      "file:app/lang/vectorstore.py",
+      "file:app/utils/llm_client.py",
+      "file:app/utils/model_roles.py",
+      "file:app/lang/embeddings.py"
+    ],
+    "depthMap": {
+      "file:app/main.py": 0,
+      "file:app/api/v1/__init__.py": 1,
+      "file:app/api/v1/auth.py": 1,
+      "file:app/api/v1/content_assets.py": 1,
+      "file:app/api/v1/hotlist.py": 1,
+      "file:app/api/v1/logs.py": 1,
+      "file:app/api/v1/tasks.py": 1,
+      "file:app/api/v1/users.py": 1,
+      "file:app/config.py": 1,
+      "file:app/database.py": 1,
+      "file:app/utils/logger.py": 1,
+      "file:app/core/deps.py": 2,
+      "file:app/core/security.py": 2,
+      "file:app/models/user.py": 2,
+      "file:app/schemas/common.py": 2,
+      "file:app/schemas/user.py": 2,
+      "file:app/models/style_card.py": 2,
+      "file:app/models/toutiao_reference.py": 2,
+      "file:app/schemas/content_asset.py": 2,
+      "file:app/services/content_asset_service.py": 2,
+      "file:app/models/hotlist_sync.py": 2,
+      "file:app/services/hotlist_service.py": 2,
+      "file:app/models/agent_log.py": 2,
+      "file:app/models/copy.py": 2,
+      "file:app/models/orchestration_audit_log.py": 2,
+      "file:app/models/system_log.py": 2,
+      "file:app/models/task.py": 2,
+      "file:app/schemas/task.py": 2,
+      "file:app/utils/log_writer.py": 2,
+      "file:app/lang/graph/ingest_graph.py": 3,
+      "file:app/lang/rag/ingest.py": 3,
+      "file:app/lang/toutiao_fetcher.py": 3,
+      "file:app/services/writing_pattern_service.py": 3,
+      "file:app/lang/graph/state.py": 4,
+      "file:app/lang/rag/chunking.py": 4,
+      "file:app/lang/vectorstore.py": 4,
+      "file:app/utils/llm_client.py": 4,
+      "file:app/utils/model_roles.py": 4,
+      "file:app/lang/embeddings.py": 5
+    },
+    "byDepth": {
+      "0": [
+        "file:app/main.py"
+      ],
+      "1": [
+        "file:app/api/v1/__init__.py",
+        "file:app/api/v1/auth.py",
+        "file:app/api/v1/content_assets.py",
+        "file:app/api/v1/hotlist.py",
+        "file:app/api/v1/logs.py",
+        "file:app/api/v1/tasks.py",
+        "file:app/api/v1/users.py",
+        "file:app/config.py",
+        "file:app/database.py",
+        "file:app/utils/logger.py"
+      ],
+      "2": [
+        "file:app/core/deps.py",
+        "file:app/core/security.py",
+        "file:app/models/user.py",
+        "file:app/schemas/common.py",
+        "file:app/schemas/user.py",
+        "file:app/models/style_card.py",
+        "file:app/models/toutiao_reference.py",
+        "file:app/schemas/content_asset.py",
+        "file:app/services/content_asset_service.py",
+        "file:app/models/hotlist_sync.py",
+        "file:app/services/hotlist_service.py",
+        "file:app/models/agent_log.py",
+        "file:app/models/copy.py",
+        "file:app/models/orchestration_audit_log.py",
+        "file:app/models/system_log.py",
+        "file:app/models/task.py",
+        "file:app/schemas/task.py",
+        "file:app/utils/log_writer.py"
+      ],
+      "3": [
+        "file:app/lang/graph/ingest_graph.py",
+        "file:app/lang/rag/ingest.py",
+        "file:app/lang/toutiao_fetcher.py",
+        "file:app/services/writing_pattern_service.py"
+      ],
+      "4": [
+        "file:app/lang/graph/state.py",
+        "file:app/lang/rag/chunking.py",
+        "file:app/lang/vectorstore.py",
+        "file:app/utils/llm_client.py",
+        "file:app/utils/model_roles.py"
+      ],
+      "5": [
+        "file:app/lang/embeddings.py"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "项目总览文档，介绍多智能体文案系统架构、MVP 能力、技术栈、部署步骤、目录结构与 API。"
+      },
+      {
+        "id": "document:requirements.txt",
+        "name": "requirements.txt",
+        "type": "document",
+        "summary": "锁定后端运行所需的 Web、数据库、LLM、LangGraph、向量检索和测试依赖。"
+      },
+      {
+        "id": "document:docs/TOUTIAO_RAG_GUIDE.md",
+        "name": "TOUTIAO_RAG_GUIDE.md",
+        "type": "document",
+        "summary": "头条长文 RAG 实战指南，说明 LangChain 与 LangGraph 的职责分工、入库和检索步骤、相关文件清单及故障排查。"
+      },
+      {
+        "id": "document:docs/resume_agent_fullstack.md",
+        "name": "resume_agent_fullstack.md",
+        "type": "document",
+        "summary": "面向 AI 全栈工程师岗位的 Markdown 简历源稿，覆盖技能、经历、项目亮点、教育背景与投递前说明。"
+      },
+      {
+        "id": "document:docs/template_lines.txt",
+        "name": "template_lines.txt",
+        "type": "document",
+        "summary": "按段落索引列出的简历模板纯文本快照，用于确认 python-docx 修改时所依赖的段落位置和内容。"
+      },
+      {
+        "id": "document:docs/template_structure.txt",
+        "name": "template_structure.txt",
+        "type": "document",
+        "summary": "记录简历模板各段落样式与文本结构的诊断快照，辅助验证列表、普通段落和空段落布局。"
+      },
+      {
+        "id": "document:frontend/README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "React + Vite 前端的使用说明，概述鉴权、任务、热榜和管理功能，并给出开发、构建和环境变量配置步骤。"
+      }
+    ],
+    "infrastructure": [
+      {
+        "id": "service:docker-compose.yml",
+        "name": "docker-compose.yml",
+        "type": "service",
+        "summary": "编排后端、前端、MySQL 与相关持久化资源，提供本地或服务器的一体化容器运行环境。"
+      },
+      {
+        "id": "service:Dockerfile",
+        "name": "Dockerfile",
+        "type": "service",
+        "summary": "使用 builder 与 runtime 两阶段构建 Python 应用镜像，分离依赖安装和最终运行环境。"
+      },
+      {
+        "id": "service:Dockerfile:builder",
+        "name": "builder",
+        "type": "service",
+        "summary": "安装并编译 Python 依赖，为最终镜像准备可复制的运行环境。"
+      },
+      {
+        "id": "service:Dockerfile:runtime",
+        "name": "runtime",
+        "type": "service",
+        "summary": "承载精简后的应用运行环境并启动后端服务。"
+      }
+    ],
+    "data": [
+      {
+        "id": "schema:scripts/init_mysql.sql",
+        "name": "init_mysql.sql",
+        "type": "schema",
+        "summary": "MySQL 本地初始化脚本，创建 utf8mb4 的 copy_generator 数据库、应用账号并授予数据库权限。"
+      },
+      {
+        "id": "table:scripts/migrate_add_toutiao_platform.sql:migration",
+        "name": "migrate_add_toutiao_platform.sql",
+        "type": "table",
+        "summary": "扩展 tasks.platform 枚举以支持头条、微博、微信、抖音、小红书和知乎等内容平台。"
+      },
+      {
+        "id": "table:scripts/migrate_add_toutiao_platform.sql:tasks",
+        "name": "tasks",
+        "type": "table",
+        "summary": "迁移脚本所修改的任务表，将 platform 列约束为受支持平台枚举并设置默认值。"
+      },
+      {
+        "id": "table:scripts/migrate_agentic_phase2.sql:migration",
+        "name": "migrate_agentic_phase2.sql",
+        "type": "table",
+        "summary": "Agentic 编排第二阶段迁移，为任务记录增加可空 JSON 编排元数据，并说明人工介入状态的枚举扩展方式。"
+      },
+      {
+        "id": "table:scripts/migrate_agentic_phase2.sql:tasks",
+        "name": "tasks",
+        "type": "table",
+        "summary": "迁移脚本所修改的任务表，新增 orchestration_meta JSON 字段以持久化编排上下文。"
+      },
+      {
+        "id": "table:scripts/migrate_audit_logs.sql:migration",
+        "name": "migrate_audit_logs.sql",
+        "type": "table",
+        "summary": "创建编排全链路审计日志表的 Phase 3 数据库迁移，包含任务外键、步骤序号、耗时、失败信息和查询索引。"
+      },
+      {
+        "id": "table:scripts/migrate_audit_logs.sql:orchestration_audit_logs",
+        "name": "orchestration_audit_logs",
+        "type": "table",
+        "summary": "按任务和执行序列记录 Agent 编排步骤输入输出、状态、失败级别、耗时与错误详情的审计表。"
+      },
+      {
+        "id": "table:scripts/migrate_style_pattern.sql:migration",
+        "name": "migrate_style_pattern.sql",
+        "type": "table",
+        "summary": "为头条参考文章增加互动量字段和索引，并创建按主题与平台保存风格模式的 style_cards 表。"
+      },
+      {
+        "id": "table:scripts/migrate_style_pattern.sql:toutiao_reference",
+        "name": "toutiao_reference",
+        "type": "table",
+        "summary": "迁移脚本扩展的头条参考文章表，新增点赞、阅读、评论与发布时间字段并建立点赞量索引。"
+      },
+      {
+        "id": "table:scripts/migrate_style_pattern.sql:style_cards",
+        "name": "style_cards",
+        "type": "table",
+        "summary": "存储主题聚类、平台、风格模式 JSON、来源文章、置信度和平均点赞量的风格卡表。"
+      }
+    ],
+    "config": [
+      {
+        "id": "config:.env.example",
+        "name": ".env.example",
+        "type": "config",
+        "summary": "列出应用、编排、数据库、认证、模型、向量库、热点同步和日志所需的环境变量模板。"
+      },
+      {
+        "id": "config:package.json",
+        "name": "package.json",
+        "type": "config",
+        "summary": "定义仓库级辅助 npm 脚本，用于统一调用后端、前端或部署相关命令。"
+      },
+      {
+        "id": "config:docs/template_doc.xml",
+        "name": "template_doc.xml",
+        "type": "config",
+        "summary": "从 Word 简历模板提取的 WordprocessingML 文档主体，保留段落、字体、边框和版式属性供模板分析或复用。"
+      },
+      {
+        "id": "config:frontend/.env.example",
+        "name": ".env.example",
+        "type": "config",
+        "summary": "前端环境变量示例，声明可选的 VITE_API_BASE；开发环境留空时由 Vite 代理访问本地后端。"
+      },
+      {
+        "id": "config:frontend/package.json",
+        "name": "package.json",
+        "type": "config",
+        "summary": "前端包清单与脚本配置，定义 Vite 开发、TypeScript 校验构建和预览命令，以及 React 运行时依赖。"
+      },
+      {
+        "id": "config:frontend/tsconfig.json",
+        "name": "tsconfig.json",
+        "type": "config",
+        "summary": "前端 TypeScript 严格编译配置，启用 bundler 模块解析、React JSX、未使用代码检查和 @/* 路径别名。"
+      }
+    ]
+  },
+  "clusters": [],
+  "layers": {
+    "count": 9,
+    "list": [
+      {
+        "id": "layer:frontend",
+        "name": "前端应用层",
+        "description": "承载 React 页面、可复用组件、全局上下文、浏览器端 API 客户端和类型定义，形成用户操作多智能体文案系统的完整界面。"
+      },
+      {
+        "id": "layer:api",
+        "name": "API 与契约层",
+        "description": "提供 FastAPI 路由、鉴权依赖和 Pydantic 数据契约，把前端请求转换为后端业务调用并统一响应。"
+      },
+      {
+        "id": "layer:orchestration",
+        "name": "智能体编排层",
+        "description": "组织主管与专业智能体、LangGraph 状态图、可插拔技能和多种执行引擎，驱动文案任务的规划、生成、审核与恢复。"
+      },
+      {
+        "id": "layer:service",
+        "name": "领域服务与共享能力层",
+        "description": "实现热点、内容资产、评审、反思、审计等领域服务，并提供模型客户端、日志和调度等跨模块能力。"
+      },
+      {
+        "id": "layer:data",
+        "name": "数据与持久化层",
+        "description": "定义 SQLAlchemy 业务模型、数据库会话以及 MySQL 初始化和迁移结构，保存用户、任务、文案、审计与风格数据。"
+      },
+      {
+        "id": "layer:infrastructure",
+        "name": "配置与基础设施层",
+        "description": "集中管理应用和前端构建配置、容器镜像、Compose 编排、Nginx、Gunicorn、部署脚本及运行入口。"
+      },
+      {
+        "id": "layer:documentation",
+        "name": "文档与模板层",
+        "description": "汇总项目使用说明、头条 RAG 指南、依赖清单、简历示例和文档生成模板，为使用与交付提供参考。"
+      },
+      {
+        "id": "layer:test",
+        "name": "自动化测试层",
+        "description": "覆盖认证、API、智能体流水线、编排策略、审计、合规和写作模式等关键行为与回归场景。"
+      },
+      {
+        "id": "layer:tooling",
+        "name": "项目工具与数据运维层",
+        "description": "提供数据库准备、用户种子、内容导入、RAG 查询、风格卡构建和文档转换等一次性或运维辅助脚本。"
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:app/agents/agentic_runners.py": {
+      "name": "agentic_runners.py",
+      "type": "file",
+      "summary": "实现智能体流水线各阶段的执行、步骤结果处理、质量门禁以及中断后的恢复，是复杂任务编排的核心运行层。"
+    },
+    "file:app/agents/lead_agent.py": {
+      "name": "lead_agent.py",
+      "type": "file",
+      "summary": "实现主管智能体，负责选择执行路径、协调专业智能体并汇总多阶段文案生成结果。"
+    },
+    "file:app/agents/model_roles.py": {
+      "name": "model_roles.py",
+      "type": "file",
+      "summary": "定义智能体模型角色及其解析规则，为不同阶段选择合适的模型配置。"
+    },
+    "file:app/agents/orchestrator.py": {
+      "name": "orchestrator.py",
+      "type": "file",
+      "summary": "提供传统多智能体编排器，串联需求分析、文案生成、审核和持久化流程。"
+    },
+    "file:app/agents/pipeline_context.py": {
+      "name": "pipeline_context.py",
+      "type": "file",
+      "summary": "构造并维护流水线上下文，把任务、用户输入、模型配置和中间结果传递给各阶段。"
+    },
+    "file:app/agents/pipeline_runners.py": {
+      "name": "pipeline_runners.py",
+      "type": "file",
+      "summary": "封装流水线阶段运行函数，负责调用智能体、记录结果并推进任务状态。"
+    },
+    "file:app/agents/pipeline_state.py": {
+      "name": "pipeline_state.py",
+      "type": "file",
+      "summary": "定义智能体流水线的状态结构、状态转换和序列化辅助逻辑。"
+    },
+    "file:app/config.py": {
+      "name": "config.py",
+      "type": "file",
+      "summary": "集中声明应用运行配置，并从环境变量加载数据库、鉴权、模型和外部服务参数。"
+    },
+    "file:app/lang/graph/agentic_pipeline_graph.py": {
+      "name": "agentic_pipeline_graph.py",
+      "type": "file",
+      "summary": "构建复杂任务的 LangGraph 状态图，连接分类、规划、执行、反思、验证和人工确认节点。"
+    },
+    "file:app/lang/graph/lead_pipeline_graph.py": {
+      "name": "lead_pipeline_graph.py",
+      "type": "file",
+      "summary": "构建主管智能体主导的 LangGraph 流程图，组织专业智能体之间的分派和汇总。"
+    },
+    "file:app/models/task.py": {
+      "name": "task.py",
+      "type": "file",
+      "summary": "定义 task 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/scheduler.py": {
+      "name": "scheduler.py",
+      "type": "file",
+      "summary": "配置后台定时任务，用于周期性同步热点数据并管理调度器生命周期。"
+    },
+    "file:app/services/audit_service.py": {
+      "name": "audit_service.py",
+      "type": "file",
+      "summary": "记录和查询编排审计轨迹，确保各智能体步骤可追踪，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/embedding_service.py": {
+      "name": "embedding_service.py",
+      "type": "file",
+      "summary": "生成向量嵌入并维护内容检索所需的索引数据，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/judge_service.py": {
+      "name": "judge_service.py",
+      "type": "file",
+      "summary": "对候选文案执行结构化质量评判并输出评分结论，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/longform_mvp_service.py": {
+      "name": "longform_mvp_service.py",
+      "type": "file",
+      "summary": "执行长文生成 MVP 流程并组织分段产物，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/orchestration_persistence.py": {
+      "name": "orchestration_persistence.py",
+      "type": "file",
+      "summary": "持久化编排状态、中间步骤和恢复所需快照，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/orchestration_policy.py": {
+      "name": "orchestration_policy.py",
+      "type": "file",
+      "summary": "根据任务特征和执行结果决定编排策略、跳过条件与人工介入，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/planner_service.py": {
+      "name": "planner_service.py",
+      "type": "file",
+      "summary": "把复杂任务拆解为可执行步骤并生成结构化计划，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/reflect_service.py": {
+      "name": "reflect_service.py",
+      "type": "file",
+      "summary": "反思阶段产出改进建议并更新后续执行上下文，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/task_classifier.py": {
+      "name": "task_classifier.py",
+      "type": "file",
+      "summary": "识别任务复杂度和类型，为流水线路由提供依据，供 API 层和智能体流水线复用。"
+    },
+    "file:app/services/verify_service.py": {
+      "name": "verify_service.py",
+      "type": "file",
+      "summary": "验证阶段检查产物是否满足约束和质量要求，供 API 层和智能体流水线复用。"
+    },
+    "file:app/skills/delegation_skills.py": {
+      "name": "delegation_skills.py",
+      "type": "file",
+      "summary": "实现 delegation skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/utils/llm_client.py": {
+      "name": "llm_client.py",
+      "type": "file",
+      "summary": "统一封装大模型客户端创建、请求调用、响应解析和异常处理。"
+    },
+    "file:app/utils/model_roles.py": {
+      "name": "model_roles.py",
+      "type": "file",
+      "summary": "根据任务阶段解析模型角色并返回对应的大模型配置。"
+    },
+    "file:quick_view.py": {
+      "name": "quick_view.py",
+      "type": "file",
+      "summary": "实现 quick view 模块的核心职责，并为项目其他组件提供可复用接口。"
+    },
+    "file:run.py": {
+      "name": "run.py",
+      "type": "file",
+      "summary": "实现 run 模块的核心职责，并为项目其他组件提供可复用接口。"
+    },
+    "file:scripts/setup_mysql.py": {
+      "name": "setup_mysql.py",
+      "type": "file",
+      "summary": "提供 setup mysql 的项目维护脚本，用于初始化、数据准备或外部服务连通性检查。"
+    },
+    "file:scripts/test_deepseek.py": {
+      "name": "test_deepseek.py",
+      "type": "file",
+      "summary": "提供 test deepseek 的项目维护脚本，用于初始化、数据准备或外部服务连通性检查。"
+    },
+    "file:tests/test_agentic_phase2.py": {
+      "name": "test_agentic_phase2.py",
+      "type": "file",
+      "summary": "覆盖 agentic phase2 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_agentic_pipeline.py": {
+      "name": "test_agentic_pipeline.py",
+      "type": "file",
+      "summary": "覆盖 agentic pipeline 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_lead_agent.py": {
+      "name": "test_lead_agent.py",
+      "type": "file",
+      "summary": "覆盖 lead agent 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_longform_mvp.py": {
+      "name": "test_longform_mvp.py",
+      "type": "file",
+      "summary": "覆盖 longform mvp 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_orchestration_policy.py": {
+      "name": "test_orchestration_policy.py",
+      "type": "file",
+      "summary": "覆盖 orchestration policy 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_reflect_service.py": {
+      "name": "test_reflect_service.py",
+      "type": "file",
+      "summary": "覆盖 reflect service 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:app/api/v1/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "实现 init 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/auth.py": {
+      "name": "auth.py",
+      "type": "file",
+      "summary": "实现 auth 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/content_assets.py": {
+      "name": "content_assets.py",
+      "type": "file",
+      "summary": "实现 content assets 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/hotlist.py": {
+      "name": "hotlist.py",
+      "type": "file",
+      "summary": "实现 hotlist 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/logs.py": {
+      "name": "logs.py",
+      "type": "file",
+      "summary": "实现 logs 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/tasks.py": {
+      "name": "tasks.py",
+      "type": "file",
+      "summary": "实现 tasks 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/api/v1/users.py": {
+      "name": "users.py",
+      "type": "file",
+      "summary": "实现 users 领域的 FastAPI 路由，完成请求校验、权限控制、服务调用和响应组装。"
+    },
+    "file:app/core/deps.py": {
+      "name": "deps.py",
+      "type": "file",
+      "summary": "提供 FastAPI 鉴权依赖，解析当前用户并执行活跃状态与管理员权限检查。"
+    },
+    "file:app/core/security.py": {
+      "name": "security.py",
+      "type": "file",
+      "summary": "实现密码哈希校验、JWT 访问令牌签发和解码等认证安全能力。"
+    },
+    "file:app/database.py": {
+      "name": "database.py",
+      "type": "file",
+      "summary": "创建 SQLAlchemy 引擎与会话，兼容不同数据库并提供依赖注入和建表入口。"
+    },
+    "file:app/main.py": {
+      "name": "main.py",
+      "type": "file",
+      "summary": "FastAPI 应用入口，注册路由、中间件、生命周期钩子、异常处理器和健康检查。"
+    },
+    "file:app/models/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "定义 init 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/agent_log.py": {
+      "name": "agent_log.py",
+      "type": "file",
+      "summary": "定义 agent log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/copy.py": {
+      "name": "copy.py",
+      "type": "file",
+      "summary": "定义 copy 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/document.py": {
+      "name": "document.py",
+      "type": "file",
+      "summary": "定义 document 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/hotlist_sync.py": {
+      "name": "hotlist_sync.py",
+      "type": "file",
+      "summary": "定义 hotlist sync 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/orchestration_audit_log.py": {
+      "name": "orchestration_audit_log.py",
+      "type": "file",
+      "summary": "定义 orchestration audit log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/style_card.py": {
+      "name": "style_card.py",
+      "type": "file",
+      "summary": "定义 style card 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/system_log.py": {
+      "name": "system_log.py",
+      "type": "file",
+      "summary": "定义 system log 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/models/user.py": {
+      "name": "user.py",
+      "type": "file",
+      "summary": "定义 user 的 SQLAlchemy 持久化模型、字段约束及数据库关系。"
+    },
+    "file:app/schemas/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "定义 init 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。"
+    },
+    "file:app/schemas/common.py": {
+      "name": "common.py",
+      "type": "file",
+      "summary": "定义 common 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。"
+    },
+    "file:app/schemas/content_asset.py": {
+      "name": "content_asset.py",
+      "type": "file",
+      "summary": "定义 content asset 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。"
+    },
+    "file:app/schemas/task.py": {
+      "name": "task.py",
+      "type": "file",
+      "summary": "定义 task 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。"
+    },
+    "file:app/schemas/user.py": {
+      "name": "user.py",
+      "type": "file",
+      "summary": "定义 user 领域的 Pydantic 请求与响应结构，用于 API 校验和序列化。"
+    },
+    "file:app/services/hotlist_service.py": {
+      "name": "hotlist_service.py",
+      "type": "file",
+      "summary": "拉取、清洗、保存和查询多平台热点榜单数据，供 API 层和智能体流水线复用。"
+    },
+    "file:scripts/seed_users.py": {
+      "name": "seed_users.py",
+      "type": "file",
+      "summary": "提供 seed users 的项目维护脚本，用于初始化、数据准备或外部服务连通性检查。"
+    },
+    "file:tests/test_auth.py": {
+      "name": "test_auth.py",
+      "type": "file",
+      "summary": "覆盖 auth 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_content_assets_api.py": {
+      "name": "test_content_assets_api.py",
+      "type": "file",
+      "summary": "覆盖 content assets api 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:frontend/src/App.tsx": {
+      "name": "App.tsx",
+      "type": "file",
+      "summary": "定义前端顶层路由树，将公开页面、受保护页面和管理员页面组合到统一布局中。"
+    },
+    "file:frontend/src/api/auth.ts": {
+      "name": "auth.ts",
+      "type": "file",
+      "summary": "封装 auth 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/api/client.ts": {
+      "name": "client.ts",
+      "type": "file",
+      "summary": "封装浏览器端 HTTP 客户端、令牌存取、统一响应解析和 API 错误模型。"
+    },
+    "file:frontend/src/api/contentAssets.ts": {
+      "name": "contentAssets.ts",
+      "type": "file",
+      "summary": "封装 content Assets 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/api/hotlist.ts": {
+      "name": "hotlist.ts",
+      "type": "file",
+      "summary": "封装 hotlist 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/api/logs.ts": {
+      "name": "logs.ts",
+      "type": "file",
+      "summary": "封装 logs 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/api/tasks.ts": {
+      "name": "tasks.ts",
+      "type": "file",
+      "summary": "封装 tasks 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/api/users.ts": {
+      "name": "users.ts",
+      "type": "file",
+      "summary": "封装 users 领域的前端 API 调用，并复用统一 HTTP 客户端处理认证与错误。"
+    },
+    "file:frontend/src/components/AdminRoute.tsx": {
+      "name": "AdminRoute.tsx",
+      "type": "file",
+      "summary": "实现 Admin Route 可复用 React 组件，承担界面展示、导航或访问控制职责。"
+    },
+    "file:frontend/src/components/AgentPipeline.tsx": {
+      "name": "AgentPipeline.tsx",
+      "type": "file",
+      "summary": "实现 Agent Pipeline 可复用 React 组件，承担界面展示、导航或访问控制职责。"
+    },
+    "file:frontend/src/components/AuditTimeline.tsx": {
+      "name": "AuditTimeline.tsx",
+      "type": "file",
+      "summary": "实现 Audit Timeline 可复用 React 组件，承担界面展示、导航或访问控制职责。"
+    },
+    "file:frontend/src/components/Layout.tsx": {
+      "name": "Layout.tsx",
+      "type": "file",
+      "summary": "实现 Layout 可复用 React 组件，承担界面展示、导航或访问控制职责。"
+    },
+    "file:frontend/src/components/ProtectedRoute.tsx": {
+      "name": "ProtectedRoute.tsx",
+      "type": "file",
+      "summary": "实现 Protected Route 可复用 React 组件，承担界面展示、导航或访问控制职责。"
+    },
+    "file:frontend/src/contexts/AuthContext.tsx": {
+      "name": "AuthContext.tsx",
+      "type": "file",
+      "summary": "提供全局认证上下文，管理登录用户、令牌恢复、登录注册和退出状态。"
+    },
+    "file:frontend/src/contexts/ToastContext.tsx": {
+      "name": "ToastContext.tsx",
+      "type": "file",
+      "summary": "提供全局提示消息上下文，管理临时通知的创建、展示与自动消失。"
+    },
+    "file:frontend/src/main.tsx": {
+      "name": "main.tsx",
+      "type": "file",
+      "summary": "React 前端入口，挂载应用并注入路由、认证和提示消息等全局上下文。"
+    },
+    "file:frontend/src/pages/AdminUsers.tsx": {
+      "name": "AdminUsers.tsx",
+      "type": "file",
+      "summary": "实现 Admin Users 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/ContentAssets.tsx": {
+      "name": "ContentAssets.tsx",
+      "type": "file",
+      "summary": "实现 Content Assets 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/CreateTask.tsx": {
+      "name": "CreateTask.tsx",
+      "type": "file",
+      "summary": "实现 Create Task 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/Dashboard.tsx": {
+      "name": "Dashboard.tsx",
+      "type": "file",
+      "summary": "实现 Dashboard 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/Hotlist.tsx": {
+      "name": "Hotlist.tsx",
+      "type": "file",
+      "summary": "实现 Hotlist 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/Login.tsx": {
+      "name": "Login.tsx",
+      "type": "file",
+      "summary": "实现 Login 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/Profile.tsx": {
+      "name": "Profile.tsx",
+      "type": "file",
+      "summary": "实现 Profile 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/Register.tsx": {
+      "name": "Register.tsx",
+      "type": "file",
+      "summary": "实现 Register 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/pages/TaskDetail.tsx": {
+      "name": "TaskDetail.tsx",
+      "type": "file",
+      "summary": "实现 Task Detail 业务页面，协调接口请求、交互状态和结果展示。"
+    },
+    "file:frontend/src/types/api.ts": {
+      "name": "api.ts",
+      "type": "file",
+      "summary": "集中定义前后端 API 的请求、响应、任务、日志、热点和内容资产类型。"
+    },
+    "file:app/agents/base_agent.py": {
+      "name": "base_agent.py",
+      "type": "file",
+      "summary": "实现 base agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。"
+    },
+    "file:app/agents/copywriter_agent.py": {
+      "name": "copywriter_agent.py",
+      "type": "file",
+      "summary": "实现 copywriter agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。"
+    },
+    "file:app/agents/requirement_agent.py": {
+      "name": "requirement_agent.py",
+      "type": "file",
+      "summary": "实现 requirement agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。"
+    },
+    "file:app/agents/reviewer_agent.py": {
+      "name": "reviewer_agent.py",
+      "type": "file",
+      "summary": "实现 reviewer agent 相关智能体能力，参与任务分析、生成、审核或流水线协调。"
+    },
+    "file:app/skills/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "汇总并导出项目内置技能，使编排器能够从统一包入口加载技能实现。"
+    },
+    "file:app/skills/base.py": {
+      "name": "base.py",
+      "type": "file",
+      "summary": "定义技能抽象、注册表和执行器，为具体文案技能提供统一调用与审计协议。"
+    },
+    "file:app/skills/compliance_skills.py": {
+      "name": "compliance_skills.py",
+      "type": "file",
+      "summary": "实现 compliance skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/copy_skills.py": {
+      "name": "copy_skills.py",
+      "type": "file",
+      "summary": "实现 copy skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/platform_skills.py": {
+      "name": "platform_skills.py",
+      "type": "file",
+      "summary": "实现 platform skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/rag_skills.py": {
+      "name": "rag_skills.py",
+      "type": "file",
+      "summary": "实现 rag skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/requirement_skills.py": {
+      "name": "requirement_skills.py",
+      "type": "file",
+      "summary": "实现 requirement skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/review_skills.py": {
+      "name": "review_skills.py",
+      "type": "file",
+      "summary": "实现 review skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/skills/skill_response.py": {
+      "name": "skill_response.py",
+      "type": "file",
+      "summary": "定义技能执行结果的标准信封和兼容旧格式的归一化逻辑。"
+    },
+    "file:app/skills/toutiao_rag_skills.py": {
+      "name": "toutiao_rag_skills.py",
+      "type": "file",
+      "summary": "实现 toutiao rag skills 领域的可注册技能，把专业处理能力暴露给智能体编排器。"
+    },
+    "file:app/utils/log_writer.py": {
+      "name": "log_writer.py",
+      "type": "file",
+      "summary": "提供 log writer 通用辅助能力，供后端多个模块复用。"
+    },
+    "file:app/utils/logger.py": {
+      "name": "logger.py",
+      "type": "file",
+      "summary": "提供 logger 通用辅助能力，供后端多个模块复用。"
+    },
+    "file:tests/test_audit_trail.py": {
+      "name": "test_audit_trail.py",
+      "type": "file",
+      "summary": "覆盖 audit trail 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:tests/test_compliance_skills.py": {
+      "name": "test_compliance_skills.py",
+      "type": "file",
+      "summary": "覆盖 compliance skills 相关行为的自动化测试，验证正常流程、边界条件和关键回归场景。"
+    },
+    "file:app/lang/embeddings.py": {
+      "name": "embeddings.py",
+      "type": "file",
+      "summary": "集中创建并缓存文本向量模型，为向量库写入和语义检索提供统一的 embedding 实例。"
+    },
+    "file:app/lang/graph/ingest_graph.py": {
+      "name": "ingest_graph.py",
+      "type": "file",
+      "summary": "定义文章入库的 LangGraph 工作流，将原文切块并写入向量库，同时维护摄取状态和错误信息。"
+    },
+    "file:app/lang/graph/query_graph.py": {
+      "name": "query_graph.py",
+      "type": "file",
+      "summary": "定义 RAG 查询图，完成候选文档检索、参考资料格式化和统一查询结果组装。"
+    },
+    "file:app/lang/graph/state.py": {
+      "name": "state.py",
+      "type": "file",
+      "summary": "声明文章摄取与查询流程使用的类型化状态，约束图节点之间传递的数据字段。"
+    },
+    "file:app/lang/rag/chunking.py": {
+      "name": "chunking.py",
+      "type": "file",
+      "summary": "把头条文章转换为带来源元数据的文档分块，并按配置创建递归文本切分器。"
+    },
+    "file:app/lang/rag/ingest.py": {
+      "name": "ingest.py",
+      "type": "file",
+      "summary": "封装向量库的文档写入与文章分块删除操作，为重新索引和清理内容资产提供底层能力。"
+    },
+    "file:app/lang/rag/retriever.py": {
+      "name": "retriever.py",
+      "type": "file",
+      "summary": "执行头条参考资料的向量检索，并把命中文档整理为适合注入提示词的文本。"
+    },
+    "file:app/lang/toutiao_fetcher.py": {
+      "name": "toutiao_fetcher.py",
+      "type": "file",
+      "summary": "从头条链接提取文章标识，抓取页面并解析渲染数据或 HTML，输出标准化文章内容。"
+    },
+    "file:app/lang/vectorstore.py": {
+      "name": "vectorstore.py",
+      "type": "file",
+      "summary": "按项目配置创建并缓存 Chroma 向量库，连接 embedding 模型与持久化目录。"
+    },
+    "file:app/models/toutiao_reference.py": {
+      "name": "toutiao_reference.py",
+      "type": "file",
+      "summary": "定义头条参考文章的数据库模型，保存来源、正文、互动数据及向量索引状态。"
+    },
+    "file:app/services/content_asset_service.py": {
+      "name": "content_asset_service.py",
+      "type": "file",
+      "summary": "编排参考文章导入、重建索引、删除和风格卡生成，连接抓取、数据库、RAG 与写作模式服务。"
+    },
+    "file:app/services/writing_pattern_service.py": {
+      "name": "writing_pattern_service.py",
+      "type": "file",
+      "summary": "从多篇文章中去标识化内容、抽取结构模式并合并为可复用写作风格，同时检测文本复用风险。"
+    },
+    "file:app/skills/style_skills.py": {
+      "name": "style_skills.py",
+      "type": "file",
+      "summary": "提供搜索热门文章、抽取写作模式、读取和保存风格卡的 Agent 技能实现。"
+    },
+    "file:scripts/build_style_cards.py": {
+      "name": "build_style_cards.py",
+      "type": "file",
+      "summary": "命令行批量按关键词检索素材、提炼写作模式并生成风格卡。"
+    },
+    "file:scripts/import_toutiao_article.py": {
+      "name": "import_toutiao_article.py",
+      "type": "file",
+      "summary": "命令行导入单篇头条文章，持久化引用记录并触发向量与图式索引。"
+    },
+    "file:scripts/query_toutiao_rag.py": {
+      "name": "query_toutiao_rag.py",
+      "type": "file",
+      "summary": "提供轻量命令行入口，用于对头条文章知识库执行 RAG 查询。"
+    },
+    "file:tests/test_writing_pattern.py": {
+      "name": "test_writing_pattern.py",
+      "type": "file",
+      "summary": "覆盖去标识化、结构摘要、重复检测、热门文章排序、风格抽取和大纲生成的测试。"
+    },
+    "file:app/lang/graph/copy_pipeline_graph.py": {
+      "name": "copy_pipeline_graph.py",
+      "type": "file",
+      "summary": "构建文案生产 LangGraph，将需求分析、写作、审阅、质量收口及失败处理连接为可路由流程。"
+    },
+    "file:app/orchestration/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "作为编排子系统的公共入口，集中导出引擎协议、工厂和具体引擎实现。"
+    },
+    "file:app/orchestration/base.py": {
+      "name": "base.py",
+      "type": "file",
+      "summary": "定义编排引擎抽象接口和运行契约，统一启动、恢复、查询状态与直接运行能力。"
+    },
+    "file:app/orchestration/factory.py": {
+      "name": "factory.py",
+      "type": "file",
+      "summary": "维护编排引擎注册表，并依据配置或显式名称创建 Native 或 LangGraph 引擎。"
+    },
+    "file:app/orchestration/langgraph_engine.py": {
+      "name": "langgraph_engine.py",
+      "type": "file",
+      "summary": "以 LangGraph 文案流程实现统一编排引擎接口，将任务执行委托给图运行器。"
+    },
+    "file:app/orchestration/native_engine.py": {
+      "name": "native_engine.py",
+      "type": "file",
+      "summary": "以原生 Agent 流程实现统一编排引擎接口，作为不依赖 LangGraph 的执行后端。"
+    },
+    "file:tests/test_orchestration.py": {
+      "name": "test_orchestration.py",
+      "type": "file",
+      "summary": "验证引擎工厂、状态初始化、成功与失败流程，以及 Native 和 LangGraph 引擎的委托行为。"
+    },
+    "service:docker-compose.yml": {
+      "name": "docker-compose.yml",
+      "type": "service",
+      "summary": "编排后端、前端、MySQL 与相关持久化资源，提供本地或服务器的一体化容器运行环境。"
+    },
+    "service:Dockerfile": {
+      "name": "Dockerfile",
+      "type": "service",
+      "summary": "使用 builder 与 runtime 两阶段构建 Python 应用镜像，分离依赖安装和最终运行环境。"
+    },
+    "service:Dockerfile:builder": {
+      "name": "builder",
+      "type": "service",
+      "summary": "安装并编译 Python 依赖，为最终镜像准备可复制的运行环境。"
+    },
+    "service:Dockerfile:runtime": {
+      "name": "runtime",
+      "type": "service",
+      "summary": "承载精简后的应用运行环境并启动后端服务。"
+    },
+    "config:.env.example": {
+      "name": ".env.example",
+      "type": "config",
+      "summary": "列出应用、编排、数据库、认证、模型、向量库、热点同步和日志所需的环境变量模板。"
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "项目总览文档，介绍多智能体文案系统架构、MVP 能力、技术栈、部署步骤、目录结构与 API。"
+    },
+    "file:deploy.sh": {
+      "name": "deploy.sh",
+      "type": "file",
+      "summary": "自动检查环境、生成配置并通过 Docker Compose 完成项目部署、状态检查和运维提示。"
+    },
+    "config:package.json": {
+      "name": "package.json",
+      "type": "config",
+      "summary": "定义仓库级辅助 npm 脚本，用于统一调用后端、前端或部署相关命令。"
+    },
+    "document:requirements.txt": {
+      "name": "requirements.txt",
+      "type": "document",
+      "summary": "锁定后端运行所需的 Web、数据库、LLM、LangGraph、向量检索和测试依赖。"
+    },
+    "document:docs/TOUTIAO_RAG_GUIDE.md": {
+      "name": "TOUTIAO_RAG_GUIDE.md",
+      "type": "document",
+      "summary": "头条长文 RAG 实战指南，说明 LangChain 与 LangGraph 的职责分工、入库和检索步骤、相关文件清单及故障排查。"
+    },
+    "document:docs/resume_agent_fullstack.md": {
+      "name": "resume_agent_fullstack.md",
+      "type": "document",
+      "summary": "面向 AI 全栈工程师岗位的 Markdown 简历源稿，覆盖技能、经历、项目亮点、教育背景与投递前说明。"
+    },
+    "config:docs/template_doc.xml": {
+      "name": "template_doc.xml",
+      "type": "config",
+      "summary": "从 Word 简历模板提取的 WordprocessingML 文档主体，保留段落、字体、边框和版式属性供模板分析或复用。"
+    },
+    "document:docs/template_lines.txt": {
+      "name": "template_lines.txt",
+      "type": "document",
+      "summary": "按段落索引列出的简历模板纯文本快照，用于确认 python-docx 修改时所依赖的段落位置和内容。"
+    },
+    "document:docs/template_structure.txt": {
+      "name": "template_structure.txt",
+      "type": "document",
+      "summary": "记录简历模板各段落样式与文本结构的诊断快照，辅助验证列表、普通段落和空段落布局。"
+    },
+    "config:frontend/.env.example": {
+      "name": ".env.example",
+      "type": "config",
+      "summary": "前端环境变量示例，声明可选的 VITE_API_BASE；开发环境留空时由 Vite 代理访问本地后端。"
+    },
+    "document:frontend/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "React + Vite 前端的使用说明，概述鉴权、任务、热榜和管理功能，并给出开发、构建和环境变量配置步骤。"
+    },
+    "file:frontend/index.html": {
+      "name": "index.html",
+      "type": "file",
+      "summary": "Vite 单页应用的 HTML 外壳，加载中英文字体、提供 root 挂载节点并启动 src/main.tsx。"
+    },
+    "config:frontend/package.json": {
+      "name": "package.json",
+      "type": "config",
+      "summary": "前端包清单与脚本配置，定义 Vite 开发、TypeScript 校验构建和预览命令，以及 React 运行时依赖。"
+    },
+    "config:frontend/tsconfig.json": {
+      "name": "tsconfig.json",
+      "type": "config",
+      "summary": "前端 TypeScript 严格编译配置，启用 bundler 模块解析、React JSX、未使用代码检查和 @/* 路径别名。"
+    },
+    "schema:scripts/init_mysql.sql": {
+      "name": "init_mysql.sql",
+      "type": "schema",
+      "summary": "MySQL 本地初始化脚本，创建 utf8mb4 的 copy_generator 数据库、应用账号并授予数据库权限。"
+    },
+    "table:scripts/migrate_add_toutiao_platform.sql:migration": {
+      "name": "migrate_add_toutiao_platform.sql",
+      "type": "table",
+      "summary": "扩展 tasks.platform 枚举以支持头条、微博、微信、抖音、小红书和知乎等内容平台。"
+    },
+    "table:scripts/migrate_add_toutiao_platform.sql:tasks": {
+      "name": "tasks",
+      "type": "table",
+      "summary": "迁移脚本所修改的任务表，将 platform 列约束为受支持平台枚举并设置默认值。"
+    },
+    "table:scripts/migrate_agentic_phase2.sql:migration": {
+      "name": "migrate_agentic_phase2.sql",
+      "type": "table",
+      "summary": "Agentic 编排第二阶段迁移，为任务记录增加可空 JSON 编排元数据，并说明人工介入状态的枚举扩展方式。"
+    },
+    "table:scripts/migrate_agentic_phase2.sql:tasks": {
+      "name": "tasks",
+      "type": "table",
+      "summary": "迁移脚本所修改的任务表，新增 orchestration_meta JSON 字段以持久化编排上下文。"
+    },
+    "table:scripts/migrate_audit_logs.sql:migration": {
+      "name": "migrate_audit_logs.sql",
+      "type": "table",
+      "summary": "创建编排全链路审计日志表的 Phase 3 数据库迁移，包含任务外键、步骤序号、耗时、失败信息和查询索引。"
+    },
+    "table:scripts/migrate_audit_logs.sql:orchestration_audit_logs": {
+      "name": "orchestration_audit_logs",
+      "type": "table",
+      "summary": "按任务和执行序列记录 Agent 编排步骤输入输出、状态、失败级别、耗时与错误详情的审计表。"
+    },
+    "table:scripts/migrate_style_pattern.sql:migration": {
+      "name": "migrate_style_pattern.sql",
+      "type": "table",
+      "summary": "为头条参考文章增加互动量字段和索引，并创建按主题与平台保存风格模式的 style_cards 表。"
+    },
+    "table:scripts/migrate_style_pattern.sql:toutiao_reference": {
+      "name": "toutiao_reference",
+      "type": "table",
+      "summary": "迁移脚本扩展的头条参考文章表，新增点赞、阅读、评论与发布时间字段并建立点赞量索引。"
+    },
+    "table:scripts/migrate_style_pattern.sql:style_cards": {
+      "name": "style_cards",
+      "type": "table",
+      "summary": "存储主题聚类、平台、风格模式 JSON、来源文章、置信度和平均点赞量的风格卡表。"
+    },
+    "file:app/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "应用顶层 Python 包标记文件，用于将 app 目录作为可导入包。"
+    },
+    "file:app/agents/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Agents 包公共入口，通过模块级 __getattr__ 惰性暴露编排器和三个 Agent，避免与 skills 包形成循环依赖。"
+    },
+    "file:app/api/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "API 子包标记文件，为路由和接口模块提供 Python 包命名空间。"
+    },
+    "file:app/core/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "核心基础设施子包的空入口文件，用于组织配置、鉴权等共享能力。"
+    },
+    "file:app/lang/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "说明头条长文 RAG 的 LangChain 与 LangGraph 分层、目录职责以及推荐阅读顺序的包文档入口。"
+    },
+    "file:app/lang/graph/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "LangGraph 流程编排包说明，列出入库、检索、固定编排、Agentic 和 Lead 等状态图及其调用方。"
+    },
+    "file:app/lang/rag/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "LangChain RAG 工具包说明，映射图节点到切块、入库、检索和提示词格式化函数。"
+    },
+    "file:app/services/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "服务层子包标记文件，为业务服务实现提供统一命名空间。"
+    },
+    "file:app/utils/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "通用工具子包标记文件，用于组织跨模块复用的辅助函数。"
+    },
+    "file:docs/resume_agent_fullstack.docx": {
+      "name": "resume_agent_fullstack.docx",
+      "type": "file",
+      "summary": "由 Markdown 简历源稿生成的 Word 投递文档，包含 AI 全栈技能、项目经历和教育背景等排版内容。"
+    },
+    "file:frontend/src/styles/index.css": {
+      "name": "index.css",
+      "type": "file",
+      "summary": "前端全局样式表，集中定义应用布局、鉴权表单、任务卡片、热榜、Agent Pipeline、审计时间线及响应式交互视觉。"
+    },
+    "file:frontend/src/vite-env.d.ts": {
+      "name": "vite-env.d.ts",
+      "type": "file",
+      "summary": "Vite 客户端类型声明，补充 ImportMetaEnv 中 VITE_API_BASE 的只读字符串类型。"
+    },
+    "file:frontend/tsconfig.tsbuildinfo": {
+      "name": "tsconfig.tsbuildinfo",
+      "type": "file",
+      "summary": "TypeScript 增量构建缓存元数据，由编译器生成以加速后续类型检查和构建。"
+    },
+    "file:frontend/vite.config.ts": {
+      "name": "vite.config.ts",
+      "type": "file",
+      "summary": "Vite 开发服务器配置，启用 React 插件、固定 5173 端口并将 /api 请求代理到本地 8000 后端。"
+    },
+    "file:gunicorn.conf.py": {
+      "name": "gunicorn.conf.py",
+      "type": "file",
+      "summary": "FastAPI 生产 Gunicorn 配置，使用 Uvicorn worker 并设置进程数、超时、日志、请求回收与生命周期钩子。"
+    },
+    "file:nginx.conf": {
+      "name": "nginx.conf",
+      "type": "file",
+      "summary": "生产 Nginx 反向代理配置，提供 HTTP 到 HTTPS 跳转、TLS、限流、压缩、健康检查和 FastAPI 路由转发。"
+    },
+    "file:scripts/fill_user_resume_docx.py": {
+      "name": "fill_user_resume_docx.py",
+      "type": "file",
+      "summary": "基于固定段落索引填充用户 Word 简历模板的脚本，自底向上修改内容、插入项目亮点并在写入前创建备份。"
+    },
+    "file:scripts/md_resume_to_docx.py": {
+      "name": "md_resume_to_docx.py",
+      "type": "file",
+      "summary": "将 Markdown 简历转换为格式化 Word 文档，支持标题、富文本粗体、列表、引用和表格，并统一设置中文字体。"
+    },
+    "file:scripts/study.py": {
+      "name": "study.py",
+      "type": "file",
+      "summary": "LangGraph 最小学习示例，以 TypedDict 状态执行求和或乘积节点并编译为可调用状态图。"
+    },
+    "file:tests/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "测试包标记文件，使测试模块可以使用包级导入。"
+    },
+    "file:tests/conftest.py": {
+      "name": "conftest.py",
+      "type": "file",
+      "summary": "Pytest 公共配置，在测试收集和每个测试执行前导入全部 ORM 模型，确保 create_all 能创建新增表。"
+    }
+  },
+  "totalNodes": 182,
+  "totalEdges": 1453
+}

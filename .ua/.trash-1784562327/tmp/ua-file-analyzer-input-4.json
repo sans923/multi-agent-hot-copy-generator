@@ -1,0 +1,280 @@
+{
+    "projectRoot":  "D:\\workspace\\demo_project\\multi-agent-hot-copy-generator",
+    "batchFiles":  [
+                       {
+                           "path":  "app/agents/base_agent.py",
+                           "language":  "python",
+                           "sizeLines":  377,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/agents/copywriter_agent.py",
+                           "language":  "python",
+                           "sizeLines":  175,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/agents/requirement_agent.py",
+                           "language":  "python",
+                           "sizeLines":  155,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/agents/reviewer_agent.py",
+                           "language":  "python",
+                           "sizeLines":  214,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/models/toutiao_reference.py",
+                           "language":  "python",
+                           "sizeLines":  60,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/scheduler.py",
+                           "language":  "python",
+                           "sizeLines":  293,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/services/embedding_service.py",
+                           "language":  "python",
+                           "sizeLines":  491,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/services/writing_pattern_service.py",
+                           "language":  "python",
+                           "sizeLines":  243,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/__init__.py",
+                           "language":  "python",
+                           "sizeLines":  169,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/base.py",
+                           "language":  "python",
+                           "sizeLines":  378,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/compliance_skills.py",
+                           "language":  "python",
+                           "sizeLines":  250,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/copy_skills.py",
+                           "language":  "python",
+                           "sizeLines":  690,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/platform_skills.py",
+                           "language":  "python",
+                           "sizeLines":  192,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/rag_skills.py",
+                           "language":  "python",
+                           "sizeLines":  187,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/requirement_skills.py",
+                           "language":  "python",
+                           "sizeLines":  239,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/review_skills.py",
+                           "language":  "python",
+                           "sizeLines":  432,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/skill_response.py",
+                           "language":  "python",
+                           "sizeLines":  85,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/style_skills.py",
+                           "language":  "python",
+                           "sizeLines":  347,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/skills/toutiao_rag_skills.py",
+                           "language":  "python",
+                           "sizeLines":  118,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/utils/log_writer.py",
+                           "language":  "python",
+                           "sizeLines":  83,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "app/utils/logger.py",
+                           "language":  "python",
+                           "sizeLines":  64,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "scripts/build_style_cards.py",
+                           "language":  "python",
+                           "sizeLines":  95,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/test_compliance_skills.py",
+                           "language":  "python",
+                           "sizeLines":  127,
+                           "fileCategory":  "code"
+                       },
+                       {
+                           "path":  "tests/test_writing_pattern.py",
+                           "language":  "python",
+                           "sizeLines":  148,
+                           "fileCategory":  "code"
+                       }
+                   ],
+    "batchImportData":  {
+                            "app/agents/base_agent.py":  [
+                                                             "app/config.py",
+                                                             "app/services/audit_service.py",
+                                                             "app/skills/__init__.py",
+                                                             "app/utils/llm_client.py",
+                                                             "app/utils/logger.py",
+                                                             "app/utils/model_roles.py"
+                                                         ],
+                            "app/agents/copywriter_agent.py":  [
+                                                                   "app/agents/base_agent.py",
+                                                                   "app/skills/__init__.py",
+                                                                   "app/utils/logger.py"
+                                                               ],
+                            "app/agents/requirement_agent.py":  [
+                                                                    "app/agents/base_agent.py",
+                                                                    "app/models/task.py",
+                                                                    "app/skills/__init__.py",
+                                                                    "app/utils/logger.py"
+                                                                ],
+                            "app/agents/reviewer_agent.py":  [
+                                                                 "app/agents/base_agent.py",
+                                                                 "app/models/copy.py",
+                                                                 "app/models/task.py",
+                                                                 "app/skills/__init__.py",
+                                                                 "app/utils/logger.py"
+                                                             ],
+                            "app/models/toutiao_reference.py":  [
+                                                                    "app/database.py"
+                                                                ],
+                            "app/scheduler.py":  [
+                                                     "app/config.py",
+                                                     "app/utils/logger.py"
+                                                 ],
+                            "app/services/embedding_service.py":  [
+                                                                      "app/config.py",
+                                                                      "app/utils/logger.py"
+                                                                  ],
+                            "app/services/writing_pattern_service.py":  [
+                                                                            "app/utils/llm_client.py",
+                                                                            "app/utils/logger.py",
+                                                                            "app/utils/model_roles.py"
+                                                                        ],
+                            "app/skills/__init__.py":  [
+                                                           "app/skills/base.py",
+                                                           "app/skills/compliance_skills.py",
+                                                           "app/skills/copy_skills.py",
+                                                           "app/skills/platform_skills.py",
+                                                           "app/skills/rag_skills.py",
+                                                           "app/skills/requirement_skills.py",
+                                                           "app/skills/review_skills.py",
+                                                           "app/skills/skill_response.py",
+                                                           "app/skills/style_skills.py",
+                                                           "app/skills/toutiao_rag_skills.py"
+                                                       ],
+                            "app/skills/base.py":  [
+                                                       "app/services/audit_service.py",
+                                                       "app/skills/skill_response.py",
+                                                       "app/utils/logger.py"
+                                                   ],
+                            "app/skills/compliance_skills.py":  [
+                                                                    "app/models/toutiao_reference.py",
+                                                                    "app/services/writing_pattern_service.py",
+                                                                    "app/skills/base.py",
+                                                                    "app/skills/skill_response.py",
+                                                                    "app/utils/logger.py"
+                                                                ],
+                            "app/skills/copy_skills.py":  [
+                                                              "app/skills/base.py",
+                                                              "app/utils/logger.py"
+                                                          ],
+                            "app/skills/platform_skills.py":  [
+                                                                  "app/skills/base.py",
+                                                                  "app/utils/logger.py"
+                                                              ],
+                            "app/skills/rag_skills.py":  [
+                                                             "app/skills/base.py",
+                                                             "app/utils/logger.py"
+                                                         ],
+                            "app/skills/requirement_skills.py":  [
+                                                                     "app/models/hotlist_sync.py",
+                                                                     "app/skills/base.py",
+                                                                     "app/utils/logger.py"
+                                                                 ],
+                            "app/skills/review_skills.py":  [
+                                                                "app/skills/base.py",
+                                                                "app/utils/logger.py"
+                                                            ],
+                            "app/skills/skill_response.py":  [
+
+                                                             ],
+                            "app/skills/style_skills.py":  [
+                                                               "app/models/style_card.py",
+                                                               "app/models/toutiao_reference.py",
+                                                               "app/services/writing_pattern_service.py",
+                                                               "app/skills/base.py",
+                                                               "app/utils/logger.py"
+                                                           ],
+                            "app/skills/toutiao_rag_skills.py":  [
+                                                                     "app/lang/graph/query_graph.py",
+                                                                     "app/skills/base.py",
+                                                                     "app/utils/logger.py"
+                                                                 ],
+                            "app/utils/log_writer.py":  [
+                                                            "app/utils/logger.py"
+                                                        ],
+                            "app/utils/logger.py":  [
+                                                        "app/config.py"
+                                                    ],
+                            "scripts/build_style_cards.py":  [
+                                                                 "app/database.py",
+                                                                 "app/models/toutiao_reference.py",
+                                                                 "app/services/writing_pattern_service.py",
+                                                                 "app/skills/style_skills.py"
+                                                             ],
+                            "tests/test_compliance_skills.py":  [
+                                                                    "app/database.py",
+                                                                    "app/models/toutiao_reference.py",
+                                                                    "app/skills/base.py",
+                                                                    "app/skills/compliance_skills.py",
+                                                                    "app/skills/skill_response.py"
+                                                                ],
+                            "tests/test_writing_pattern.py":  [
+                                                                  "app/database.py",
+                                                                  "app/models/style_card.py",
+                                                                  "app/models/toutiao_reference.py",
+                                                                  "app/services/writing_pattern_service.py",
+                                                                  "app/skills/copy_skills.py",
+                                                                  "app/skills/style_skills.py"
+                                                              ]
+                        }
+}

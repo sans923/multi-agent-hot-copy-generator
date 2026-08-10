@@ -1,0 +1,129 @@
+[
+  {
+    "order": 1,
+    "title": "项目全景",
+    "description": "先从 README 建立系统全貌：这是一个覆盖多智能体协作、头条长文生成、内容资产与部署运维的全栈项目。它给出目录、API 和启动方式，为后续沿一次任务请求追踪完整链路提供地图。",
+    "nodeIds": [
+      "document:README.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "应用启动",
+    "description": "在掌握项目目标后，从 run.py 进入 app/main.py，理解 FastAPI 应用如何创建并注册路由、中间件、异常处理、生命周期任务与健康检查。这里是 Python 服务的组合根，也是面试中解释应用启动、依赖装配和运行边界的最佳入口。",
+    "nodeIds": [
+      "file:run.py",
+      "file:app/main.py"
+    ],
+    "languageLesson": "FastAPI 通过装饰器声明路由，并可用 lifespan 上下文管理器统一管理启动与关闭阶段的资源。"
+  },
+  {
+    "order": 3,
+    "title": "任务 API",
+    "description": "从 FastAPI 总入口继续到任务路由：这里负责创建、查询、读取结果，以及人工恢复中断的智能体流程。Pydantic 请求响应模型把 HTTP 契约与内部执行状态隔开，使参数校验、序列化和接口文档保持一致。",
+    "nodeIds": [
+      "file:app/api/v1/tasks.py",
+      "file:app/schemas/task.py"
+    ],
+    "languageLesson": "Pydantic 模型利用 Python 类型标注执行运行时校验，并自动成为 FastAPI OpenAPI 契约的一部分。"
+  },
+  {
+    "order": 4,
+    "title": "编排引擎",
+    "description": "任务 API 启动后台流程后，编排工厂根据配置选择 LangGraph 或原生执行引擎。统一引擎边界让业务调用方不依赖具体实现，也便于在渐进式演进、回滚和对比测试之间切换。",
+    "nodeIds": [
+      "file:app/orchestration/factory.py",
+      "file:app/orchestration/langgraph_engine.py",
+      "file:app/orchestration/native_engine.py"
+    ]
+  },
+  {
+    "order": 5,
+    "title": "Agent 流水线",
+    "description": "进入引擎内部后，流水线执行器串联需求分析、文案生成、审核与主控 Agent，并统一推进成功、失败和最终落库状态。显式的流水线状态与编排器共同构成多 Agent 协作协议，使每个阶段的输入、输出和异常路径都可追踪。",
+    "nodeIds": [
+      "file:app/agents/pipeline_runners.py",
+      "file:app/agents/pipeline_state.py",
+      "file:app/agents/orchestrator.py"
+    ],
+    "languageLesson": "Python 的类型标注与数据类式状态对象能把跨阶段共享数据显式化，降低多步骤工作流中的隐式耦合。"
+  },
+  {
+    "order": 6,
+    "title": "Skill 能力层",
+    "description": "在 Agent 决定做什么之后，Skill 层把文案生成与 RAG 等领域动作封装为统一的可调用接口。这样的职责分离让 Agent 专注规划与协作，让 Skill 专注可复用、可替换、可测试的执行能力。",
+    "nodeIds": [
+      "file:app/skills/base.py",
+      "file:app/skills/copy_skills.py",
+      "file:app/skills/rag_skills.py"
+    ]
+  },
+  {
+    "order": 7,
+    "title": "LangGraph 状态图",
+    "description": "更复杂的任务由 LangGraph 状态图声明节点、条件路由和执行入口，再由智能体运行器完成分类、规划、逐步执行、反思与质量门禁。它还覆盖检查点恢复和人工介入，展示了生产级 Agent 系统如何处理循环、失败和长任务续跑。",
+    "nodeIds": [
+      "file:app/lang/graph/agentic_pipeline_graph.py",
+      "file:app/agents/agentic_runners.py"
+    ],
+    "languageLesson": "LangGraph 将工作流建模为带类型状态的有向图；条件边负责动态路由，检查点则让执行能够暂停、恢复和审计。"
+  },
+  {
+    "order": 8,
+    "title": "RAG 检索链",
+    "description": "当 Skill 需要外部参考时，查询图组织语义检索与提示词格式化，Retriever 将命中文档整理为可引用上下文。持久化 Chroma 向量库绑定统一嵌入模型，使资料入库与在线查询共享同一语义空间。",
+    "nodeIds": [
+      "file:app/lang/graph/query_graph.py",
+      "file:app/lang/rag/retriever.py",
+      "file:app/lang/vectorstore.py",
+      "file:app/lang/embeddings.py"
+    ]
+  },
+  {
+    "order": 9,
+    "title": "持久化审计",
+    "description": "执行结果通过 SQLAlchemy 会话与任务模型持久化，编排持久化服务负责保存流程状态，审计服务记录关键事件。审计表进一步保存各步骤的输入输出摘要、状态、耗时与错误，让恢复、排障和合规追溯都有可靠依据。",
+    "nodeIds": [
+      "file:app/database.py",
+      "file:app/models/task.py",
+      "file:app/services/orchestration_persistence.py",
+      "file:app/services/audit_service.py",
+      "table:scripts/migrate_audit_logs.sql:orchestration_audit_logs"
+    ],
+    "languageLesson": "SQLAlchemy 会话提供事务边界；审计表与业务表分离，可在不污染核心模型的前提下保留不可缺失的执行证据。"
+  },
+  {
+    "order": 10,
+    "title": "React 可视化",
+    "description": "后端状态最终由 React 入口和路由壳加载到任务详情页，形成用户可操作的全栈闭环。AgentPipeline 展示阶段进度，AuditTimeline 展示审计事件与日志，使复杂的后台图执行转化为可观察、可恢复的交互界面。",
+    "nodeIds": [
+      "file:frontend/src/main.tsx",
+      "file:frontend/src/App.tsx",
+      "file:frontend/src/pages/TaskDetail.tsx",
+      "file:frontend/src/components/AgentPipeline.tsx",
+      "file:frontend/src/components/AuditTimeline.tsx"
+    ],
+    "languageLesson": "React 组件将服务端任务状态映射为声明式 UI；路由与组件组合负责页面边界，局部组件负责进度和时间线等专门视图。"
+  },
+  {
+    "order": 11,
+    "title": "容器化部署",
+    "description": "完成代码链路后，Dockerfile 用多阶段构建打包 React 前端与 Python 后端，并配置非 root 运行和健康检查。Docker Compose 编排应用与 MySQL，Nginx 则承担静态资源、HTTPS、限流和 FastAPI 反向代理，组成可部署的生产拓扑。",
+    "nodeIds": [
+      "service:Dockerfile",
+      "service:docker-compose.yml",
+      "file:nginx.conf"
+    ],
+    "languageLesson": "多阶段 Docker 构建把编译依赖与运行依赖分开；Compose 的健康检查和服务依赖用于控制多容器启动顺序与可用性。"
+  },
+  {
+    "order": 12,
+    "title": "测试闭环",
+    "description": "最后用测试反向验证整条架构：Agent 测试覆盖关键流水线行为，编排测试覆盖工厂、状态、成功失败路径和双引擎委托，审计测试保证可追踪性。把这些用例与前述链路对应起来，可以形成一套完整的 Agent Python 全栈面试叙事：设计不仅能运行，还能被验证和持续演进。",
+    "nodeIds": [
+      "file:tests/test_agentic_pipeline.py",
+      "file:tests/test_orchestration.py",
+      "file:tests/test_audit_trail.py"
+    ]
+  }
+]

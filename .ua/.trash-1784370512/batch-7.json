@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "编排后端、前端、MySQL 与相关持久化资源，提供本地或服务器的一体化容器运行环境。",
+      "tags": [
+        "orchestration",
+        "infrastructure",
+        "containerization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "使用 builder 与 runtime 两阶段构建 Python 应用镜像，分离依赖安装和最终运行环境。",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:Dockerfile:builder",
+      "type": "service",
+      "name": "builder",
+      "filePath": "Dockerfile",
+      "summary": "安装并编译 Python 依赖，为最终镜像准备可复制的运行环境。",
+      "tags": [
+        "containerization",
+        "build-stage",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile:runtime",
+      "type": "service",
+      "name": "runtime",
+      "filePath": "Dockerfile",
+      "summary": "承载精简后的应用运行环境并启动后端服务。",
+      "tags": [
+        "containerization",
+        "build-stage",
+        "deployment"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:builder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:runtime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    }
+  ]
+}

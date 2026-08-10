@@ -1,0 +1,99 @@
+{
+  "nodes": [
+    {
+      "id": "config:frontend/.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": "frontend/.env.example",
+      "summary": "给出前端环境变量示例，约定访问后端 API 时使用的基础地址。",
+      "tags": [
+        "配置",
+        "构建系统",
+        "前端"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:frontend/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "frontend/README.md",
+      "summary": "说明前端工程的开发、构建与质量检查方式，并概述 Vite、React 和 TypeScript 项目结构。",
+      "tags": [
+        "文档",
+        "前端",
+        "开发指南"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "frontend/package.json",
+      "summary": "声明 React 前端的脚本、运行时依赖和开发工具链版本，控制开发、构建、检查与预览命令。",
+      "tags": [
+        "配置",
+        "构建系统",
+        "前端"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "frontend/tsconfig.json",
+      "summary": "配置前端 TypeScript 编译目标、严格检查、模块解析与 JSX 转换策略。",
+      "tags": [
+        "配置",
+        "typescript",
+        "前端"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "frontend/index.html",
+      "summary": "提供 Vite 前端的 HTML 宿主页，声明挂载节点并加载 React 应用入口。",
+      "tags": [
+        "前端",
+        "html",
+        "入口页面"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:frontend/tsconfig.json",
+      "target": "file:frontend/src/main.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:frontend/package.json",
+      "target": "file:frontend/src/main.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:frontend/README.md",
+      "target": "file:frontend/src/main.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:frontend/index.html",
+      "target": "file:frontend/src/main.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

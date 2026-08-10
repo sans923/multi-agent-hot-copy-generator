@@ -1,0 +1,42 @@
+{
+  "projectRoot": "D:\\workspace\\demo_project\\multi-agent-hot-copy-generator",
+  "batchFiles": [
+    {
+      "path": "docs/TOUTIAO_RAG_GUIDE.md",
+      "language": "markdown",
+      "sizeLines": 203,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/resume_agent_fullstack.md",
+      "language": "markdown",
+      "sizeLines": 96,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/template_doc.xml",
+      "language": "xml",
+      "sizeLines": 1,
+      "fileCategory": "config"
+    },
+    {
+      "path": "docs/template_lines.txt",
+      "language": "txt",
+      "sizeLines": 19,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/template_structure.txt",
+      "language": "txt",
+      "sizeLines": 22,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    "docs/TOUTIAO_RAG_GUIDE.md": [],
+    "docs/resume_agent_fullstack.md": [],
+    "docs/template_doc.xml": [],
+    "docs/template_lines.txt": [],
+    "docs/template_structure.txt": []
+  }
+}

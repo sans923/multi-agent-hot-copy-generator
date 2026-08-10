@@ -1,0 +1,47 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'config:.env.example' has no edges (orphan)",
+    "Node 'document:README.md' has no edges (orphan)",
+    "Node 'document:requirements.txt' has no edges (orphan)",
+    "Node 'document:docs/TOUTIAO_RAG_GUIDE.md' has no edges (orphan)",
+    "Node 'schema:scripts/init_mysql.sql' has no edges (orphan)",
+    "Node 'file:app/__init__.py' has no edges (orphan)",
+    "Node 'file:app/api/__init__.py' has no edges (orphan)",
+    "Node 'file:app/core/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/graph/__init__.py' has no edges (orphan)",
+    "Node 'file:app/lang/rag/__init__.py' has no edges (orphan)",
+    "Node 'file:app/services/__init__.py' has no edges (orphan)",
+    "Node 'file:app/utils/__init__.py' has no edges (orphan)",
+    "Node 'file:frontend/tsconfig.tsbuildinfo' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 684,
+    "totalEdges": 1453,
+    "totalLayers": 9,
+    "tourSteps": 11,
+    "fileLevelNodes": 182,
+    "nodeTypes": {
+      "file": 155,
+      "function": 417,
+      "class": 85,
+      "service": 4,
+      "config": 6,
+      "document": 7,
+      "schema": 1,
+      "table": 9
+    },
+    "edgeTypes": {
+      "contains": 504,
+      "exports": 501,
+      "imports": 430,
+      "depends_on": 4,
+      "configures": 2,
+      "related": 5,
+      "documents": 1,
+      "migrates": 5,
+      "routes": 1
+    }
+  }
+}

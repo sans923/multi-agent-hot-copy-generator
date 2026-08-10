@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/TOUTIAO_RAG_GUIDE.md",
+      "type": "document",
+      "name": "TOUTIAO_RAG_GUIDE.md",
+      "filePath": "docs/TOUTIAO_RAG_GUIDE.md",
+      "summary": "说明今日头条内容采集、清洗、索引和 RAG 检索的配置与使用流程。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "项目资料"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/resume_agent_fullstack.md",
+      "type": "document",
+      "name": "resume_agent_fullstack.md",
+      "filePath": "docs/resume_agent_fullstack.md",
+      "summary": "面向 AI 全栈工程师岗位整理项目经历、技术栈和简历表述素材。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "项目资料"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:docs/template_doc.xml",
+      "type": "config",
+      "name": "template_doc.xml",
+      "filePath": "docs/template_doc.xml",
+      "summary": "保存简历 Word 模板的 OOXML 文档主体、段落样式与版式结构。",
+      "tags": [
+        "配置",
+        "文档模板",
+        "office"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/template_lines.txt",
+      "type": "document",
+      "name": "template_lines.txt",
+      "filePath": "docs/template_lines.txt",
+      "summary": "按段落序号记录简历模板的可见文本，供模板定位与内容替换。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "项目资料"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/template_structure.txt",
+      "type": "document",
+      "name": "template_structure.txt",
+      "filePath": "docs/template_structure.txt",
+      "summary": "记录简历模板段落样式和文本结构，便于分析 Word 文档布局。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "项目资料"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": []
+}

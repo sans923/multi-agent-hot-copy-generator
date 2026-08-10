@@ -1,0 +1,223 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/TOUTIAO_RAG_GUIDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 203,
+      "nonEmptyLines": 143,
+      "sections": [
+        {
+          "heading": "头条长文 RAG 实战指南（LangChain + LangGraph）",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "一、整体架构（必背）",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "LangChain 负责什么？",
+          "level": 3,
+          "line": 41
+        },
+        {
+          "heading": "LangGraph 负责什么？",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "二、一步步操作（你要亲手跑）",
+          "level": 2,
+          "line": 62
+        },
+        {
+          "heading": "Step 0：安装依赖",
+          "level": 3,
+          "line": 64
+        },
+        {
+          "heading": "Step 1：导入一篇头条长文",
+          "level": 3,
+          "line": 74
+        },
+        {
+          "heading": "Step 2：单独测 RAG 检索",
+          "level": 3,
+          "line": 84
+        },
+        {
+          "heading": "Step 3：走完整创作任务",
+          "level": 3,
+          "line": 92
+        },
+        {
+          "heading": "三、文件清单与面试讲法",
+          "level": 2,
+          "line": 100
+        },
+        {
+          "heading": "1. `app/models/toutiao_reference.py`",
+          "level": 3,
+          "line": 102
+        },
+        {
+          "heading": "2. `app/lang/toutiao_fetcher.py`",
+          "level": 3,
+          "line": 108
+        },
+        {
+          "heading": "3. `app/lang/rag/chunking.py`",
+          "level": 3,
+          "line": 114
+        },
+        {
+          "heading": "4. `app/lang/rag/ingest.py`",
+          "level": 3,
+          "line": 120
+        },
+        {
+          "heading": "5. `app/lang/graph/ingest_graph.py`",
+          "level": 3,
+          "line": 125
+        },
+        {
+          "heading": "6. `app/lang/graph/query_graph.py`",
+          "level": 3,
+          "line": 135
+        },
+        {
+          "heading": "7. `app/skills/toutiao_rag_skills.py`",
+          "level": 3,
+          "line": 142
+        },
+        {
+          "heading": "8. `app/agents/copywriter_agent.py`",
+          "level": 3,
+          "line": 147
+        },
+        {
+          "heading": "四、3 分钟面试项目介绍稿",
+          "level": 2,
+          "line": 154
+        },
+        {
+          "heading": "五、常见面试追问",
+          "level": 2,
+          "line": 164
+        },
+        {
+          "heading": "六、批量导入（可选）",
+          "level": 2,
+          "line": 183
+        },
+        {
+          "heading": "七、故障排查",
+          "level": 2,
+          "line": 196
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 22
+      }
+    },
+    {
+      "path": "docs/resume_agent_fullstack.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 96,
+      "nonEmptyLines": 60,
+      "sections": [
+        {
+          "heading": "【请替换姓名】 · AI 全栈工程师",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "专业技能",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "工作经历",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "项目经验",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "多智能体热点爆款文案生成系统 · 独立设计与全栈实现",
+          "level": 3,
+          "line": 30
+        },
+        {
+          "heading": "其他项目 / 补充（可选，按需保留）",
+          "level": 2,
+          "line": 64
+        },
+        {
+          "heading": "【请替换】Vue 后台管理系统 · 前端开发（2024 – 2025）",
+          "level": 3,
+          "line": 66
+        },
+        {
+          "heading": "教育背景",
+          "level": 2,
+          "line": 74
+        },
+        {
+          "heading": "求职意向",
+          "level": 2,
+          "line": 82
+        },
+        {
+          "heading": "附：简历使用说明（投递前删除本节）",
+          "level": 2,
+          "line": 90
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 10
+      }
+    },
+    {
+      "path": "docs/template_doc.xml",
+      "language": "xml",
+      "fileCategory": "config",
+      "totalLines": 2,
+      "nonEmptyLines": 2,
+      "metrics": {}
+    },
+    {
+      "path": "docs/template_lines.txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "totalLines": 19,
+      "nonEmptyLines": 19,
+      "metrics": {}
+    },
+    {
+      "path": "docs/template_structure.txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "totalLines": 23,
+      "nonEmptyLines": 23,
+      "metrics": {}
+    }
+  ]
+}

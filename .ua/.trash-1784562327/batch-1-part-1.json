@@ -1,0 +1,1589 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/agents/agentic_runners.py",
+      "type": "file",
+      "name": "agentic_runners.py",
+      "filePath": "app/agents/agentic_runners.py",
+      "summary": "实现智能体式任务流水线的分类、规划、逐步执行、反思和质量门禁，并支持检查点恢复与人工介入。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_merge_state",
+      "type": "function",
+      "name": "_merge_state",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        52,
+        55
+      ],
+      "summary": "实现“ merge state”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:run_classify_stage",
+      "type": "function",
+      "name": "run_classify_stage",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        58,
+        82
+      ],
+      "summary": "执行 classify stage 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:run_plan_stage",
+      "type": "function",
+      "name": "run_plan_stage",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        85,
+        109
+      ],
+      "summary": "执行 plan stage 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_get_current_step_def",
+      "type": "function",
+      "name": "_get_current_step_def",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        112,
+        118
+      ],
+      "summary": "实现“ get current step def”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:run_execute_current_step",
+      "type": "function",
+      "name": "run_execute_current_step",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        121,
+        201
+      ],
+      "summary": "执行 execute current step 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:handle_step_outcome",
+      "type": "function",
+      "name": "handle_step_outcome",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        204,
+        321
+      ],
+      "summary": "实现“handle step outcome”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_audit_awaiting_human",
+      "type": "function",
+      "name": "_audit_awaiting_human",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        324,
+        334
+      ],
+      "summary": "实现“ audit awaiting human”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_audit_execute_step",
+      "type": "function",
+      "name": "_audit_execute_step",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        337,
+        352
+      ],
+      "summary": "实现“ audit execute step”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:plan_has_more_steps",
+      "type": "function",
+      "name": "plan_has_more_steps",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        355,
+        358
+      ],
+      "summary": "实现“plan has more steps”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_run_complex_loop",
+      "type": "function",
+      "name": "_run_complex_loop",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        361,
+        394
+      ],
+      "summary": "实现“ run complex loop”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:_run_bounded_quality_gate",
+      "type": "function",
+      "name": "_run_bounded_quality_gate",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        397,
+        457
+      ],
+      "summary": "实现“ run bounded quality gate”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:run_agentic_pipeline",
+      "type": "function",
+      "name": "run_agentic_pipeline",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        460,
+        520
+      ],
+      "summary": "执行 agentic pipeline 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/agentic_runners.py:resume_agentic_pipeline",
+      "type": "function",
+      "name": "resume_agentic_pipeline",
+      "filePath": "app/agents/agentic_runners.py",
+      "lineRange": [
+        523,
+        637
+      ],
+      "summary": "实现“resume agentic pipeline”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/lead_agent.py",
+      "type": "file",
+      "name": "lead_agent.py",
+      "filePath": "app/agents/lead_agent.py",
+      "summary": "实现“lead agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/lead_agent.py:LeadAgent",
+      "type": "class",
+      "name": "LeadAgent",
+      "filePath": "app/agents/lead_agent.py",
+      "lineRange": [
+        30,
+        157
+      ],
+      "summary": "封装“LeadAgent”的状态与行为，作为 实现“lead agent”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/agents/model_roles.py",
+      "type": "file",
+      "name": "model_roles.py",
+      "filePath": "app/agents/model_roles.py",
+      "summary": "实现“model roles”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "simple",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "file:app/agents/orchestrator.py",
+      "type": "file",
+      "name": "orchestrator.py",
+      "filePath": "app/agents/orchestrator.py",
+      "summary": "实现“orchestrator”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "class:app/agents/orchestrator.py:AgentOrchestrator",
+      "type": "class",
+      "name": "AgentOrchestrator",
+      "filePath": "app/agents/orchestrator.py",
+      "lineRange": [
+        33,
+        68
+      ],
+      "summary": "封装“AgentOrchestrator”的状态与行为，作为 实现“orchestrator”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/agents/pipeline_context.py",
+      "type": "file",
+      "name": "pipeline_context.py",
+      "filePath": "app/agents/pipeline_context.py",
+      "summary": "实现“pipeline context”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "simple",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/agents/pipeline_context.py:set_active_pipeline",
+      "type": "function",
+      "name": "set_active_pipeline",
+      "filePath": "app/agents/pipeline_context.py",
+      "lineRange": [
+        48,
+        50
+      ],
+      "summary": "实现“set active pipeline”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_context.py:reset_active_pipeline",
+      "type": "function",
+      "name": "reset_active_pipeline",
+      "filePath": "app/agents/pipeline_context.py",
+      "lineRange": [
+        53,
+        55
+      ],
+      "summary": "实现“reset active pipeline”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_context.py:get_active_pipeline",
+      "type": "function",
+      "name": "get_active_pipeline",
+      "filePath": "app/agents/pipeline_context.py",
+      "lineRange": [
+        58,
+        60
+      ],
+      "summary": "实现“get active pipeline”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_context.py:mark_stage_delegated",
+      "type": "function",
+      "name": "mark_stage_delegated",
+      "filePath": "app/agents/pipeline_context.py",
+      "lineRange": [
+        63,
+        67
+      ],
+      "summary": "实现“mark stage delegated”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/agents/pipeline_context.py:ActivePipeline",
+      "type": "class",
+      "name": "ActivePipeline",
+      "filePath": "app/agents/pipeline_context.py",
+      "lineRange": [
+        20,
+        39
+      ],
+      "summary": "封装“ActivePipeline”的状态与行为，作为 实现“pipeline context”智能体及其协作逻辑，承担热点爆款文案生成流水线中的专门角色的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/agents/pipeline_runners.py",
+      "type": "file",
+      "name": "pipeline_runners.py",
+      "filePath": "app/agents/pipeline_runners.py",
+      "summary": "编排需求分析、文案生成、审核和主控智能体阶段，统一任务状态推进、失败处理与最终结果落库。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "complex",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:mark_task_failed",
+      "type": "function",
+      "name": "mark_task_failed",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        37,
+        45
+      ],
+      "summary": "实现“mark task failed”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:promote_draft_to_final",
+      "type": "function",
+      "name": "promote_draft_to_final",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        48,
+        59
+      ],
+      "summary": "实现“promote draft to final”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:run_requirement_stage",
+      "type": "function",
+      "name": "run_requirement_stage",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        62,
+        143
+      ],
+      "summary": "执行 requirement stage 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:run_copywriter_stage",
+      "type": "function",
+      "name": "run_copywriter_stage",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        146,
+        284
+      ],
+      "summary": "执行 copywriter stage 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:run_reviewer_stage",
+      "type": "function",
+      "name": "run_reviewer_stage",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        287,
+        381
+      ],
+      "summary": "执行 reviewer stage 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:run_full_pipeline",
+      "type": "function",
+      "name": "run_full_pipeline",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        384,
+        435
+      ],
+      "summary": "执行 full pipeline 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:_merge_state",
+      "type": "function",
+      "name": "_merge_state",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        438,
+        441
+      ],
+      "summary": "实现“ merge state”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_runners.py:run_lead_pipeline",
+      "type": "function",
+      "name": "run_lead_pipeline",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        444,
+        452
+      ],
+      "summary": "执行 lead pipeline 流程并返回标准化结果。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/agents/pipeline_runners.py:PipelineAgents",
+      "type": "class",
+      "name": "PipelineAgents",
+      "filePath": "app/agents/pipeline_runners.py",
+      "lineRange": [
+        28,
+        34
+      ],
+      "summary": "封装“PipelineAgents”的状态与行为，作为 编排需求分析、文案生成、审核和主控智能体阶段，统一任务状态推进、失败处理与最终结果落库的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/agents/pipeline_state.py",
+      "type": "file",
+      "name": "pipeline_state.py",
+      "filePath": "app/agents/pipeline_state.py",
+      "summary": "定义多智能体流水线的状态结构、计划步骤及成功、失败、超时和等待人工等结果构造逻辑。",
+      "tags": [
+        "智能体",
+        "流程编排",
+        "文案生成"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:init_pipeline_state",
+      "type": "function",
+      "name": "init_pipeline_state",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        79,
+        137
+      ],
+      "summary": "实现“init pipeline state”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:build_fallback_requirement",
+      "type": "function",
+      "name": "build_fallback_requirement",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        140,
+        149
+      ],
+      "summary": "构建 fallback requirement 所需的结构、状态或执行对象。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:build_success_result",
+      "type": "function",
+      "name": "build_success_result",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        152,
+        163
+      ],
+      "summary": "构建 success result 所需的结构、状态或执行对象。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:build_awaiting_human_result",
+      "type": "function",
+      "name": "build_awaiting_human_result",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        166,
+        180
+      ],
+      "summary": "构建 awaiting human result 所需的结构、状态或执行对象。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:build_failure_result",
+      "type": "function",
+      "name": "build_failure_result",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        183,
+        193
+      ],
+      "summary": "构建 failure result 所需的结构、状态或执行对象。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:is_timed_out",
+      "type": "function",
+      "name": "is_timed_out",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        196,
+        199
+      ],
+      "summary": "实现“is timed out”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/agents/pipeline_state.py:is_step_limit_reached",
+      "type": "function",
+      "name": "is_step_limit_reached",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        202,
+        204
+      ],
+      "summary": "实现“is step limit reached”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/agents/pipeline_state.py:PlanStep",
+      "type": "class",
+      "name": "PlanStep",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        15,
+        20
+      ],
+      "summary": "封装“PlanStep”的状态与行为，作为 定义多智能体流水线的状态结构、计划步骤及成功、失败、超时和等待人工等结果构造逻辑的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/agents/pipeline_state.py:PipelineState",
+      "type": "class",
+      "name": "PipelineState",
+      "filePath": "app/agents/pipeline_state.py",
+      "lineRange": [
+        23,
+        76
+      ],
+      "summary": "封装“PipelineState”的状态与行为，作为 定义多智能体流水线的状态结构、计划步骤及成功、失败、超时和等待人工等结果构造逻辑的核心对象。",
+      "tags": [
+        "类",
+        "智能体",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "app/config.py",
+      "summary": "实现“config”模块，为多智能体热点爆款文案生成系统提供对应能力。",
+      "tags": [
+        "python",
+        "业务逻辑",
+        "热点文案"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "采用 Python 类型标注与模块化服务边界组织同步或异步业务流程。"
+    },
+    {
+      "id": "function:app/config.py:get_settings",
+      "type": "function",
+      "name": "get_settings",
+      "filePath": "app/config.py",
+      "lineRange": [
+        141,
+        142
+      ],
+      "summary": "实现“get settings”处理逻辑，服务于该模块承担的热点文案生成职责。",
+      "tags": [
+        "函数",
+        "业务逻辑",
+        "流程处理"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/config.py:Settings",
+      "type": "class",
+      "name": "Settings",
+      "filePath": "app/config.py",
+      "lineRange": [
+        19,
+        137
+      ],
+      "summary": "封装“Settings”的状态与行为，作为 实现“config”模块，为多智能体热点爆款文案生成系统提供对应能力的核心对象。",
+      "tags": [
+        "类",
+        "领域对象",
+        "行为封装"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/orchestration_persistence.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/orchestration_policy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/planner_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/reflect_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/task_classifier.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/services/verify_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_merge_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_merge_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_classify_stage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_classify_stage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_plan_stage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_plan_stage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_get_current_step_def",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_get_current_step_def",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_execute_current_step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_execute_current_step",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:handle_step_outcome",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:handle_step_outcome",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_audit_awaiting_human",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_audit_awaiting_human",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_audit_execute_step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_audit_execute_step",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:plan_has_more_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:plan_has_more_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_run_complex_loop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_run_complex_loop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_run_bounded_quality_gate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:_run_bounded_quality_gate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_agentic_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:run_agentic_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:resume_agentic_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/agentic_runners.py",
+      "target": "function:app/agents/agentic_runners.py:resume_agentic_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/agents/base_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/agents/pipeline_context.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/skills/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "class:app/agents/lead_agent.py:LeadAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/lead_agent.py",
+      "target": "class:app/agents/lead_agent.py:LeadAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/model_roles.py",
+      "target": "file:app/utils/model_roles.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/orchestrator.py",
+      "target": "file:app/agents/agentic_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/orchestrator.py",
+      "target": "file:app/agents/pipeline_runners.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/orchestrator.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/orchestrator.py",
+      "target": "class:app/agents/orchestrator.py:AgentOrchestrator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/orchestrator.py",
+      "target": "class:app/agents/orchestrator.py:AgentOrchestrator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:set_active_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:set_active_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:reset_active_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:reset_active_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:get_active_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:get_active_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:mark_stage_delegated",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "function:app/agents/pipeline_context.py:mark_stage_delegated",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "class:app/agents/pipeline_context.py:ActivePipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_context.py",
+      "target": "class:app/agents/pipeline_context.py:ActivePipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/agents/copywriter_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/agents/pipeline_state.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/agents/requirement_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/agents/reviewer_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/models/copy.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/models/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/services/audit_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/services/longform_mvp_service.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "file:app/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:mark_task_failed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:mark_task_failed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:promote_draft_to_final",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:promote_draft_to_final",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_requirement_stage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_requirement_stage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_copywriter_stage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_copywriter_stage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_reviewer_stage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_reviewer_stage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_full_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_full_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:_merge_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:_merge_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_lead_pipeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "function:app/agents/pipeline_runners.py:run_lead_pipeline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "class:app/agents/pipeline_runners.py:PipelineAgents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_runners.py",
+      "target": "class:app/agents/pipeline_runners.py:PipelineAgents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "file:app/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:init_pipeline_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:init_pipeline_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_fallback_requirement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_fallback_requirement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_success_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_success_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_awaiting_human_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_awaiting_human_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_failure_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:build_failure_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:is_timed_out",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:is_timed_out",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:is_step_limit_reached",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "function:app/agents/pipeline_state.py:is_step_limit_reached",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "class:app/agents/pipeline_state.py:PlanStep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "class:app/agents/pipeline_state.py:PlanStep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "class:app/agents/pipeline_state.py:PipelineState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/agents/pipeline_state.py",
+      "target": "class:app/agents/pipeline_state.py:PipelineState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/config.py",
+      "target": "function:app/config.py:get_settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/config.py",
+      "target": "function:app/config.py:get_settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/config.py",
+      "target": "class:app/config.py:Settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/config.py",
+      "target": "class:app/config.py:Settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

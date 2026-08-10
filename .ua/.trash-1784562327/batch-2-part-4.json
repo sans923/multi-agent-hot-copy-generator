@@ -1,0 +1,498 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/models/system_log.py",
+      "type": "file",
+      "name": "system_log.py",
+      "filePath": "app/models/system_log.py",
+      "summary": "定义 system_log.py 对应的 SQLAlchemy 持久化模型及其字段关系。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "持久化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/system_log.py:SystemLog",
+      "type": "class",
+      "name": "SystemLog",
+      "filePath": "app/models/system_log.py",
+      "lineRange": [
+        26,
+        92
+      ],
+      "summary": "定义 SystemLog 的结构、字段与行为，作为 system_log.py 中可复用的数据类型。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "实体"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/task.py",
+      "type": "file",
+      "name": "task.py",
+      "filePath": "app/models/task.py",
+      "summary": "定义 task.py 对应的 SQLAlchemy 持久化模型及其字段关系。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "持久化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/task.py:TaskStatus",
+      "type": "class",
+      "name": "TaskStatus",
+      "filePath": "app/models/task.py",
+      "lineRange": [
+        19,
+        35
+      ],
+      "summary": "定义 TaskStatus 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "实体"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models/task.py:TaskPlatform",
+      "type": "class",
+      "name": "TaskPlatform",
+      "filePath": "app/models/task.py",
+      "lineRange": [
+        38,
+        45
+      ],
+      "summary": "定义 TaskPlatform 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "实体"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models/task.py:Task",
+      "type": "class",
+      "name": "Task",
+      "filePath": "app/models/task.py",
+      "lineRange": [
+        48,
+        126
+      ],
+      "summary": "定义 Task 的结构、字段与行为，作为 task.py 中可复用的数据类型。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "实体"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/models/user.py",
+      "type": "file",
+      "name": "user.py",
+      "filePath": "app/models/user.py",
+      "summary": "定义 user.py 对应的 SQLAlchemy 持久化模型及其字段关系。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "持久化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models/user.py:User",
+      "type": "class",
+      "name": "User",
+      "filePath": "app/models/user.py",
+      "lineRange": [
+        22,
+        111
+      ],
+      "summary": "定义 User 的结构、字段与行为，作为 user.py 中可复用的数据类型。",
+      "tags": [
+        "data-model",
+        "数据库",
+        "实体"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/schemas/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/schemas/__init__.py",
+      "summary": "定义 __init__.py 相关的 Pydantic 请求与响应结构，约束 API 数据边界。",
+      "tags": [
+        "validation",
+        "数据契约",
+        "序列化"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/schemas/common.py",
+      "type": "file",
+      "name": "common.py",
+      "filePath": "app/schemas/common.py",
+      "summary": "定义 common.py 相关的 Pydantic 请求与响应结构，约束 API 数据边界。",
+      "tags": [
+        "validation",
+        "数据契约",
+        "序列化"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/schemas/common.py:ApiResponse",
+      "type": "class",
+      "name": "ApiResponse",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        35,
+        45
+      ],
+      "summary": "定义 ApiResponse 的结构、字段与行为，作为 common.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/common.py:PaginationResponse",
+      "type": "class",
+      "name": "PaginationResponse",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        48,
+        65
+      ],
+      "summary": "定义 PaginationResponse 的结构、字段与行为，作为 common.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/common.py:PaginationParams",
+      "type": "class",
+      "name": "PaginationParams",
+      "filePath": "app/schemas/common.py",
+      "lineRange": [
+        68,
+        83
+      ],
+      "summary": "定义 PaginationParams 的结构、字段与行为，作为 common.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/schemas/content_asset.py",
+      "type": "file",
+      "name": "content_asset.py",
+      "filePath": "app/schemas/content_asset.py",
+      "summary": "定义 content_asset.py 相关的 Pydantic 请求与响应结构，约束 API 数据边界。",
+      "tags": [
+        "validation",
+        "数据契约",
+        "序列化"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "class",
+      "name": "ReferenceImportRequest",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        9,
+        14
+      ],
+      "summary": "定义 ReferenceImportRequest 的结构、字段与行为，作为 content_asset.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "class",
+      "name": "ReferenceResponse",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        17,
+        31
+      ],
+      "summary": "定义 ReferenceResponse 的结构、字段与行为，作为 content_asset.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "class",
+      "name": "StyleCardBuildRequest",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        34,
+        36
+      ],
+      "summary": "定义 StyleCardBuildRequest 的结构、字段与行为，作为 content_asset.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "class",
+      "name": "StyleCardResponse",
+      "filePath": "app/schemas/content_asset.py",
+      "lineRange": [
+        39,
+        48
+      ],
+      "summary": "定义 StyleCardResponse 的结构、字段与行为，作为 content_asset.py 中可复用的数据类型。",
+      "tags": [
+        "数据结构",
+        "类型定义",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "class:app/models/system_log.py:SystemLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/system_log.py",
+      "target": "class:app/models/system_log.py:SystemLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:TaskStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:TaskStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:TaskPlatform",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:TaskPlatform",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:Task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/task.py",
+      "target": "class:app/models/task.py:Task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "file:app/database.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "class:app/models/user.py:User",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models/user.py",
+      "target": "class:app/models/user.py:User",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/task.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/__init__.py",
+      "target": "file:app/schemas/user.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:ApiResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:ApiResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationParams",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/common.py",
+      "target": "class:app/schemas/common.py:PaginationParams",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceImportRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:ReferenceResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardBuildRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/schemas/content_asset.py",
+      "target": "class:app/schemas/content_asset.py:StyleCardResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

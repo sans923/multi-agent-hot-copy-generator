@@ -1,0 +1,147 @@
+{
+  "projectRoot": "D:\\workspace\\demo_project\\multi-agent-hot-copy-generator",
+  "batchFiles": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/agents/__init__.py",
+      "language": "python",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/api/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/core/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/__init__.py",
+      "language": "python",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/graph/__init__.py",
+      "language": "python",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/lang/rag/__init__.py",
+      "language": "python",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/utils/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "frontend/src/styles/index.css",
+      "language": "css",
+      "sizeLines": 1572,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "frontend/src/vite-env.d.ts",
+      "language": "typescript",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": "frontend/tsconfig.tsbuildinfo",
+      "language": "tsbuildinfo",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "language": "typescript",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "gunicorn.conf.py",
+      "language": "python",
+      "sizeLines": 74,
+      "fileCategory": "code"
+    },
+    {
+      "path": "nginx.conf",
+      "language": "conf",
+      "sizeLines": 134,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/fill_user_resume_docx.py",
+      "language": "python",
+      "sizeLines": 139,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/md_resume_to_docx.py",
+      "language": "python",
+      "sizeLines": 184,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/study.py",
+      "language": "python",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/__init__.py": [],
+    "app/agents/__init__.py": [],
+    "app/api/__init__.py": [],
+    "app/core/__init__.py": [],
+    "app/lang/__init__.py": [],
+    "app/lang/graph/__init__.py": [],
+    "app/lang/rag/__init__.py": [],
+    "app/services/__init__.py": [],
+    "app/utils/__init__.py": [],
+    "frontend/src/styles/index.css": [],
+    "frontend/src/vite-env.d.ts": [],
+    "frontend/tsconfig.tsbuildinfo": [],
+    "frontend/vite.config.ts": [],
+    "gunicorn.conf.py": [],
+    "nginx.conf": [],
+    "scripts/fill_user_resume_docx.py": [],
+    "scripts/md_resume_to_docx.py": [],
+    "scripts/study.py": [],
+    "tests/__init__.py": [],
+    "tests/conftest.py": []
+  }
+}
