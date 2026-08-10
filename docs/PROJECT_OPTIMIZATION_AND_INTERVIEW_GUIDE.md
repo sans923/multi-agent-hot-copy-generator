@@ -111,7 +111,7 @@
 1. **[本轮已修复/P1]** 共享提示词缺少非可信外部内容边界，用户输入、检索内容和工具结果可能携带提示词注入指令。
 2. **[仍存在/P0]** 工具执行层没有按 Agent 的 `skill_names` 再做服务端授权校验，存在工具越权执行面。
 3. **[仍存在/P1]** FastAPI `BackgroundTasks` 与 Web 进程同生命周期，进程重启时任务不具备独立队列的持久性与可靠重投能力。
-4. **[仍存在/P1]** 完整 pytest 套件依赖项目 Python 环境、数据库和第三方依赖；当前工作区虚拟环境已失效，无法在本轮运行全套测试。
+4. **[本轮已修复/P1]** 已用 uv 托管 Python 3.11.9 重建 `.venv`，提交 149 个包的精确锁文件，并在该环境中完成全量 pytest：`113 passed, 6 warnings`。
 5. **[仍存在/P1]** 默认数据库密码出现在配置默认值中；即使可由环境变量覆盖，也容易被误用到非本地环境。
 6. **[仍存在/P1]** 工具参数由模型生成，执行器只做 JSON 解析，未见基于每个 `parameters_schema` 的统一前置校验。
 7. **[仍存在/P2]** 前端主要靠轮询任务状态，长任务的实时反馈和服务器查询压力仍可优化。
@@ -128,7 +128,7 @@
 
 - 已完成：共享 Prompt 注入防护契约；
 - 为 tool call 参数增加结构化校验和清晰错误返回；
-- 修复可复现的 Python 测试环境并运行相关及全量测试；
+- 已完成：用 Python 3.11.9、uv 项目级运行时、精确依赖锁文件和引导脚本重建可复现环境，并运行相关及全量测试；
 - 评估将长任务迁移到具备持久化、重试和幂等能力的任务队列；
 - 移除可被误用的数据库默认密码。
 
@@ -471,7 +471,25 @@ Agentic 编排则多了任务分类、计划、验证、重试和人工暂停。
 
 **[实测]** 现有 `venv` 是从旧目录移动过来的，`pyvenv.cfg` 指向不存在的 Python 3.13 路径，而且 `site-packages` 只有 pip。不要继续在这个 venv 上排查业务代码，否则“解释器坏了”和“项目代码坏了”会混在一起。
 
-### 23.2 推荐新建独立环境，不覆盖旧环境
+### 23.2 推荐使用仓库引导脚本重建独立环境
+
+**[本轮代码事实]** 仓库现在用 `.python-version` 固定 Python 3.11.9，用 `requirements.lock.txt` 固定直接和间接依赖，并由 `scripts/bootstrap_python.ps1` 将 uv 的 Python 运行时、下载缓存和虚拟环境分别放在项目内的 `.python-runtime`、`.uv-cache` 和 `.venv`。这些本地运行目录已被 Git 忽略，Git 只跟踪版本声明、锁文件和脚本。
+
+安装 [uv](https://docs.astral.sh/uv/) 后，在项目根目录运行：
+
+```powershell
+.\scripts\bootstrap_python.ps1
+```
+
+需要本机代理时只对当前脚本进程传入，不把个人代理地址写进仓库：
+
+```powershell
+.\scripts\bootstrap_python.ps1 -Proxy http://127.0.0.1:7890
+```
+
+脚本会安装项目级 Python 3.11.9、仅在版本不一致时重建 `.venv`、按锁文件同步 149 个包，并执行依赖一致性检查。重复运行是幂等的。
+
+以下旧方法保留为理解虚拟环境机制的手工方案，但不能提供间接依赖完全一致的保证：
 
 先安装 README 要求的 Python 3.11+。在项目根目录创建一个新名字，例如 `.venv-debug`：
 
@@ -822,6 +840,22 @@ Agent 执行失败
 
 **面试时怎么讲：** “我先读 `pyvenv.cfg` 和 `sys.prefix/base_prefix` 定位解释器链路，确认不是业务依赖报错，而是 venv 依赖的基础 Python 消失。恢复 Python 后重建可再生环境，再用 `pip check`、核心导入和完整 pytest 分层验证。过程中我把不可达代理、超时遗留进程和真正缺包分别处理，最终以 103 个测试通过作为环境可用证据，同时明确外部服务和 GPU 尚未验证。”
 
+## 32.3 uv 项目级 Python、依赖锁与全量测试重建
+
+**[原始问题与触发场景]** `venv`、`.venv-debug` 和备份环境的启动器都继续指向已删除的用户级 Python 3.11.9，系统 `py` 报告没有已注册解释器；`requirements.txt` 只有范围约束，历史机器即使安装成功，也不能保证另一台机器解析出相同的 149 个直接和间接依赖。
+
+**[实际确认的问题原因]** 虚拟环境不包含独立基础解释器，基础 Python 被移除后旧目录无法启动。当前 Codex 进程没有继承历史用户代理变量，uv 默认联网先后遇到 tunnel connection refused；显式连接本机 7890 代理后网络可用。最初尝试使用工作区自带 Python 3.12.13，但 `chroma-hnswlib==0.7.6` 在该平台需要源码构建，并在构建隔离环境中等待 NumPy 缓存锁超时。改用项目历史已验证的 Python 3.11.9 后可直接使用预编译 wheel。PyTorch 116.4 MiB wheel 首次下载又发生 TLS handshake EOF，保留缓存并重试后完成。
+
+**[解决方案与修改文件]** 新增 `.python-version` 固定 3.11.9；生成 `requirements.lock.txt`，锁定当前 `requirements.txt` 解析得到的 149 个包及其分发包哈希；新增 `scripts/bootstrap_python.ps1`，使用项目级 `UV_PYTHON_INSTALL_DIR` 和 `UV_CACHE_DIR`，支持可选进程级代理，使用 `uv python install --no-registry` 避免修改 Windows 注册表，创建或复用 `.venv`，再执行 `uv pip sync` 和 `uv pip check`。本轮没有修改业务代码，也没有把本地运行时、缓存或虚拟环境纳入 Git。
+
+**[实际测试结果]** `.venv\Scripts\python.exe --version` 为 Python 3.11.9；`uv pip check` 检查 149 个包并返回全部兼容；FastAPI 0.115.14、SQLAlchemy 2.0.30、ChromaDB 0.6.3、LangChain 0.3.30、PyTorch 2.13.0+cpu、pytest 8.4.2 和 OpenAI 1.35.3 均成功导入。首次完整 pytest 为 `113 passed, 6 warnings in 35.07s`；实际执行引导脚本后再次运行完整 pytest 为 `113 passed, 6 warnings in 17.63s`；加入哈希和解释器失败检测后最终复测为 `113 passed, 6 warnings in 17.93s`，引导脚本再次幂等运行成功且无注册表警告。
+
+**[缺点和代价]** 锁文件已记录分发包哈希，但它由 Windows/Python 3.11 环境解析生成，Windows、Linux 和不同 CPU 架构仍可能需要重新评估平台 wheel；完整环境包含 PyTorch、ONNX Runtime、SciPy 等大包，首次代理下载约十几分钟，首次机器学习栈导入实测约 214 秒。当前测试未安装覆盖率插件，因此本轮没有覆盖率百分比证据。
+
+**[仍未验证]** GPU/CUDA、真实 embedding 模型下载、MySQL、DeepSeek/第三方 API、前端构建、Docker/Gunicorn 和生产部署未在本轮验证；`113 passed` 证明当前测试套件在隔离环境通过，不等于上述外部链路已通过。
+
+**[面试时怎么讲]** “我没有只把坏 venv 修到本机能跑，而是先确认基础解释器链路和代理边界，再用 `.python-version` 固定 Python、用 uv 锁定全部传递依赖、用幂等脚本把运行时和缓存局部化。Python 3.12 下 Chroma 触发源码构建和缓存锁问题后，我基于 wheel 可用性回到 3.11.9；大包下载中断则保留缓存重试。最后用依赖检查、关键导入、脚本重跑和三次 113/113 全量测试证明环境可复现，同时明确没有验证外部服务和生产链路。”
+
 ## 33. 活文档更新日志
 
 > 本表只记录实际发生的项目工作。测试或验证未执行时必须明确写“未运行”；预期收益只能标记为“待验证”，不能写成实际效果。历史记录只追加，不删除、不覆盖。
@@ -838,3 +872,4 @@ Agent 执行失败
 | 2026-08-10 | 解释项目为何同时使用 pytest 与 unittest.mock.patch | 未修改代码或配置；补充 pytest 的测试组织职责、patch 的依赖替换职责、项目实例、代价与面试讲法 | 已静态核对 `tests/test_agentic_pipeline.py` 的 fixture、`@patch` 用例及 `requirements.txt` 中的 pytest 依赖；代码测试未运行 | 第 25.2.1、33 节 | 已完成 |
 | 2026-08-10 | 移出 Understand Anything 并修复 CodeGraph 默认检索 | 移出 `tools/Understand-Anything`；删除 `.codex/skills/understand*`、`.ua/**` 和原 Git link；更新 `.gitignore`；CodeGraph 1.4.1 升级到 1.5.0 并重建本地索引 | `codegraph index -f .`：170 文件、1,873 节点、4,279 边、工具报告 9.5 秒；真实 `codegraph explore` 返回源码和影响面；MCP `initialize`/`tools/list` 返回 1.5.0 与 `codegraph_explore`；业务代码测试未运行 | 第 9～11、15、33 节 | 已完成；新 Codex 任务中工具热加载待确认，项目内 token A/B 待验证 |
 | 2026-08-10 | 恢复 Windows Python 与项目标准虚拟环境 | 安装用户级 Python 3.11.9；以该解释器重建本地 `venv` 并安装 `requirements.txt`；未修改业务代码或依赖声明 | Python/venv 版本均为 3.11.9；`pip check` 无冲突；核心依赖导入成功；完整 pytest：`103 passed, 6 warnings in 20.69s` | 第 32.1、33 节 | 已完成；GPU、外部服务、生产链路和 `.venv-debug` 状态待验证 |
+| 2026-08-10 | 重建可复现 Python 环境并运行完整测试 | 新增 `.python-version`、`requirements.lock.txt` 和 `scripts/bootstrap_python.ps1`；以 uv 项目级 Python 3.11.9 重建 `.venv` 并锁定 149 个包及分发包哈希；未修改业务代码 | `uv pip check`：149 个包全部兼容；关键依赖导入成功；完整 pytest 三次均为 `113 passed, 6 warnings`，最终为 `17.93s`；PowerShell 解析、`compileall`、引导脚本幂等运行和 CodeGraph 增量同步成功 | 第 9、10、23.2、32.3、33 节 | 已完成；覆盖率、外部服务、GPU 与生产链路待验证 |
