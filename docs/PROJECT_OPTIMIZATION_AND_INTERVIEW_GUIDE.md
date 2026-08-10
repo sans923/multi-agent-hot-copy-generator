@@ -577,6 +577,14 @@ Mock 是“假的但可控的替身”。测试 BaseAgent 时，可以让假的�
 
 然后断言 Python 是否：正确追加 tool message、限制工具次数、累计 token、处理异常。这样测试的是自己的控制逻辑，不是测试 DeepSeek 今天是否稳定。
 
+#### 25.2.1 为什么同时导入 `pytest` 和 `unittest.mock.patch`
+
+**[代码事实]** 它们负责不同层面，不是两个重复的测试框架。`pytest` 是本项目的测试运行与组织工具，用于发现 `test_*` 用例、提供 `@pytest.fixture` 等能力；`patch` 来自 Python 标准库 `unittest.mock`，用于在单个用例执行期间临时替换模型客户端、流水线阶段或其他外部依赖，并在用例结束后自动恢复。
+
+例如 `tests/test_agentic_pipeline.py` 使用 `@pytest.fixture(autouse=True)` 创建和清理内存数据库，同时使用 `@patch("app.agents.agentic_runners.run_full_pipeline")` 隔离真实流水线。前者准备可复用的测试环境，后者控制被测代码的依赖和返回值。项目没有因为导入 `patch` 就同时运行两套测试框架；pytest 可以直接执行这些包含 `unittest.mock` 对象的普通测试函数。
+
+面试时可以这样讲：pytest 负责测试生命周期、fixture 和断言体验，`unittest.mock.patch` 负责依赖替身；组合使用能让测试保持快速、确定且不访问真实模型或外部服务。代价是 patch 路径必须指向“被测模块实际查找该对象的位置”，路径写错会导致替换不生效；过度 patch 也可能让测试只验证 mock 之间的配合，而没有覆盖真实组件协作。
+
 ### 25.3 测试的正确分层
 
 ```text
@@ -792,3 +800,4 @@ Agent 执行失败
 | 2026-08-10 | 修复当前仓库经 Clash 访问 GitHub 的连接问题 | 在仓库级 `.git/config` 中将 `http.proxy`、`https.proxy` 设置为 `http://127.0.0.1:7890`；未修改项目代码 | `Test-NetConnection 127.0.0.1:7890` 成功；`git ls-remote origin HEAD` 返回远端 HEAD；系统权限下 `git push --dry-run` 返回 `Everything up-to-date`；未执行实际推送 | 第 15、33 节 | 已完成 |
 | 2026-08-10 | 尝试更新落后于代码提交的知识图谱并按用户要求暂停 | 未修改正式图谱和元数据；删除本轮增量中间文件；恢复误清理的两个受 Git 跟踪 `.ua/.trash-*` 目录 | 对比 `.ua/meta.json` 与 HEAD；增量批次仅生成 2 个文件并确认遗漏新增 `prompt_policy.py`；恢复后目标目录 `git diff` 与 `git diff --cached` 均为空；未执行全量图谱构建 | 第 15、33 节 | 未完成：正式图谱仍落后，后续需从全量扫描继续 |
 | 2026-08-10 | 启用任务完成后的自动提交与推送 | 更新 `AGENTS.md`：默认自动提交并推送本轮相关修改、禁止夹带无关改动、要求提交信息记录修改和验证、失败时保留本地修改；同步活文档规则说明 | 已执行 `git diff --check`、逐文件差异审查、规则关键词检查和提交前 Git 状态检查；代码测试未运行 | 第 32、33 节 | 已完成规则修改；本轮提交与推送结果见 Git 历史 |
+| 2026-08-10 | 解释项目为何同时使用 pytest 与 unittest.mock.patch | 未修改代码或配置；补充 pytest 的测试组织职责、patch 的依赖替换职责、项目实例、代价与面试讲法 | 已静态核对 `tests/test_agentic_pipeline.py` 的 fixture、`@patch` 用例及 `requirements.txt` 中的 pytest 依赖；代码测试未运行 | 第 25.2.1、33 节 | 已完成 |
