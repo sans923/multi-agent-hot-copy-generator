@@ -116,6 +116,7 @@
 6. **[仍存在/P1]** 工具参数由模型生成，执行器只做 JSON 解析，未见基于每个 `parameters_schema` 的统一前置校验。
 7. **[仍存在/P2]** 前端主要靠轮询任务状态，长任务的实时反馈和服务器查询压力仍可优化。
 8. **[仍存在/P2]** README 的“10 个 Skill”描述已落后于当前实际注册数量（当前代码注册了更多检索、风格、合规和委派 Skill）。
+9. **[本轮已修复/P2]** 仓库同时保存 Understand Anything 插件、项目技能副本和过期 `.ua` 图谱，代码检索方案重复且旧图可能误导 Agent；现已统一以 CodeGraph 为默认代码检索。
 
 ## 10. P0、P1、P2 和暂不优化项
 
@@ -136,6 +137,7 @@
 - 增加 SSE/WebSocket 进度推送；
 - 补充 token、延迟、工具调用次数和质量门控指标；
 - 清理 README 与实际 Skill 数量、运行方式之间的文档漂移。
+- 已完成：移出 Understand Anything 插件及过期图谱，统一使用本地增量 CodeGraph；实际 token 节省幅度仍需项目内 A/B 基准验证。
 
 ### 暂不优化
 
@@ -159,6 +161,19 @@
 10. **真实结果**：见第 13、14 节。
 11. **代价**：每次模型调用增加少量固定 system tokens；提示词防护只能降低风险，不能替代工具授权和输入/输出校验。
 12. **面试表达**：见第 17～19 节。
+
+### 2026-08-10：统一使用 CodeGraph 作为默认代码检索
+
+1. **原始问题**：业务仓库同时包含 `tools/Understand-Anything` Git link、`.codex/skills/understand*` 技能副本和受 Git 追踪的 `.ua` 生成图谱；旧图谱已确认落后于代码，而 CodeGraph 虽已安装并建库，本轮 Codex 工具清单却没有加载 `codegraph_explore`。
+2. **触发场景**：Agent 理解或修改代码时可能继续使用 grep/Read，或误信过期 `.ua`；首次执行 `codegraph sync` 还因旧运行态留下 `codegraph.lock` 而阻塞。
+3. **问题原因**：两套图谱方案并存、Understand Anything 需要显式重建且旧扫描清单遗漏新增文件；CodeGraph 1.4.1 索引有 4 个待同步文件，当前 Codex 任务又是在 MCP 工具可用前启动，无法中途热加载工具。
+4. **解决方案**：把 Understand Anything 完整源码移动到仓库外的 `D:\workspace\_tooling\tools\Understand-Anything`；从 Git 移除其技能副本、旧 `.ua` 图谱和原 Git link；在 `.gitignore` 阻止回流；解除 CodeGraph 旧锁，升级到 1.5.0 并用新引擎全量重建索引。
+5. **修改文件**：删除 `tools/Understand-Anything` Git link、`.codex/skills/understand*` 和 `.ua/**`；修改 `.gitignore`；本节同步更新活文档。用户原有业务代码、测试和依赖文件修改未纳入本轮修改。
+6. **测试方法与实测结果**：`codegraph index -f .` 成功索引 170 个文件，生成 1,873 个节点和 4,279 条边，工具报告核心索引阶段耗时 9.5 秒；`codegraph explore "AgenticPipelineGraph phase2 execution"` 成功返回当前磁盘源码及 blast radius；通过 stdio MCP `initialize` + `tools/list` 探针，服务端返回版本 1.5.0 和 `codegraph_explore` 工具定义。
+7. **失败方案与坑**：首次 `codegraph sync` 超时并遗留锁，`codegraph status` 随后阻塞，执行 `codegraph unlock .` 后恢复；`codegraph upgrade` 已明确输出安装成功和版本 1.5.0，但 Windows launcher 在完成后额外输出异常命令文本并返回退出码 1，因此必须用后续 `codegraph --version` 验证真实结果。
+8. **缺点和代价**：新任务首次启动 MCP 会常驻 watcher；索引是静态分析结果，不能替代测试、类型检查或运行时验证；CodeGraph 上游基准不能直接当成本项目收益，本项目 token、耗时和工具调用下降幅度仍是待验证预期。
+9. **使用边界**：代码理解默认先调用 `codegraph_explore`；配置、文档或图中未覆盖的细节仍可使用精确的 `rg`/Read。当前任务的工具列表不会热加载，需新建 Codex 任务后确认 `codegraph_explore` 出现。
+10. **面试时怎么讲**：我没有叠加两个知识图谱，而是按“更新机制、上下文成本和可信新鲜度”做取舍；保留自动增量、能返回当前源码与调用链的 CodeGraph，把偏可视化/onboarding 的 Understand Anything 移出业务仓库，并用真实索引、查询和 MCP 握手验证接入，而不是只看配置文件。
 
 ## 12. 提示词优化记录
 
@@ -244,6 +259,10 @@
 ### 坑 6：旧知识图谱的增量扫描基线不包含新增源码
 
 **[实测/未完成]** `.ua/meta.json` 记录的提交为 `79ce1a9`，当前 HEAD 为 `f2468e3`。按增量路径生成批次时只识别到 `app/agents/base_agent.py` 和 `README.md`，没有包含新提交新增的 `app/core/prompt_policy.py` 及其测试，原因是保留的 174 文件扫描清单早于这些新增文件。继续增量合并会让图谱仍然缺节点，因此原计划改为刷新全量扫描清单；随后用户要求暂停知识图谱任务，本轮未修改正式的 `.ua/knowledge-graph.json` 或 `.ua/meta.json`，生成的中间文件已删除，两个被清理的受 Git 跟踪旧临时目录也已恢复且无实际差异。知识图谱仍落后，后续应从全量文件扫描继续，而不是复用该旧清单。
+
+### 坑 7：CodeGraph 升级成功但命令返回非零退出码
+
+**[实测]** `codegraph upgrade` 下载并安装 1.5.0、刷新 Agent 配置并明确输出升级完成，但 Windows launcher 随后打印异常命令文本并以退出码 1 结束。不能只根据退出码断言升级失败；本轮继续执行 `codegraph --version`、全量索引、真实 explore 查询和 MCP 握手，四项结果共同确认 1.5.0 可用。该 launcher 尾部异常仍属于上游问题，本轮未修改第三方安装器。
 
 ### 解决办法
 
@@ -801,3 +820,4 @@ Agent 执行失败
 | 2026-08-10 | 尝试更新落后于代码提交的知识图谱并按用户要求暂停 | 未修改正式图谱和元数据；删除本轮增量中间文件；恢复误清理的两个受 Git 跟踪 `.ua/.trash-*` 目录 | 对比 `.ua/meta.json` 与 HEAD；增量批次仅生成 2 个文件并确认遗漏新增 `prompt_policy.py`；恢复后目标目录 `git diff` 与 `git diff --cached` 均为空；未执行全量图谱构建 | 第 15、33 节 | 未完成：正式图谱仍落后，后续需从全量扫描继续 |
 | 2026-08-10 | 启用任务完成后的自动提交与推送 | 更新 `AGENTS.md`：默认自动提交并推送本轮相关修改、禁止夹带无关改动、要求提交信息记录修改和验证、失败时保留本地修改；同步活文档规则说明 | 已执行 `git diff --check`、逐文件差异审查、规则关键词检查和提交前 Git 状态检查；代码测试未运行 | 第 32、33 节 | 已完成规则修改；本轮提交与推送结果见 Git 历史 |
 | 2026-08-10 | 解释项目为何同时使用 pytest 与 unittest.mock.patch | 未修改代码或配置；补充 pytest 的测试组织职责、patch 的依赖替换职责、项目实例、代价与面试讲法 | 已静态核对 `tests/test_agentic_pipeline.py` 的 fixture、`@patch` 用例及 `requirements.txt` 中的 pytest 依赖；代码测试未运行 | 第 25.2.1、33 节 | 已完成 |
+| 2026-08-10 | 移出 Understand Anything 并修复 CodeGraph 默认检索 | 移出 `tools/Understand-Anything`；删除 `.codex/skills/understand*`、`.ua/**` 和原 Git link；更新 `.gitignore`；CodeGraph 1.4.1 升级到 1.5.0 并重建本地索引 | `codegraph index -f .`：170 文件、1,873 节点、4,279 边、工具报告 9.5 秒；真实 `codegraph explore` 返回源码和影响面；MCP `initialize`/`tools/list` 返回 1.5.0 与 `codegraph_explore`；业务代码测试未运行 | 第 9～11、15、33 节 | 已完成；新 Codex 任务中工具热加载待确认，项目内 token A/B 待验证 |
