@@ -21,9 +21,12 @@ LangGraph：Agentic 增强流水线
 
 from __future__ import annotations
 
-from typing import Literal
+import time
+from typing import Callable, Literal
 
 from langgraph.graph import END, StateGraph
+from langgraph.types import interrupt
+from sqlalchemy.orm import Session
 
 from app.agents.agentic_runners import (
     audit_awaiting_human,
@@ -50,6 +53,8 @@ from app.services.orchestration_persistence import (
 from app.services.orchestration_policy import decide_final_quality_gate
 from app.services.audit_service import write_audit_log
 from app.config import settings
+from app.database import SessionLocal
+from app.models.task import TaskStatus
 from app.utils.logger import logger
 
 
@@ -273,6 +278,240 @@ def build_agentic_pipeline_graph():
     graph.add_edge("persist_awaiting_human", END)
 
     return graph.compile()
+
+
+def build_durable_agentic_pipeline_graph(
+    *,
+    checkpointer,
+    session_factory: Callable[[], Session] = SessionLocal,
+):
+    """构建不持有 Session、支持 interrupt/Command resume 的 durable 图。"""
+
+    def with_session(state: PipelineState, operation):
+        db = session_factory()
+        try:
+            runtime_state: PipelineState = dict(state)
+            runtime_state["db"] = db
+            return operation(db, runtime_state)
+        finally:
+            db.close()
+
+    def classify_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: run_classify_stage(runtime))
+
+    def plan_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: run_plan_stage(runtime))
+
+    def execute_node(state: PipelineState) -> dict:
+        if is_timed_out(state):
+            return {
+                "awaiting_human": True,
+                "failure_level": "human",
+                "error": f"任务超时（>{settings.AGENT_TIMEOUT_SEC}s）",
+            }
+        if is_step_limit_reached(state):
+            return {
+                "awaiting_human": True,
+                "failure_level": "human",
+                "error": f"超过最大步数 {state.get('max_steps')}",
+            }
+        def execute_once(db: Session, runtime: PipelineState) -> dict:
+            from app.models.task import Task
+
+            operation_key = ":".join(str(runtime.get(key, 0) or 0) for key in (
+                "current_step", "resume_count", "retry_count", "reflect_count",
+                "rewrite_count", "step_count",
+            ))
+            task = db.query(Task).filter(Task.id == runtime["task_id"]).first()
+            if not task:
+                return {"abort": True, "error": "任务不存在"}
+            meta = dict(task.orchestration_meta or {})
+            effects = dict(meta.get("durable_effects") or {})
+            existing = effects.get(operation_key) or {}
+            if existing.get("status") == "completed":
+                return dict(existing.get("result") or {})
+            if existing.get("status") == "running":
+                return {
+                    "awaiting_human": True,
+                    "failure_level": "human",
+                    "error": "上次节点执行结果不确定，已停止自动重放以避免重复调用",
+                }
+            effects[operation_key] = {"status": "running"}
+            meta["durable_effects"] = effects
+            task.orchestration_meta = meta
+            db.commit()
+
+            result = run_execute_current_step(db, _get_agents(), runtime)
+            db.refresh(task)
+            latest_meta = dict(task.orchestration_meta or {})
+            latest_effects = dict(latest_meta.get("durable_effects") or {})
+            latest_effects[operation_key] = {"status": "completed", "result": result}
+            latest_meta["durable_effects"] = latest_effects
+            task.orchestration_meta = latest_meta
+            db.commit()
+            return result
+
+        return with_session(state, execute_once)
+
+    def handle_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: handle_step_outcome(runtime))
+
+    def quality_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: _quality_gate_node(runtime))
+
+    def simple_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: _simple_pipeline_node(runtime))
+
+    def finalize_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: _finalize_node(runtime))
+
+    def failed_node(state: PipelineState) -> dict:
+        return with_session(state, lambda _db, runtime: _mark_failed_node(runtime))
+
+    def human_gate(state: PipelineState) -> dict:
+        decision = interrupt({
+            "kind": "agentic_human_intervention",
+            "task_id": state.get("task_id"),
+            "reason": state.get("error") or "需人工介入",
+            "allowed_actions": ["retry", "accept_draft", "cancel"],
+            "current_step": state.get("current_step"),
+        })
+        action = decision.get("action") if isinstance(decision, dict) else None
+        if action not in {"retry", "accept_draft", "cancel"}:
+            return {
+                "awaiting_human": True,
+                "failure_level": "human",
+                "error": "无效的人工操作",
+                "human_action": None,
+            }
+        updates = {
+            "human_action": action,
+            "awaiting_human": False,
+            "failure_level": None,
+            "error": None,
+            "deadline_ts": time.time() + settings.AGENT_TIMEOUT_SEC,
+            "resume_count": (state.get("resume_count") or 0) + 1,
+        }
+        if action == "retry":
+            updates.update({"retry_count": 0, "step_count": 0})
+            if (state.get("quality_gate") or {}).get("action") == "awaiting_human":
+                steps = (state.get("plan") or {}).get("steps") or []
+                reviewer_idx = next(
+                    (index for index, step in enumerate(steps) if step.get("stage") == "reviewer"),
+                    None,
+                )
+                if reviewer_idx is not None:
+                    updates.update({
+                        "current_step": reviewer_idx,
+                        "rewrite_count": 0,
+                        "quality_gate": {},
+                    })
+        return updates
+
+    def route_human(state: PipelineState) -> str:
+        return state.get("human_action") or "human_gate"
+
+    def accept_node(state: PipelineState) -> dict:
+        from app.agents.pipeline_runners import promote_draft_to_final
+        from app.services.orchestration_persistence import apply_result_meta_to_task
+
+        def accept(db: Session, runtime: PipelineState) -> dict:
+            copy_id = promote_draft_to_final(
+                db,
+                runtime.get("copy_id"),
+                task_id=int(runtime["task_id"]),
+            )
+            if copy_id is None:
+                return {
+                    "awaiting_human": True,
+                    "failure_level": "human",
+                    "error": "找不到属于当前任务的有效初稿，无法接受",
+                    "human_action": None,
+                }
+            result = build_success_result({**runtime, "final_copy_id": copy_id})
+            apply_result_meta_to_task(db, int(runtime["task_id"]), result, runtime)
+            return {"final_copy_id": copy_id, "result": result}
+
+        return with_session(state, accept)
+
+    def cancel_node(state: PipelineState) -> dict:
+        def cancel(db: Session, runtime: PipelineState) -> dict:
+            from app.models.task import Task
+
+            task = db.query(Task).filter(Task.id == runtime["task_id"]).first()
+            if task:
+                task.status = TaskStatus.FAILED
+                task.error_message = "用户取消任务"
+                db.commit()
+            return {
+                "abort": True,
+                "error": "用户取消任务",
+                "result": build_failure_result({**runtime, "error": "用户取消任务"}),
+            }
+
+        return with_session(state, cancel)
+
+    graph = StateGraph(PipelineState)
+    graph.add_node("classify", classify_node)
+    graph.add_node("simple_pipeline", simple_node)
+    graph.add_node("create_plan", plan_node)
+    graph.add_node("execute_step", execute_node)
+    graph.add_node("handle_outcome", handle_node)
+    graph.add_node("evaluate_quality", quality_node)
+    graph.add_node("prepare_quality_rewrite", _prepare_quality_rewrite_node)
+    graph.add_node("human_gate", human_gate)
+    graph.add_node("accept_draft", accept_node)
+    graph.add_node("cancel", cancel_node)
+    graph.add_node("finalize", finalize_node)
+    graph.add_node("mark_failed", failed_node)
+    graph.set_entry_point("classify")
+    graph.add_conditional_edges(
+        "classify",
+        _route_after_classify,
+        {"simple_pipeline": "simple_pipeline", "plan": "create_plan"},
+    )
+    graph.add_edge("simple_pipeline", END)
+    graph.add_edge("create_plan", "execute_step")
+    graph.add_edge("execute_step", "handle_outcome")
+    graph.add_conditional_edges(
+        "handle_outcome",
+        _route_after_handle,
+        {
+            "execute_step": "execute_step",
+            "quality_gate": "evaluate_quality",
+            "mark_failed": "mark_failed",
+            "awaiting_human": "human_gate",
+        },
+    )
+    graph.add_conditional_edges(
+        "evaluate_quality",
+        _route_after_quality_gate,
+        {
+            "finalize": "finalize",
+            "prepare_quality_rewrite": "prepare_quality_rewrite",
+            "awaiting_human": "human_gate",
+        },
+    )
+    graph.add_conditional_edges(
+        "human_gate",
+        route_human,
+        {
+            "retry": "execute_step",
+            "accept_draft": "accept_draft",
+            "cancel": "cancel",
+            "human_gate": "human_gate",
+        },
+    )
+    graph.add_edge("prepare_quality_rewrite", "execute_step")
+    graph.add_conditional_edges(
+        "accept_draft",
+        lambda state: "human_gate" if state.get("awaiting_human") else "end",
+        {"human_gate": "human_gate", "end": END},
+    )
+    graph.add_edge("cancel", END)
+    graph.add_edge("finalize", END)
+    graph.add_edge("mark_failed", END)
+    return graph.compile(checkpointer=checkpointer)
 
 
 def run_agentic_pipeline_graph(db, task_id: int) -> dict:

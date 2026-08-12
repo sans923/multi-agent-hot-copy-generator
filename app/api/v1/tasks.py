@@ -43,6 +43,7 @@ router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
 
 def _run_agents_background(task_id: int) -> None:
     db = SessionLocal()
+    engine = None
     try:
         # 双引擎切换的唯一接缝：按配置 settings.ORCHESTRATION_ENGINE 取编排引擎并调用。
         # 默认 "native"（自研 AgentOrchestrator），切换为 "langgraph" 即用 LangGraph 引擎；
@@ -86,6 +87,9 @@ def _run_agents_background(task_id: int) -> None:
             task.error_message = str(e)[:500]
             db.commit()
     finally:
+        close = getattr(engine, "close", None)
+        if close:
+            close()
         db.close()
 
 
@@ -310,9 +314,28 @@ def _resume_task_background(task_id: int, action: str) -> None:
     try:
         from app.agents.agentic_runners import resume_agentic_pipeline
         from app.config import settings
+        from app.orchestration import get_orchestration_engine
 
         task = db.query(Task).filter(Task.id == task_id).first()
         meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+        if meta.get("durability_mode") == "langgraph_sqlite_v1":
+            engine = get_orchestration_engine("langgraph")
+            try:
+                result = engine.resume(
+                    db,
+                    task_id,
+                    thread_id=str(meta["thread_id"]),
+                    human_input={"action": action},
+                )
+            finally:
+                close = getattr(engine, "close", None)
+                if close:
+                    close()
+            logger.info(
+                f"Durable 任务恢复完成: task_id={task_id}, "
+                f"action={action}, success={result.get('success')}"
+            )
+            return
         mode = meta.get("resolved_mode") or (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
         if mode != "agentic":
             task = db.query(Task).filter(Task.id == task_id).first()
@@ -326,8 +349,10 @@ def _resume_task_background(task_id: int, action: str) -> None:
         logger.info(f"任务恢复完成: task_id={task_id}, action={action}, success={result.get('success')}")
     except Exception as e:
         logger.exception(f"任务恢复异常: task_id={task_id}")
+        db.rollback()
         task = db.query(Task).filter(Task.id == task_id).first()
-        if task:
+        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+        if task and meta.get("durability_mode") != "langgraph_sqlite_v1":
             task.status = TaskStatus.FAILED
             task.error_message = str(e)[:500]
             db.commit()
@@ -364,6 +389,37 @@ def resume_task(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"任务状态为 {task.status.value}，无法恢复（需要 awaiting_human）",
+        )
+
+    meta = task.orchestration_meta if isinstance(task.orchestration_meta, dict) else {}
+    if meta.get("durability_mode") == "langgraph_sqlite_v1":
+        if body.action == "retry":
+            background_tasks.add_task(_resume_task_background, task.id, "retry")
+            return ApiResponse(
+                success=True,
+                message="恢复请求已接收，请轮询状态",
+                data=TaskResponse.model_validate(task),
+            )
+
+        from app.orchestration import get_orchestration_engine
+
+        engine = get_orchestration_engine("langgraph")
+        try:
+            result = engine.resume(
+                db,
+                task.id,
+                thread_id=str(meta["thread_id"]),
+                human_input={"action": body.action},
+            )
+        finally:
+            close = getattr(engine, "close", None)
+            if close:
+                close()
+        db.refresh(task)
+        return ApiResponse(
+            success=result.get("success", False),
+            message=result.get("message") or result.get("error") or "任务已恢复",
+            data=TaskResponse.model_validate(task),
         )
 
     if body.action == "cancel":

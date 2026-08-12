@@ -291,9 +291,9 @@ def test_retry_execution_can_only_be_claimed_once(db):
     assert task.status == TaskStatus.PROCESSING
 
 
-@patch("app.orchestration.factory._ENGINE_REGISTRY")
+@patch("app.orchestration.get_orchestration_engine")
 def test_durable_resume_api_routes_action_through_langgraph_engine(
-    mock_registry,
+    mock_get_engine,
     db,
 ):
     task = _create_task(db)
@@ -306,7 +306,7 @@ def test_durable_resume_api_routes_action_through_langgraph_engine(
     }
     db.commit()
     user = db.query(User).filter(User.id == task.user_id).one()
-    engine = mock_registry["langgraph"].return_value
+    engine = mock_get_engine.return_value
     engine.resume.return_value = {"success": False, "error": "用户取消任务"}
 
     response = resume_task(

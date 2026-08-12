@@ -58,6 +58,7 @@ class PipelineState(TypedDict, total=False):
     plan: dict[str, Any]              # {steps, source, reasoning, ...}
     current_step: int
     step_count: int
+    resume_count: int
     retry_count: int
     reflect_count: int
     reflect_notes: list[str]
@@ -74,6 +75,7 @@ class PipelineState(TypedDict, total=False):
     decision_log: list[dict[str, Any]]
     skipped_steps: list[dict[str, Any]]
     selected_style_card_id: int | None
+    human_action: str | None
 
 
 def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None, dict | None]:
@@ -118,6 +120,7 @@ def init_pipeline_state(db: Session, task_id: int) -> tuple[PipelineState | None
         "plan": {},
         "current_step": 0,
         "step_count": 0,
+        "resume_count": 0,
         "retry_count": 0,
         "reflect_count": 0,
         "reflect_notes": [],

@@ -92,3 +92,12 @@ class OrchestrationEngine(ABC):
         raise NotImplementedError(
             f"引擎 '{self.name}' 不支持 get_state()（人工介入扩展点尚未实现）"
         )
+
+    def close(self) -> None:
+        """释放引擎持有的可关闭资源；无资源引擎保持空操作。"""
+
+    def __enter__(self) -> "OrchestrationEngine":
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()

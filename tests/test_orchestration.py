@@ -7,7 +7,7 @@
     pytest tests/test_orchestration.py -v
 """
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from sqlalchemy import create_engine
@@ -306,21 +306,24 @@ def test_langgraph_engine_resumes_interrupted_task_after_rebuild(
     db.commit()
     checkpoint_path = tmp_path / "agentic-checkpoints.sqlite3"
 
+    first_saver = ParameterizedSqliteSaver(checkpoint_path)
     first_engine = LangGraphOrchestrationEngine(
-        checkpointer=ParameterizedSqliteSaver(checkpoint_path),
+        checkpointer=first_saver,
         session_factory=TestSessionLocal,
     )
     paused = first_engine.start(db, task.id)
     db.refresh(task)
     thread_id = task.orchestration_meta["thread_id"]
     first_engine.close()
+    first_saver.close()
 
     assert paused["awaiting_human"] is True
     assert task.status == TaskStatus.AWAITING_HUMAN
     assert "checkpoint" not in task.orchestration_meta
 
+    rebuilt_saver = ParameterizedSqliteSaver(checkpoint_path)
     rebuilt_engine = LangGraphOrchestrationEngine(
-        checkpointer=ParameterizedSqliteSaver(checkpoint_path),
+        checkpointer=rebuilt_saver,
         session_factory=TestSessionLocal,
     )
     snapshot = rebuilt_engine.get_state(thread_id=thread_id)
@@ -331,6 +334,7 @@ def test_langgraph_engine_resumes_interrupted_task_after_rebuild(
         human_input={"action": "retry"},
     )
     rebuilt_engine.close()
+    rebuilt_saver.close()
 
     assert snapshot["interrupts"][0]["allowed_actions"] == [
         "retry", "accept_draft", "cancel",
@@ -338,3 +342,163 @@ def test_langgraph_engine_resumes_interrupted_task_after_rebuild(
     assert resumed["success"] is True
     db.refresh(task)
     assert task.status == TaskStatus.COMPLETED
+
+
+def test_langgraph_engine_does_not_close_injected_checkpointer():
+    saver = Mock()
+    engine = LangGraphOrchestrationEngine(checkpointer=saver)
+
+    engine.close()
+
+    saver.close.assert_not_called()
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.run_execute_current_step")
+@patch("app.lang.graph.agentic_pipeline_graph.run_plan_stage")
+@patch("app.lang.graph.agentic_pipeline_graph.run_classify_stage")
+def test_invalid_accept_draft_reinterrupts_durable_thread(
+    mock_classify,
+    mock_plan,
+    mock_execute,
+    db,
+    tmp_path,
+):
+    mock_classify.return_value = {"task_mode": "complex", "classify_reasons": []}
+    mock_plan.return_value = {
+        "plan": {"source": "default", "steps": [{"step_id": "review", "stage": "reviewer"}]},
+        "current_step": 0,
+    }
+    mock_execute.return_value = {
+        "awaiting_human": True,
+        "failure_level": "human",
+        "error": "approval required",
+        "last_step_failed": False,
+    }
+    task = _create_task(db, "durable invalid accept")
+    task.orchestration_meta = {"execution_mode": "plan", "resolved_mode": "agentic"}
+    db.commit()
+    saver = ParameterizedSqliteSaver(tmp_path / "invalid-accept.sqlite3")
+    engine = LangGraphOrchestrationEngine(
+        checkpointer=saver,
+        session_factory=TestSessionLocal,
+    )
+
+    engine.start(db, task.id)
+    db.refresh(task)
+    thread_id = task.orchestration_meta["thread_id"]
+    result = engine.resume(
+        db,
+        task.id,
+        thread_id=thread_id,
+        human_input={"action": "accept_draft"},
+    )
+    snapshot = engine.get_state(thread_id=thread_id)
+    engine.close()
+    saver.close()
+
+    db.refresh(task)
+    assert result["awaiting_human"] is True
+    assert task.status == TaskStatus.AWAITING_HUMAN
+    assert snapshot["interrupts"][0]["reason"] == "找不到属于当前任务的有效初稿，无法接受"
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.run_execute_current_step")
+@patch("app.lang.graph.agentic_pipeline_graph.run_plan_stage")
+@patch("app.lang.graph.agentic_pipeline_graph.run_classify_stage")
+def test_running_effect_is_not_automatically_replayed(
+    mock_classify,
+    mock_plan,
+    mock_execute,
+    db,
+    tmp_path,
+):
+    mock_classify.return_value = {"task_mode": "complex", "classify_reasons": []}
+    mock_plan.return_value = {
+        "plan": {"source": "default", "steps": [{"step_id": "review", "stage": "reviewer"}]},
+        "current_step": 0,
+    }
+    task = _create_task(db, "ambiguous durable effect")
+    task.orchestration_meta = {
+        "execution_mode": "plan",
+        "resolved_mode": "agentic",
+        "durable_effects": {"0:0:0:0:0:0": {"status": "running"}},
+    }
+    db.commit()
+    saver = ParameterizedSqliteSaver(tmp_path / "effect-replay.sqlite3")
+    engine = LangGraphOrchestrationEngine(
+        checkpointer=saver,
+        session_factory=TestSessionLocal,
+    )
+
+    result = engine.start(db, task.id)
+    engine.close()
+    saver.close()
+
+    assert result["awaiting_human"] is True
+    assert "停止自动重放" in result["error"]
+    mock_execute.assert_not_called()
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.run_execute_current_step")
+@patch("app.lang.graph.agentic_pipeline_graph.run_plan_stage")
+@patch("app.lang.graph.agentic_pipeline_graph.run_classify_stage")
+def test_resume_failure_creates_a_new_interrupt_and_can_resume_again(
+    mock_classify,
+    mock_plan,
+    mock_execute,
+    db,
+    tmp_path,
+):
+    mock_classify.return_value = {"task_mode": "complex", "classify_reasons": []}
+    mock_plan.return_value = {
+        "plan": {"source": "default", "steps": [{"step_id": "review", "stage": "reviewer"}]},
+        "current_step": 0,
+    }
+    mock_execute.side_effect = [
+        {
+            "awaiting_human": True,
+            "failure_level": "human",
+            "error": "approval required",
+            "last_step_failed": False,
+        },
+        RuntimeError("model response lost"),
+        {
+            "abort": True,
+            "error": "stop after retry proof",
+            "last_step_failed": True,
+        },
+    ]
+    task = _create_task(db, "resume failure compensation")
+    task.orchestration_meta = {"execution_mode": "plan", "resolved_mode": "agentic"}
+    db.commit()
+    saver = ParameterizedSqliteSaver(tmp_path / "resume-failure.sqlite3")
+    engine = LangGraphOrchestrationEngine(
+        checkpointer=saver,
+        session_factory=TestSessionLocal,
+    )
+    engine.start(db, task.id)
+    db.refresh(task)
+    thread_id = task.orchestration_meta["thread_id"]
+    recovered = engine.resume(
+        db,
+        task.id,
+        thread_id=thread_id,
+        human_input={"action": "retry"},
+    )
+    snapshot = engine.get_state(thread_id=thread_id)
+    retried = engine.resume(
+        db,
+        task.id,
+        thread_id=thread_id,
+        human_input={"action": "retry"},
+    )
+    engine.close()
+    saver.close()
+
+    db.expire_all()
+    restored = db.query(Task).filter(Task.id == task.id).one()
+    assert recovered["awaiting_human"] is True
+    assert snapshot["interrupts"]
+    assert "停止自动重放" in snapshot["interrupts"][0]["reason"]
+    assert retried["success"] is False
+    assert restored.status == TaskStatus.FAILED

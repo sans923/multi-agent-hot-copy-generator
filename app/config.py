@@ -78,6 +78,7 @@ class Settings(BaseSettings):
     MAX_RETRY_PER_STEP: int = 2            # L1：单步重试上限
     MAX_REFLECT_ROUNDS: int = 2            # 反思轮次上限（Phase 1 预留）
     ENABLE_JUDGE_VERIFY: bool = True       # 规则不确定时启用 Judge 模型
+    LANGGRAPH_CHECKPOINT_PATH: str = "./data/langgraph-checkpoints.sqlite3"
 
     # --- ChromaDB 配置 ---
     CHROMA_PERSIST_PATH: str = "./data/chroma"

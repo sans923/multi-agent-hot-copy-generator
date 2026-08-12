@@ -201,6 +201,7 @@ class ParameterizedSqliteSaver(BaseCheckpointSaver):
         checkpoint_ns = str(configurable.get("checkpoint_ns", ""))
         checkpoint_id = str(configurable["checkpoint_id"])
         rows = []
+        replace_existing = all(channel in WRITES_IDX_MAP for channel, _ in writes)
         for index, (channel, value) in enumerate(writes):
             value_type, value_blob = self.serde.dumps_typed(value)
             rows.append((
@@ -215,15 +216,13 @@ class ParameterizedSqliteSaver(BaseCheckpointSaver):
                 task_path,
             ))
         with self._lock, self._connection:
-            self._connection.executemany(
-                """
-                INSERT OR REPLACE INTO checkpoint_writes (
+            statement = """
+                INSERT OR {conflict_action} INTO checkpoint_writes (
                     thread_id, checkpoint_ns, checkpoint_id, task_id, write_idx,
                     channel, value_type, value, task_path
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                rows,
-            )
+            """.format(conflict_action="REPLACE" if replace_existing else "IGNORE")
+            self._connection.executemany(statement, rows)
 
     def list(
         self,
@@ -233,6 +232,8 @@ class ParameterizedSqliteSaver(BaseCheckpointSaver):
         before: RunnableConfig | None = None,
         limit: int | None = None,
     ) -> Iterator[CheckpointTuple]:
+        if limit is not None and limit <= 0:
+            return
         clauses: list[str] = []
         params: list[Any] = []
         if config:
