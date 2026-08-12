@@ -12,6 +12,7 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.agents.pipeline_runners import PipelineAgents, run_full_pipeline
 from app.agents.pipeline_state import init_pipeline_state
@@ -22,6 +23,7 @@ from app.models.user import User
 from app.orchestration import get_orchestration_engine
 from app.orchestration.langgraph_engine import LangGraphOrchestrationEngine
 from app.orchestration.native_engine import NativeOrchestrationEngine
+from app.services.langgraph_checkpoint import ParameterizedSqliteSaver
 
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -29,6 +31,7 @@ SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
 test_engine = create_engine(
     SQLALCHEMY_TEST_DATABASE_URL,
     connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
 )
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
@@ -247,3 +250,91 @@ def test_langgraph_engine_delegates_to_graph(mock_run_copy_pipeline, db):
 
     mock_run_copy_pipeline.assert_called_once_with(db=db, task_id=2)
     assert result["success"] is True
+
+
+@patch("app.lang.graph.agentic_pipeline_graph.decide_final_quality_gate")
+@patch("app.lang.graph.agentic_pipeline_graph.run_execute_current_step")
+@patch("app.lang.graph.agentic_pipeline_graph.run_plan_stage")
+@patch("app.lang.graph.agentic_pipeline_graph.run_classify_stage")
+def test_langgraph_engine_resumes_interrupted_task_after_rebuild(
+    mock_classify,
+    mock_plan,
+    mock_execute,
+    mock_quality_gate,
+    db,
+    tmp_path,
+):
+    mock_classify.return_value = {"task_mode": "complex", "classify_reasons": []}
+    mock_plan.return_value = {
+        "plan": {
+            "source": "default",
+            "steps": [{"step_id": "reviewer", "stage": "reviewer"}],
+        },
+        "current_step": 0,
+    }
+    mock_execute.side_effect = [
+        {
+            "awaiting_human": True,
+            "failure_level": "human",
+            "error": "需要人工确认",
+            "last_step_failed": False,
+        },
+        {
+            "final_copy_id": 10,
+            "review_score": 90.0,
+            "total_tokens": 5,
+            "stages": {"reviewer": {"success": True}},
+            "last_step_failed": False,
+            "step_count": 1,
+        },
+    ]
+    mock_quality_gate.return_value = type("Decision", (), {
+        "passed": True,
+        "action": "finalize",
+        "failed_checks": [],
+        "as_dict": lambda self: {
+            "passed": True,
+            "action": "finalize",
+            "failed_checks": [],
+        },
+    })()
+    task = _create_task(db, "复杂任务需要人工确认")
+    task.orchestration_meta = {
+        "execution_mode": "plan",
+        "resolved_mode": "agentic",
+    }
+    db.commit()
+    checkpoint_path = tmp_path / "agentic-checkpoints.sqlite3"
+
+    first_engine = LangGraphOrchestrationEngine(
+        checkpointer=ParameterizedSqliteSaver(checkpoint_path),
+        session_factory=TestSessionLocal,
+    )
+    paused = first_engine.start(db, task.id)
+    db.refresh(task)
+    thread_id = task.orchestration_meta["thread_id"]
+    first_engine.close()
+
+    assert paused["awaiting_human"] is True
+    assert task.status == TaskStatus.AWAITING_HUMAN
+    assert "checkpoint" not in task.orchestration_meta
+
+    rebuilt_engine = LangGraphOrchestrationEngine(
+        checkpointer=ParameterizedSqliteSaver(checkpoint_path),
+        session_factory=TestSessionLocal,
+    )
+    snapshot = rebuilt_engine.get_state(thread_id=thread_id)
+    resumed = rebuilt_engine.resume(
+        db,
+        task.id,
+        thread_id=thread_id,
+        human_input={"action": "retry"},
+    )
+    rebuilt_engine.close()
+
+    assert snapshot["interrupts"][0]["allowed_actions"] == [
+        "retry", "accept_draft", "cancel",
+    ]
+    assert resumed["success"] is True
+    db.refresh(task)
+    assert task.status == TaskStatus.COMPLETED
