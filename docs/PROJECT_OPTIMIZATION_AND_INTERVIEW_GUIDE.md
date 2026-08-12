@@ -935,6 +935,19 @@ Agent 执行失败
 
 **[失败过程与边界]** 首次完整运行曾因 `tests/test_agentic_phase2.py` 导入当时尚不存在的 `_claim_retry_execution` 而在收集阶段中断；排除该文件后其余 `103 passed`。该函数随后由工作区中的并行修改补齐，本轮没有改动业务代码，仅基于最新文件重新运行全量测试。6 条警告来自 LangGraph 待弃用默认值及 Pydantic V2 class-based config；当前测试通过不代表 MySQL、外部模型、GPU 或生产部署已验证。
 
+## 32.8 LangGraph durable interrupt/resume 单机闭环（2026-08-12）
+
+1. **原始问题与触发场景**：Agentic 首次执行虽然走 LangGraph，但图未配置 checkpointer 或 `thread_id`；人工暂停把业务状态写进 `Task.orchestration_meta.checkpoint` 后直接结束，retry 再绕回自写 Python 循环。Web 进程重启、图重建或恢复分支变化时，首跑与恢复使用两套状态机，执行游标也不是 LangGraph 原生 checkpoint。
+2. **问题原因**：`PipelineState` 携带长生命周期 SQLAlchemy Session，图使用无 checkpointer 的 `compile()`/`invoke()`，暂停节点用 `END` 模拟中断，`LangGraphOrchestrationEngine.start/resume/get_state` 尚未实现；现有依赖组合也没有与 LangGraph 0.2.76 兼容的项目内 durable saver。
+3. **解决方案与架构取舍**：新增参数化 SQLite `BaseCheckpointSaver`，新 Agentic 线程由服务端生成并持久保存不可变 `thread_id`，图以 `interrupt()` 暂停并用 `Command(resume=...)` 在同一 checkpoint 恢复。durable state 在写 checkpoint 前移除 `db/result`，每个业务节点只创建短 Session。新线程以 LangGraph checkpoint 为执行真相，Task JSON 只保留状态投影、线程信息和旧任务兼容元数据；既有 legacy JSON 任务仍按旧适配器恢复，避免伪造 LangGraph 执行游标。
+4. **安全与一致性边界**：所有 saver 外部值使用 SQL 绑定参数；普通 pending write 保留首次值，特殊 interrupt/resume channel 才允许替换。retry 用条件更新原子认领，竞争失败按幂等冲突返回；无效草稿重新进入 human interrupt。若恢复在消费旧 interrupt 后失败，引擎从同一 checkpoint 推进到副作用防重门控并产生新 interrupt；补偿本身失败才明确标为 FAILED，不制造“AWAITING 但无 interrupt”的死状态。业务副作用以 `running/completed` 和恢复代数记录：完成结果可复用，状态不确定时停止自动重放并转人工。该措施是保守防重，不等价于 exactly-once。
+5. **修改文件**：`.env.example`、`app/config.py`、`app/agents/pipeline_state.py`、`app/lang/graph/agentic_pipeline_graph.py`、`app/orchestration/base.py`、`app/orchestration/langgraph_engine.py`、`app/api/v1/tasks.py`、`app/services/langgraph_checkpoint.py`、`tests/test_durable_orchestration.py`、`tests/test_orchestration.py`、`tests/test_agentic_phase2.py`。
+6. **测试方法与实际结果**：按 TDD 先提交 saver、图重建恢复和 API 路由 RED 用例；聚焦 saver/编排/API 回归为 `33 passed, 5 warnings`，审查故障窗口补测为 `7 passed, 1 warning`。`compileall -q app tests` 通过；`.venv` 为 Python 3.11.9，关键依赖导入成功，pytest 8.4.2；最终完整测试为 `132 passed, 6 warnings in 18.03s`。`.venv` 未安装 pip，因此 `python -m pip check` 实际失败为 `No module named pip`；`.venv-debug` 启动器仍指向不存在的旧 Python，`py -3.11` 也报告未找到系统安装，本轮未重建环境。
+7. **缺点、代价与尚未验证**：SQLite saver 只声明单机/单进程开发闭环，不支持多 Web worker 共享；FastAPI `BackgroundTasks` 仍不是持久任务队列。Task 副作用记录与 LangGraph checkpoint 不是同一数据库事务，当前选择“歧义时暂停人工确认”，不能保证外部调用 exactly-once。未执行真实 MySQL、多进程 kill/restart、真实 LLM、部署或吞吐基准；生产共享 saver、持久 resume queue、effect ledger/outbox 仍待实现。
+8. **面试时怎么讲**：旧方案只是把业务 JSON 当快照，首跑和恢复实际上是两套编排。我把 `thread_id + durable checkpointer + interrupt/Command(resume)` 串成同一张图，并把 Session 移出可序列化状态；同时承认 checkpoint 只能保证图状态可恢复，不能天然保证模型调用和数据库副作用 exactly-once，所以对不确定执行采用停止重放，并把生产级共享存储、任务队列和幂等账本列为下一阶段，而不是夸大为分布式可靠执行。
+
+**[下一个最值得处理的 P1]** 将首次执行和 resume 从 FastAPI `BackgroundTasks` 迁移到持久任务队列/独立 worker，并以共享数据库 saver、租约认领和持久 effect ledger 支持多进程恢复；这是把本轮“单机 durable”升级为生产可靠执行的必要一步。
+
 ## 33. 活文档更新日志
 
 > 本表只记录实际发生的项目工作。测试或验证未执行时必须明确写“未运行”；预期收益只能标记为“待验证”，不能写成实际效果。历史记录只追加，不删除、不覆盖。
@@ -955,3 +968,4 @@ Agent 执行失败
 | 2026-08-10 | 重建可复现 Python 环境并运行完整测试 | 新增 `.python-version`、`requirements.lock.txt` 和 `scripts/bootstrap_python.ps1`；以 uv 项目级 Python 3.11.9 重建 `.venv` 并锁定 149 个包及分发包哈希；未修改业务代码 | `uv pip check`：149 个包全部兼容；关键依赖导入成功；完整 pytest 三次均为 `113 passed, 6 warnings`，最终为 `17.93s`；PowerShell 解析、`compileall`、引导脚本幂等运行和 CodeGraph 增量同步成功 | 第 9、10、23.2、32.3、33 节 | 已完成；覆盖率、外部服务、GPU 与生产链路待验证 |
 | 2026-08-10 | 修复 LangGraph 状态闭环与认证测试跨线程 SQLite | 重命名 3 个冲突节点；修复 retry 原子认领、人工暂停越步、simple 终态、草稿归属、Planner 安全校验和图审计；认证 fixture 增加 `StaticPool`；新增回归测试 | 初始 RED：`9 failed, 3 passed`；审查补测 RED：simple 终态 `2 failed`、认领 helper 首次收集失败；环境：Python 3.11.9、关键导入成功、`pip check` 无冲突；最终聚焦 `50 passed, 6 warnings`；完整 pytest `115 passed, 6 warnings in 17.45s` | 第 32.4、33 节 | 本轮修复与测试已完成；durable checkpointer、恢复 token/幂等和阻塞调用超时仍待处理 |
 | 2026-08-10 | 复验可复现 Python 环境并运行当前完整 pytest | 未修改业务代码或依赖；复用 `.venv` 项目级 Python 3.11.9，记录并行代码更新前后的真实测试状态 | 核心依赖导入成功；`uv pip check --no-cache`：149 个包兼容；首次因缺少 `_claim_retry_execution` 收集失败，排除对应文件后 `103 passed`；更新后完整 pytest `115 passed, 6 warnings in 16.87s` | 第 32.5、33 节 | 已完成；外部服务、GPU 和生产链路仍待验证 |
+| 2026-08-12 | 统一 LangGraph durable checkpoint 与原生 interrupt/resume | 新增参数化 SQLite saver、服务端 `thread_id`、durable Agentic 图、`interrupt/Command(resume)`、引擎 start/resume/get_state、API durable 路由、副作用歧义防重及恢复并发/补偿测试 | TDD RED 后聚焦 `33 passed, 5 warnings`；故障窗口补测 `7 passed, 1 warning`；`compileall`、关键导入和 pytest 版本检查通过；最终完整 pytest `132 passed, 6 warnings in 18.03s`；`.venv` 的 `pip check` 因未安装 pip 失败；`.venv-debug` 与系统 `py -3.11` 不可用 | 第 32.8、33 节 | 已完成单机 durable 闭环；多 worker 共享 saver、持久队列、exactly-once/真实 MySQL 与进程故障注入待验证 |
