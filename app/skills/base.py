@@ -32,6 +32,7 @@ Agent 调用时只需要传函数名，注册器负责找到并执行对应的 S
 import json
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from typing import Any, Callable
 from sqlalchemy.orm import Session
 
@@ -225,6 +226,7 @@ class SkillExecutor:
         db: Session,
         task_id: int | None = None,
         agent_name: str | None = None,
+        allowed_function_names: Collection[str] | None = None,
     ) -> str:
         """
         执行 Function Call
@@ -235,20 +237,36 @@ class SkillExecutor:
             db: 数据库会话
             task_id: 当前任务ID（用于写日志）
             agent_name: 调用方Agent名称（用于写日志）
+            allowed_function_names: 当前 Agent 被授权调用的函数名；None 表示非 Agent
+                场景沿用注册器权限，保持现有直接调用兼容性
         
         返回：
             str: 执行结果的 JSON 字符串（返回给模型的格式）
         """
         start_time = time.time()
 
-        # 1. 找到对应的 Skill
+        # 1. Agent 调用必须先过服务端 allowlist，不能只相信模型看到的 tools 列表。
+        if (
+            allowed_function_names is not None
+            and function_name not in allowed_function_names
+        ):
+            error_result = skill_fail(
+                f"未授权的函数: {function_name}，当前 Agent 无权调用"
+            )
+            logger.warning(
+                f"Skill 调用被拒绝: agent={agent_name or 'unknown'}, "
+                f"function={function_name}"
+            )
+            return json.dumps(error_result, ensure_ascii=False)
+
+        # 2. 找到对应的 Skill
         skill = self.registry.get(function_name)
         if not skill:
             error_result = skill_fail(f"未知的函数: {function_name}，请检查函数名是否正确")
             logger.error(f"Skill 未找到: {function_name}")
             return json.dumps(error_result, ensure_ascii=False)
 
-        # 2. 解析参数（JSON字符串 → Python dict）
+        # 3. 解析参数（JSON字符串 → Python dict）
         try:
             args = json.loads(function_args_json) if function_args_json else {}
         except json.JSONDecodeError as e:
@@ -258,7 +276,7 @@ class SkillExecutor:
             logger.error(f"Skill 参数解析失败: {function_name}, args: {function_args_json}")
             return json.dumps(error_result, ensure_ascii=False)
 
-        # 3. 执行 Skill
+        # 4. 执行 Skill
         try:
             logger.info(f"执行 Skill: {function_name}, args: {args}")
             raw_result = skill.execute(db=db, **args)

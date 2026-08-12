@@ -272,6 +272,7 @@ class BaseAgent(ABC):
                         db=db,
                         task_id=task_id,
                         agent_name=self.name,
+                        allowed_function_names=self.skill_names,
                     )
 
                     tool_calls_count += 1
