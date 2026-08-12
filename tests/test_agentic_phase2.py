@@ -289,3 +289,38 @@ def test_retry_execution_can_only_be_claimed_once(db):
 
     db.refresh(task)
     assert task.status == TaskStatus.PROCESSING
+
+
+@patch("app.orchestration.factory._ENGINE_REGISTRY")
+def test_durable_resume_api_routes_action_through_langgraph_engine(
+    mock_registry,
+    db,
+):
+    task = _create_task(db)
+    task.status = TaskStatus.AWAITING_HUMAN
+    task.orchestration_meta = {
+        "execution_mode": "plan",
+        "resolved_mode": "agentic",
+        "durability_mode": "langgraph_sqlite_v1",
+        "thread_id": "task-durable-1",
+    }
+    db.commit()
+    user = db.query(User).filter(User.id == task.user_id).one()
+    engine = mock_registry["langgraph"].return_value
+    engine.resume.return_value = {"success": False, "error": "用户取消任务"}
+
+    response = resume_task(
+        task.id,
+        TaskResumeRequest(action="cancel"),
+        BackgroundTasks(),
+        current_user=user,
+        db=db,
+    )
+
+    engine.resume.assert_called_once_with(
+        db,
+        task.id,
+        thread_id="task-durable-1",
+        human_input={"action": "cancel"},
+    )
+    assert response.message == "用户取消任务"
