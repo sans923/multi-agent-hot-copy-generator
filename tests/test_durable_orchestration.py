@@ -33,10 +33,11 @@ def test_checkpoint_survives_saver_and_graph_rebuild(tmp_path):
     config = {"configurable": {"thread_id": "task-42"}}
 
     first_graph, first_saver = _build_approval_graph(checkpoint_path)
-    first_result = first_graph.invoke({"value": 7}, config=config)
+    first_graph.invoke({"value": 7}, config=config)
+    snapshot = first_graph.get_state(config)
     first_saver.close()
 
-    assert first_result["__interrupt__"][0].value == {
+    assert snapshot.tasks[0].interrupts[0].value == {
         "kind": "approval",
         "value": 7,
     }
