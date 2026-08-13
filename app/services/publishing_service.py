@@ -27,6 +27,17 @@ class DouyinOpenPlatformError(RuntimeError):
     """抖音开放平台凭证或 open ticket 获取失败。"""
 
 
+def is_allowed_media_host(media_url: object, allowed_hosts: str) -> bool:
+    """仅允许明确配置的自有 CDN/对象存储主机，避免开放签名能力被滥用。"""
+    host = str(getattr(media_url, "host", "") or "").rstrip(".").lower()
+    allowed = {
+        value.strip().rstrip(".").lower()
+        for value in allowed_hosts.split(",")
+        if value.strip()
+    }
+    return bool(host and host in allowed)
+
+
 def _clean_hashtags(values: object) -> list[str]:
     if not isinstance(values, list):
         return []
@@ -116,6 +127,7 @@ def prepare_douyin_publication(
     enabled: bool,
     client_key: str,
     ticket: str | None = None,
+    allowed_media_hosts: str = "",
     nonce_str: str | None = None,
     timestamp: str | None = None,
     external_blocker: str | None = None,
@@ -129,6 +141,8 @@ def prepare_douyin_publication(
         blockers.append("未配置 DOUYIN_CLIENT_KEY")
     if request.media_url is None or request.media_type is None:
         blockers.append("抖音 H5 投稿至少需要一个公网 HTTPS 图片或视频地址")
+    elif not is_allowed_media_host(request.media_url, allowed_media_hosts):
+        blockers.append("素材域名不在 DOUYIN_MEDIA_ALLOWED_HOSTS 自有 CDN 白名单中")
     if external_blocker:
         blockers.append(external_blocker)
     if enabled and client_key.strip() and request.media_url is not None and not ticket:
@@ -228,13 +242,14 @@ class DouyinOpenPlatformClient:
                 )
                 ticket_response.raise_for_status()
                 ticket_data = self._unwrap_data(ticket_response.json(), "open ticket")
+                expires_in = int(ticket_data.get("expires_in") or 7200)
         except (httpx.HTTPError, ValueError) as exc:
             raise DouyinOpenPlatformError("连接抖音开放平台失败") from exc
 
         ticket = str(ticket_data.get("ticket") or "")
         if not ticket:
             raise DouyinOpenPlatformError("抖音未返回 open ticket")
-        return ticket, int(ticket_data.get("expires_in") or 7200)
+        return ticket, expires_in
 
     @staticmethod
     def _unwrap_data(payload: object, label: str) -> dict[str, object]:
@@ -243,9 +258,5 @@ class DouyinOpenPlatformClient:
         data = payload["data"]
         error_code = int(data.get("error_code") or 0)
         if error_code:
-            description = str(data.get("description") or "未知错误")
-            raise DouyinOpenPlatformError(
-                f"抖音 {label} 获取失败（{error_code}）：{description}"
-            )
+            raise DouyinOpenPlatformError(f"抖音 {label} 获取失败（错误码 {error_code}）")
         return data
-

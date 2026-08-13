@@ -1,15 +1,38 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getTask, resumeTask } from "../api/tasks";
+import { getTask, preparePublication, resumeTask } from "../api/tasks";
 import { AgentPipeline } from "../components/AgentPipeline";
 import { AuditTimeline } from "../components/AuditTimeline";
 import { useToast } from "../contexts/ToastContext";
-import type { CopySummary, TaskDetail as TaskDetailType, TaskStatus } from "../types/api";
+import type {
+  CopySummary,
+  PublishMediaType,
+  TaskDetail as TaskDetailType,
+  TaskStatus,
+} from "../types/api";
 import { PLATFORM_LABELS, STATUS_LABELS } from "../types/api";
 import { ApiError } from "../api/client";
 
 const POLL_INTERVAL = 3000;
 const TERMINAL: TaskStatus[] = ["completed", "failed"];
+
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    if (!copied) throw new Error("clipboard unavailable");
+  }
+}
 
 interface LongformBrief {
   target_reader?: string;
@@ -57,6 +80,14 @@ export function TaskDetail() {
   const [selectedCopyId, setSelectedCopyId] = useState<number | null>(null);
   const [resuming, setResuming] = useState(false);
   const [auditRefresh, setAuditRefresh] = useState(0);
+  const [preparingPlatform, setPreparingPlatform] = useState<
+    "toutiao" | "douyin" | null
+  >(null);
+  const [douyinMediaUrl, setDouyinMediaUrl] = useState("");
+  const [douyinMediaType, setDouyinMediaType] =
+    useState<PublishMediaType>("image");
+  const [publishBlockers, setPublishBlockers] = useState<string[]>([]);
+  const [fallbackCreatorUrl, setFallbackCreatorUrl] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!id || Number.isNaN(id)) return;
@@ -127,10 +158,77 @@ export function TaskDetail() {
 
   const handleCopy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyToClipboard(text);
       toast.success("已复制到剪贴板");
     } catch {
       toast.error("复制失败，请手动选择文本");
+    }
+  };
+
+  const handleToutiaoPublish = async () => {
+    if (!id || Number.isNaN(id) || !displayCopy?.is_final) return;
+    const creatorWindow = window.open("about:blank", "_blank");
+    if (creatorWindow) creatorWindow.opener = null;
+    setPreparingPlatform("toutiao");
+    setPublishBlockers([]);
+    setFallbackCreatorUrl(null);
+    try {
+      const response = await preparePublication(id, {
+        platform: "toutiao",
+        copy_id: displayCopy.id,
+      });
+      const preparation = response.data;
+      if (!preparation?.ready || !preparation.creator_url) {
+        creatorWindow?.close();
+        setPublishBlockers(preparation?.blockers ?? ["头条发布包暂不可用"]);
+        return;
+      }
+      await copyToClipboard(preparation.package_text);
+      if (creatorWindow) {
+        creatorWindow.location.href = preparation.creator_url;
+        toast.success("发布包已复制，请在头条创作页确认排版并发布");
+      } else {
+        setFallbackCreatorUrl(preparation.creator_url);
+        setPublishBlockers(["浏览器拦截了新窗口，请点击下方安全链接打开头条创作页"]);
+        toast.info("发布包已复制，但浏览器拦截了新窗口");
+      }
+    } catch (e) {
+      creatorWindow?.close();
+      toast.error(e instanceof ApiError ? e.message : "头条发布准备失败");
+    } finally {
+      setPreparingPlatform(null);
+    }
+  };
+
+  const handleDouyinPublish = async () => {
+    if (!id || Number.isNaN(id) || !displayCopy?.is_final) return;
+    if (!douyinMediaUrl.trim()) {
+      setPublishBlockers(["请先填写一个公网 HTTPS 图片或视频地址"]);
+      return;
+    }
+    setPreparingPlatform("douyin");
+    setPublishBlockers([]);
+    try {
+      const response = await preparePublication(id, {
+        platform: "douyin",
+        copy_id: displayCopy.id,
+        media_url: douyinMediaUrl.trim(),
+        media_type: douyinMediaType,
+      });
+      const preparation = response.data;
+      if (!preparation?.ready || !preparation.launch_url) {
+        setPublishBlockers(preparation?.blockers ?? ["抖音投稿能力暂不可用"]);
+        return;
+      }
+      await copyToClipboard(preparation.package_text);
+      toast.info("正在拉起抖音发布器；仍需由你本人确认发布");
+      window.location.href = preparation.launch_url;
+    } catch (e) {
+      const message = e instanceof ApiError ? e.message : "抖音投稿准备失败";
+      setPublishBlockers([message]);
+      toast.error(message);
+    } finally {
+      setPreparingPlatform(null);
     }
   };
 
@@ -453,37 +551,139 @@ export function TaskDetail() {
           <AuditTimeline taskId={task.id} refreshKey={auditRefresh} />
 
           {displayCopy && (
-            <article className="copy-result">
-              <header className="copy-result-header">
-                <h2>{displayCopy.title || "生成文案"}</h2>
-                {displayCopy.review_score != null && (
-                  <span className="score-badge">
-                    评分 {displayCopy.review_score}
-                  </span>
+            <>
+              <article className="copy-result">
+                <header className="copy-result-header">
+                  <h2>{displayCopy.title || "生成文案"}</h2>
+                  {displayCopy.review_score != null && (
+                    <span className="score-badge">
+                      评分 {displayCopy.review_score}
+                    </span>
+                  )}
+                  {displayCopy.is_final && (
+                    <span className="badge-final">终稿</span>
+                  )}
+                </header>
+                <pre className="copy-content">{displayCopy.content}</pre>
+                {displayCopy.hashtags && displayCopy.hashtags.length > 0 && (
+                  <p className="copy-tags">
+                    {displayCopy.hashtags.map((t) => `#${t}`).join(" ")}
+                  </p>
                 )}
-                {displayCopy.is_final && (
-                  <span className="badge-final">终稿</span>
+                <div className="copy-actions">
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => handleCopy(displayCopy.content)}
+                  >
+                    复制文案
+                  </button>
+                  <Link to="/create" className="btn-secondary">
+                    再写一篇
+                  </Link>
+                </div>
+              </article>
+
+            {displayCopy.is_final && (
+              <section
+                className="publish-panel"
+                aria-labelledby="publish-heading"
+              >
+                <header className="publish-panel-header">
+                  <div>
+                    <span>Publish handoff</span>
+                    <h2 id="publish-heading">把终稿交给平台</h2>
+                  </div>
+                  <p>系统只负责准备与拉起；最终发布必须由账号本人确认。</p>
+                </header>
+
+                {publishBlockers.length > 0 && (
+                  <div className="publish-blockers" role="alert">
+                    <strong>当前还不能继续</strong>
+                    <ul>
+                      {publishBlockers.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                    {fallbackCreatorUrl && (
+                      <a
+                        className="btn-secondary"
+                        href={fallbackCreatorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        手动打开头条创作页
+                      </a>
+                    )}
+                  </div>
                 )}
-              </header>
-              <pre className="copy-content">{displayCopy.content}</pre>
-              {displayCopy.hashtags && displayCopy.hashtags.length > 0 && (
-                <p className="copy-tags">
-                  {displayCopy.hashtags.map((t) => `#${t}`).join(" ")}
-                </p>
-              )}
-              <div className="copy-actions">
-                <button
-                  type="button"
-                  className="btn-primary"
-                  onClick={() => handleCopy(displayCopy.content)}
-                >
-                  复制文案
-                </button>
-                <Link to="/create" className="btn-secondary">
-                  再写一篇
-                </Link>
-              </div>
-            </article>
+
+                <div className="publish-options">
+                  <article className="publish-option toutiao-option">
+                    <span className="publish-option-index">01</span>
+                    <div>
+                      <h3>今日头条长文</h3>
+                      <p>复制标题、正文和标签，并打开头条图文创作页。</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      disabled={preparingPlatform !== null}
+                      onClick={handleToutiaoPublish}
+                    >
+                      {preparingPlatform === "toutiao" ? "准备中…" : "复制并打开头条"}
+                    </button>
+                  </article>
+
+                  <article className="publish-option douyin-option">
+                    <span className="publish-option-index">02</span>
+                    <div>
+                      <h3>抖音用户确认投稿</h3>
+                      <p>使用公网素材生成安全 H5 投稿链接，并在手机端拉起抖音发布器。</p>
+                    </div>
+                    <div className="publish-media-fields">
+                      <label>
+                        素材类型
+                        <select
+                          value={douyinMediaType}
+                          onChange={(event) =>
+                            setDouyinMediaType(
+                              event.target.value as PublishMediaType
+                            )
+                          }
+                        >
+                          <option value="image">图片</option>
+                          <option value="video">视频</option>
+                        </select>
+                      </label>
+                      <label>
+                        公网 HTTPS 素材地址
+                        <input
+                          type="url"
+                          inputMode="url"
+                          placeholder="https://cdn.example.com/content.jpg"
+                          value={douyinMediaUrl}
+                          onChange={(event) => setDouyinMediaUrl(event.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      disabled={preparingPlatform !== null}
+                      onClick={handleDouyinPublish}
+                    >
+                      {preparingPlatform === "douyin" ? "生成投稿链接…" : "拉起抖音发布器"}
+                    </button>
+                    <small>
+                      需先获批 h5.share、open.get.ticket 和
+                      aweme.share；拉起不等于发布成功。
+                    </small>
+                  </article>
+                </div>
+              </section>
+            )}
+            </>
           )}
 
           {copyList.length > 1 && (

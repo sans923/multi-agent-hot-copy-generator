@@ -173,6 +173,27 @@ export interface Copy {
   created_at: string;
 }
 
+export type PublishPlatform = "toutiao" | "douyin";
+export type PublishMediaType = "image" | "video";
+
+export interface PublishPreparation {
+  platform: PublishPlatform;
+  mode: "assisted_export" | "user_confirmed_post";
+  ready: boolean;
+  requires_user_confirmation: boolean;
+  copy_id: number;
+  title: string;
+  content: string;
+  hashtags: string[];
+  package_text: string;
+  creator_url: string | null;
+  launch_url: string | null;
+  media_url: string | null;
+  media_type: PublishMediaType | null;
+  blockers: string[];
+  instructions: string[];
+}
+
 export interface HotlistItem {
   id: number;
   source_platform: string;

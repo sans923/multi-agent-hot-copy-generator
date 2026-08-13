@@ -6,6 +6,9 @@ import type {
   TaskDetail,
   TaskPlatform,
   ExecutionMode,
+  PublishMediaType,
+  PublishPlatform,
+  PublishPreparation,
 } from "../types/api";
 
 export async function createTask(payload: {
@@ -46,4 +49,22 @@ export async function resumeTask(
     method: "POST",
     body: JSON.stringify({ action }),
   });
+}
+
+export async function preparePublication(
+  taskId: number,
+  payload: {
+    platform: PublishPlatform;
+    copy_id: number;
+    media_url?: string | null;
+    media_type?: PublishMediaType | null;
+  }
+) {
+  return request<PublishPreparation>(
+    `/api/v1/tasks/${taskId}/publish-preparation`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }
+  );
 }

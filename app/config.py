@@ -96,6 +96,7 @@ class Settings(BaseSettings):
     DOUYIN_CLIENT_SECRET: str = ""
     DOUYIN_API_BASE_URL: str = "https://open.douyin.com"
     DOUYIN_HTTP_TIMEOUT_SECONDS: float = 10.0
+    DOUYIN_MEDIA_ALLOWED_HOSTS: str = ""
 
     # --- 热榜 API 配置 ---
     JUHE_API_KEY: str = ""
@@ -119,6 +120,15 @@ class Settings(BaseSettings):
         if not self.JUDGE_MODEL.strip():
             self.JUDGE_MODEL = chat
         return self
+
+    @field_validator("DOUYIN_API_BASE_URL")
+    @classmethod
+    def validate_douyin_api_base_url(cls, value: str) -> str:
+        """凭证只能发送到抖音官方 HTTPS API 主机。"""
+        normalized = value.rstrip("/")
+        if normalized != "https://open.douyin.com":
+            raise ValueError("DOUYIN_API_BASE_URL 必须为 https://open.douyin.com")
+        return normalized
 
     @model_validator(mode="after")
     def assemble_database_url(self) -> "Settings":

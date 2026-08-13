@@ -1,5 +1,6 @@
 """发布准备接口的数据契约。"""
 
+from ipaddress import ip_address
 from typing import Literal
 
 from pydantic import BaseModel, Field, HttpUrl, model_validator
@@ -13,6 +14,7 @@ class PublishPreparationRequest(BaseModel):
     """准备头条发布包或抖音 H5 用户确认投稿。"""
 
     platform: PublishPlatform
+    copy_id: int = Field(gt=0, description="页面当前展示且准备发布的终稿 ID")
     media_url: HttpUrl | None = Field(
         default=None,
         description="抖音投稿使用的公网 HTTPS 图片或视频地址",
@@ -25,6 +27,23 @@ class PublishPreparationRequest(BaseModel):
             raise ValueError("media_url 与 media_type 必须同时提供")
         if self.media_url is not None and self.media_url.scheme != "https":
             raise ValueError("抖音投稿素材必须使用公网 HTTPS 地址")
+        if self.media_url is not None:
+            if self.media_url.username or self.media_url.password:
+                raise ValueError("抖音投稿素材地址不能包含用户名或密码")
+            if self.media_url.fragment:
+                raise ValueError("抖音投稿素材地址不能包含 URL fragment")
+
+            host = (self.media_url.host or "").rstrip(".").lower()
+            if host == "localhost" or host.endswith(".localhost"):
+                raise ValueError("抖音投稿素材必须使用公网 HTTPS 地址")
+            try:
+                if not ip_address(host).is_global:
+                    raise ValueError("抖音投稿素材必须使用公网 HTTPS 地址")
+            except ValueError as exc:
+                if str(exc) == "抖音投稿素材必须使用公网 HTTPS 地址":
+                    raise
+                if "." not in host:
+                    raise ValueError("抖音投稿素材必须使用公网 HTTPS 地址") from exc
         return self
 
 
@@ -46,4 +65,3 @@ class PublishPreparationResponse(BaseModel):
     media_type: MediaType | None = None
     blockers: list[str] = Field(default_factory=list)
     instructions: list[str] = Field(default_factory=list)
-

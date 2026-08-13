@@ -16,11 +16,13 @@ from app.schemas.publishing import (
     PublishPreparationRequest,
     PublishPreparationResponse,
 )
+from app.services.audit_service import write_audit_log
 from app.services.publishing_service import (
     DouyinOpenPlatformClient,
     DouyinOpenPlatformError,
     prepare_douyin_publication,
     prepare_toutiao_publication,
+    is_allowed_media_host,
 )
 
 
@@ -57,14 +59,17 @@ def prepare_publication(
 
     final_copy = (
         db.query(Copy)
-        .filter(Copy.task_id == task.id, Copy.is_final.is_(True))
-        .order_by(Copy.version.desc(), Copy.id.desc())
+        .filter(
+            Copy.id == body.copy_id,
+            Copy.task_id == task.id,
+            Copy.is_final.is_(True),
+        )
         .first()
     )
     if final_copy is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="任务尚无终稿，不能准备发布",
+            detail="所选文案不是该任务的有效终稿，不能准备发布",
         )
 
     if body.platform == "toutiao":
@@ -72,12 +77,18 @@ def prepare_publication(
     else:
         ticket = None
         external_blocker = None
+        if settings.DOUYIN_H5_SHARE_ENABLED and not settings.DOUYIN_CLIENT_SECRET.strip():
+            external_blocker = "未配置 DOUYIN_CLIENT_SECRET"
         can_request_ticket = all(
             (
                 settings.DOUYIN_H5_SHARE_ENABLED,
                 settings.DOUYIN_CLIENT_KEY.strip(),
                 settings.DOUYIN_CLIENT_SECRET.strip(),
                 body.media_url is not None,
+                is_allowed_media_host(
+                    body.media_url,
+                    settings.DOUYIN_MEDIA_ALLOWED_HOSTS,
+                ),
             )
         )
         if can_request_ticket:
@@ -91,12 +102,31 @@ def prepare_publication(
             enabled=settings.DOUYIN_H5_SHARE_ENABLED,
             client_key=settings.DOUYIN_CLIENT_KEY,
             ticket=ticket,
+            allowed_media_hosts=settings.DOUYIN_MEDIA_ALLOWED_HOSTS,
             external_blocker=external_blocker,
         )
+
+    write_audit_log(
+        db,
+        task.id,
+        "human",
+        "publish_preparation",
+        input_summary={
+            "platform": body.platform,
+            "copy_id": body.copy_id,
+            "media_type": body.media_type,
+        },
+        output_summary={
+            "mode": preparation.mode,
+            "ready": preparation.ready,
+            "requires_user_confirmation": preparation.requires_user_confirmation,
+            "blocker_count": len(preparation.blockers),
+        },
+        status="success" if preparation.ready else "blocked",
+    )
 
     return ApiResponse(
         success=True,
         message="发布准备已完成" if preparation.ready else "发布准备存在阻断项",
         data=preparation,
     )
-
