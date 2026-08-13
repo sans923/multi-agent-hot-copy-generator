@@ -1,5 +1,7 @@
 import json
+import threading
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -7,7 +9,9 @@ from app.evaluation.prompt_injection_ab import (
     AdversarialCase,
     EvaluationRun,
     PromptInjectionABEvaluator,
+    append_run_jsonl,
     build_messages,
+    load_runs_jsonl,
     load_cases,
     score_run,
     summarize_runs,
@@ -118,6 +122,98 @@ class PromptVariantTest(unittest.TestCase):
 
 
 class PromptInjectionRunnerTest(unittest.TestCase):
+    def test_jsonl_checkpoint_can_resume_after_partial_last_line(self):
+        run = EvaluationRun(
+            case_id="case-1",
+            source="user",
+            variant="baseline",
+            repetition=1,
+            model="fake-model",
+            final_response="ok",
+            requested_tools=[],
+            tool_arguments=[],
+            tokens_used=3,
+            latency_ms=2.0,
+            finish_reason="stop",
+        )
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "runs.jsonl"
+            append_run_jsonl(path, run)
+            with path.open("a", encoding="utf-8") as handle:
+                handle.write('{"case_id":"partial"')
+
+            loaded = load_runs_jsonl(path)
+
+        self.assertEqual(len(loaded), 1)
+        self.assertEqual(loaded[0].case_id, "case-1")
+
+    def test_run_suite_supports_bounded_parallelism_callback_and_resume(self):
+        cases = load_cases(FIXTURE_PATH)[:2]
+        evaluator = PromptInjectionABEvaluator(
+            client=_FakeClient([]),
+            model="fake-model",
+            role_prompt="角色规则。",
+        )
+        active = 0
+        peak_active = 0
+        lock = threading.Lock()
+        completed = []
+
+        def fake_run_case(case, variant, repetition):
+            nonlocal active, peak_active
+            with lock:
+                active += 1
+                peak_active = max(peak_active, active)
+            threading.Event().wait(0.02)
+            with lock:
+                active -= 1
+            return EvaluationRun(
+                case_id=case.case_id,
+                source=case.source,
+                variant=variant,
+                repetition=repetition,
+                model="fake-model",
+                final_response="ok",
+                requested_tools=[],
+                tool_arguments=[],
+                tokens_used=1,
+                latency_ms=1.0,
+                finish_reason="stop",
+            )
+
+        skipped = {(cases[0].case_id, "baseline", 1)}
+        with patch.object(evaluator, "run_case", side_effect=fake_run_case):
+            runs = evaluator.run_suite(
+                cases,
+                repetitions=1,
+                max_workers=2,
+                on_result=completed.append,
+                completed_keys=skipped,
+            )
+
+        self.assertEqual(len(runs), 3)
+        self.assertEqual(len(completed), 3)
+        self.assertEqual(peak_active, 2)
+        self.assertEqual(
+            [(run.case_id, run.variant, run.repetition) for run in runs],
+            sorted(
+                (run.case_id, run.variant, run.repetition)
+                for run in runs
+            ),
+        )
+
+    def test_run_suite_rejects_invalid_worker_count(self):
+        evaluator = PromptInjectionABEvaluator(
+            client=_FakeClient([]),
+            model="fake-model",
+            role_prompt="角色规则。",
+        )
+
+        with self.assertRaisesRegex(ValueError, "max_workers"):
+            evaluator.run_suite([], repetitions=1, max_workers=0)
+
     def test_forbidden_tool_is_recorded_but_never_executed(self):
         case = load_cases(FIXTURE_PATH)[3]
         client = _FakeClient([
@@ -222,6 +318,13 @@ class PromptInjectionRunnerTest(unittest.TestCase):
         self.assertEqual(summary["variants"]["hardened"]["attack_success_rate"], 0.0)
         self.assertEqual(summary["delta"]["mean_tokens"], 10.0)
         self.assertEqual(summary["delta"]["mean_latency_ms"], 20.0)
+        self.assertEqual(
+            summary["variants"]["baseline"]["attack_success_wilson_95"]["estimate"],
+            1.0,
+        )
+        self.assertEqual(summary["paired_comparison"]["improved"], 1)
+        self.assertEqual(summary["paired_comparison"]["regressed"], 0)
+        self.assertEqual(summary["paired_comparison"]["mcnemar_exact_p"], 1.0)
 
     def test_fixture_remains_valid_json(self):
         raw = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
