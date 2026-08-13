@@ -12,6 +12,7 @@ import type {
 } from "../types/api";
 import { PLATFORM_LABELS, STATUS_LABELS } from "../types/api";
 import { ApiError } from "../api/client";
+import { openExternalApp } from "../utils/externalNavigation";
 
 const POLL_INTERVAL = 3000;
 const TERMINAL: TaskStatus[] = ["completed", "failed"];
@@ -177,6 +178,7 @@ export function TaskDetail() {
         platform: "toutiao",
         copy_id: displayCopy.id,
       });
+      setAuditRefresh((n) => n + 1);
       const preparation = response.data;
       if (!preparation?.ready || !preparation.creator_url) {
         creatorWindow?.close();
@@ -208,6 +210,7 @@ export function TaskDetail() {
     }
     setPreparingPlatform("douyin");
     setPublishBlockers([]);
+    setFallbackCreatorUrl(null);
     try {
       const response = await preparePublication(id, {
         platform: "douyin",
@@ -215,6 +218,7 @@ export function TaskDetail() {
         media_url: douyinMediaUrl.trim(),
         media_type: douyinMediaType,
       });
+      setAuditRefresh((n) => n + 1);
       const preparation = response.data;
       if (!preparation?.ready || !preparation.launch_url) {
         setPublishBlockers(preparation?.blockers ?? ["抖音投稿能力暂不可用"]);
@@ -222,7 +226,7 @@ export function TaskDetail() {
       }
       await copyToClipboard(preparation.package_text);
       toast.info("正在拉起抖音发布器；仍需由你本人确认发布");
-      window.location.href = preparation.launch_url;
+      openExternalApp(preparation.launch_url);
     } catch (e) {
       const message = e instanceof ApiError ? e.message : "抖音投稿准备失败";
       setPublishBlockers([message]);
