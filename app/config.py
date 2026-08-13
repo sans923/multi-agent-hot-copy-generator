@@ -90,6 +90,13 @@ class Settings(BaseSettings):
     RAG_CHUNK_OVERLAP: int = 80
     RAG_TOP_K: int = 3
 
+    # --- 辅助发布 / 抖音 H5 用户确认投稿 ---
+    DOUYIN_H5_SHARE_ENABLED: bool = False
+    DOUYIN_CLIENT_KEY: str = ""
+    DOUYIN_CLIENT_SECRET: str = ""
+    DOUYIN_API_BASE_URL: str = "https://open.douyin.com"
+    DOUYIN_HTTP_TIMEOUT_SECONDS: float = 10.0
+
     # --- 热榜 API 配置 ---
     JUHE_API_KEY: str = ""
     JUHE_HOTLIST_URL: str = "https://apis.juhe.cn/fapigx/networkhot/query"
