@@ -312,9 +312,7 @@ def process_one_task_execution_job(
         if heartbeat_thread is not None:
             heartbeat_thread.join(timeout=1)
 
-    if lease_lost.is_set():
-        logger.error(f"任务执行期间租约丢失，不写回队列状态: job_id={job.id}")
-    elif execution_error is not None:
+    if execution_error is not None:
         updated = mark_task_execution_failed(
             db,
             job.id,
@@ -326,6 +324,12 @@ def process_one_task_execution_job(
         )
         if not updated:
             logger.error(f"忽略已失效执行的失败写回: job_id={job.id}")
-    elif not mark_task_execution_completed(db, job.id, lease_token, attempt):
-        logger.error(f"忽略已失效执行的完成写回: job_id={job.id}")
+    else:
+        updated = mark_task_execution_completed(db, job.id, lease_token, attempt)
+        if not updated:
+            logger.error(f"忽略已失效执行的完成写回: job_id={job.id}")
+        elif lease_lost.is_set():
+            logger.warning(
+                f"heartbeat 状态未知，但 fencing CAS 确认当前租约后完成: job_id={job.id}"
+            )
     return True
