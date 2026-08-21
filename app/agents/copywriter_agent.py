@@ -111,6 +111,16 @@ class CopywriterAgent(BaseAgent):
 {memory_payload}
 """
 
+        knowledge_context = parsed_requirement.get("knowledge_context") or []
+        if knowledge_context:
+            from app.services.knowledge_service import build_knowledge_prompt_block
+
+            user_message += f"""
+
+【本次可引用知识证据】
+{build_knowledge_prompt_block(knowledge_context)}
+"""
+
         if platform == "toutiao" and content_brief and article_outline:
             longform_contract = json.dumps(
                 {

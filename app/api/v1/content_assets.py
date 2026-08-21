@@ -107,10 +107,18 @@ def remove_reference(
 
 @router.get("/style-cards", response_model=ApiResponse[list[StyleCardResponse]])
 def list_style_cards(
-    _: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    rows = db.query(StyleCard).order_by(StyleCard.updated_at.desc()).all()
+    rows = (
+        db.query(StyleCard)
+        .filter(
+            or_(StyleCard.owner_id.is_(None), StyleCard.owner_id == current_user.id),
+            StyleCard.status != "deprecated",
+        )
+        .order_by(StyleCard.priority.asc(), StyleCard.updated_at.desc())
+        .all()
+    )
     return ApiResponse(data=[StyleCardResponse(**style_card_to_dict(row)) for row in rows])
 
 

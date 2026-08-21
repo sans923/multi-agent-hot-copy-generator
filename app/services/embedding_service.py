@@ -180,6 +180,7 @@ def get_chroma_client() -> chromadb.PersistentClient:
 HOTLIST_COLLECTION = "hotlist_topics"    # 热榜话题
 DOCUMENTS_COLLECTION = "user_documents"  # 用户文档
 COPIES_COLLECTION = "copies"             # 按 user_id 隔离的历史文案
+KNOWLEDGE_COLLECTION = "knowledge_chunks" # 按 user_id/全局作用域隔离的知识分块
 
 
 # ====================================================
@@ -269,6 +270,69 @@ def delete_copy_from_chroma(copy_id: int) -> None:
     except Exception:
         return
     collection.delete(ids=[f"copy_{copy_id}"])
+
+
+def upsert_knowledge_chunk_to_chroma(
+    *,
+    chunk_id: int,
+    source_id: int,
+    user_id: int,
+    knowledge_type: str,
+    content: str,
+    source_version: int,
+) -> None:
+    """幂等写入受治理知识分块；全局来源保留 0 作用域。"""
+    if not content.strip():
+        raise ValueError("知识分块内容不能为空")
+    embedding = embed_single(content)
+    if not embedding:
+        raise RuntimeError("知识分块向量化返回空结果")
+    collection = get_chroma_client().get_or_create_collection(
+        name=KNOWLEDGE_COLLECTION,
+        metadata={"hnsw:space": "cosine"},
+    )
+    collection.upsert(
+        ids=[f"knowledge_chunk_{chunk_id}"],
+        documents=[content],
+        embeddings=[embedding],
+        metadatas=[{
+            "chunk_id": chunk_id,
+            "source_id": source_id,
+            "scope_user_id": int(user_id or 0),
+            "knowledge_type": knowledge_type,
+            "source_version": source_version,
+        }],
+    )
+
+
+def search_knowledge_chunks(
+    *, query: str, user_id: int, n_results: int = 10,
+) -> list[dict]:
+    """向量召回本人和全局知识；关系库仍负责最终权限与有效期过滤。"""
+    try:
+        collection = get_chroma_client().get_collection(name=KNOWLEDGE_COLLECTION)
+    except Exception:
+        return []
+    count = collection.count()
+    if count <= 0:
+        return []
+    embedding = embed_single(query)
+    if not embedding:
+        return []
+    result = collection.query(
+        query_embeddings=[embedding],
+        n_results=min(max(1, n_results), count),
+        where={"scope_user_id": {"$in": [0, int(user_id)]}},
+        include=["metadatas", "distances"],
+    )
+    items: list[dict] = []
+    if result.get("metadatas") and result["metadatas"][0]:
+        for metadata, distance in zip(result["metadatas"][0], result["distances"][0]):
+            items.append({
+                "chunk_id": int(metadata["chunk_id"]),
+                "vector_score": round(max(0.0, 1.0 - float(distance)), 6),
+            })
+    return items
 
 
 # ====================================================

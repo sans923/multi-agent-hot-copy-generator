@@ -32,6 +32,8 @@ from app.schemas.task import (
     TaskCopySummary,
     CopyResponse,
     TaskResumeRequest,
+    ContentBriefRequest,
+    ContentBriefResponse,
 )
 from app.schemas.common import ApiResponse, PaginationResponse
 from app.core.deps import get_current_active_user
@@ -41,6 +43,37 @@ from app.services.task_lifecycle_service import set_task_execution_status
 
 
 router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
+
+
+@router.put("/{task_id}/brief", response_model=ApiResponse[ContentBriefResponse])
+def update_content_brief(
+    task_id: int,
+    body: ContentBriefRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    task = db.query(Task).filter(Task.id == task_id, Task.user_id == current_user.id).first()
+    if task is None:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    brief = body.model_dump()
+    required = ("topic", "audience", "goal", "key_points")
+    missing = [key for key in required if not brief.get(key)]
+    completeness = round((len(required) - len(missing)) / len(required), 2)
+    task.content_brief = brief
+    task.brief_completeness = completeness
+    task.brief_missing_fields = missing
+    task.content_status = "brief_ready" if not missing else "brief_missing"
+    task.status_reason = None if not missing else f"Brief 缺少：{', '.join(missing)}"
+    from datetime import datetime
+
+    task.status_updated_at = datetime.utcnow()
+    db.commit()
+    return ApiResponse(data=ContentBriefResponse(
+        task_id=task.id,
+        brief=brief,
+        completeness_score=completeness,
+        missing_fields=missing,
+    ))
 
 
 def _run_agents_background(task_id: int) -> None:
@@ -120,7 +153,13 @@ def create_task(
     selected_style_card = None
     style_snapshot = None
     if task_data.style_card_id is not None:
-        selected_style_card = db.query(StyleCard).filter(StyleCard.id == task_data.style_card_id).first()
+        from sqlalchemy import or_
+
+        selected_style_card = db.query(StyleCard).filter(
+            StyleCard.id == task_data.style_card_id,
+            StyleCard.status == "active",
+            or_(StyleCard.owner_id == current_user.id, StyleCard.owner_id.is_(None)),
+        ).first()
         if selected_style_card is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="指定的风格卡不存在")
         if task_data.platform != TaskPlatform.TOUTIAO:
@@ -155,6 +194,14 @@ def create_task(
                 else (selected_style_card.confidence or 0)
             ),
         }
+        from app.services.style_resolution_service import resolve_style_snapshot
+
+        style_snapshot = resolve_style_snapshot(
+            db,
+            user_id=current_user.id,
+            platform=task_data.platform.value,
+            selected_style_card_id=selected_style_card.id,
+        )
 
     # 创建任务记录
     from app.services.orchestration_policy import resolve_execution_mode

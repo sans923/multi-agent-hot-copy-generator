@@ -12,6 +12,7 @@ from app.core.deps import get_current_active_user
 from app.database import Base, get_db
 from app.main import app
 from app.models.memory import StyleCardVersion, UserPreference
+from app.models.memory_index_job import MemoryIndexJob
 from app.models.style_card import StyleCard
 from app.models.task import Task, TaskPlatform
 from app.models.user import User
@@ -188,6 +189,52 @@ def test_hybrid_ranking_deduplicates_and_combines_lexical_and_vector_scores():
     assert [item["chunk_id"] for item in merged] == [2, 1, 3]
     assert len({item["chunk_id"] for item in merged}) == 3
     assert merged[0]["score"] == pytest.approx(0.89)
+
+
+def test_knowledge_chunks_use_outbox_indexing_and_vector_recall(monkeypatch):
+    created = client.post(
+        "/api/v1/knowledge/sources",
+        json={
+            "knowledge_type": "product_fact",
+            "title": "审计能力",
+            "content": "系统记录管理员操作与模型调用链。",
+        },
+    )
+    assert created.status_code == 201
+
+    db = Session()
+    jobs = db.query(MemoryIndexJob).filter_by(job_type="upsert_knowledge_chunk").all()
+    assert len(jobs) == 1
+    assert jobs[0].status == "pending"
+    chunk_id = jobs[0].entity_id
+
+    indexed: list[dict] = []
+    from app.services import embedding_service, knowledge_service
+    from app.services.memory_index_service import process_pending_memory_index_jobs
+
+    monkeypatch.setattr(
+        embedding_service,
+        "upsert_knowledge_chunk_to_chroma",
+        lambda **payload: indexed.append(payload),
+        raising=False,
+    )
+    result = process_pending_memory_index_jobs(db)
+    assert result == {"processed": 1, "completed": 1, "failed": 0}
+    assert indexed[0]["chunk_id"] == chunk_id
+    db.close()
+
+    monkeypatch.setattr(
+        knowledge_service,
+        "search_knowledge_vectors",
+        lambda **_kwargs: [{"chunk_id": chunk_id, "vector_score": 0.92}],
+        raising=False,
+    )
+    recalled = client.post(
+        "/api/v1/knowledge/search",
+        json={"query": "治理追踪", "knowledge_types": ["product_fact"]},
+    )
+    assert recalled.status_code == 200
+    assert recalled.json()["data"]["items"][0]["chunk_id"] == chunk_id
 
 
 def test_style_resolution_merges_platform_brand_selected_and_task_layers():

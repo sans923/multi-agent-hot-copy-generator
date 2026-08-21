@@ -19,6 +19,7 @@ from app.models.toutiao_reference import ToutiaoReference
 from app.models.style_card import StyleCard
 from app.models.memory_index_job import MemoryIndexJob
 from app.models.memory import MemoryFeedback, MemoryItem, StyleCardVersion, UserPreference
+from app.models.knowledge import KnowledgeChunk, KnowledgeSource
 
 __all__ = [
     "User",
@@ -36,4 +37,6 @@ __all__ = [
     "MemoryItem",
     "StyleCardVersion",
     "UserPreference",
+    "KnowledgeChunk",
+    "KnowledgeSource",
 ]

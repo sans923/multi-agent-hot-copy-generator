@@ -227,7 +227,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # 注册路由
 # ====================================================
 
-from app.api.v1 import auth, users, hotlist, tasks, logs, content_assets, publishing, memory  # noqa: E402
+from app.api.v1 import auth, users, hotlist, tasks, logs, content_assets, publishing, memory, knowledge  # noqa: E402
 
 # include_router 将路由注册到应用
 # prefix="/api/v1"：所有 v1 接口都以这个开头
@@ -241,6 +241,7 @@ app.include_router(logs.router, prefix="/api/v1")
 app.include_router(content_assets.router, prefix="/api/v1")
 app.include_router(publishing.router, prefix="/api/v1")
 app.include_router(memory.router, prefix="/api/v1")
+app.include_router(knowledge.router, prefix="/api/v1")
 
 
 # ====================================================

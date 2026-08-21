@@ -37,8 +37,13 @@ def reference_to_dict(row: ToutiaoReference) -> dict[str, Any]:
 def style_card_to_dict(row: StyleCard) -> dict[str, Any]:
     return {
         "id": row.id,
+        "owner_id": row.owner_id,
         "topic_cluster": row.topic_cluster,
         "platform": row.platform,
+        "layer": row.layer,
+        "priority": int(row.priority or 0),
+        "status": row.status,
+        "schema_version": int(row.schema_version or 1),
         "pattern_json": row.pattern_json or {},
         "avg_like_count": int(row.avg_like_count or 0),
         "source_article_ids": row.source_article_ids or [],

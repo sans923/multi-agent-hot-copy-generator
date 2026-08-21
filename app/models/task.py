@@ -9,7 +9,7 @@ Task 是整个系统的工作单元，3个 Agent 都围绕它协作
 """
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, JSON, Enum
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, JSON, Enum, Float
 from sqlalchemy.orm import relationship
 import enum
 
@@ -111,6 +111,10 @@ class Task(Base):
         nullable=True,
         comment="需求理解Agent解析后的结构化需求"
     )
+
+    content_brief = Column(JSON, nullable=True, comment="用户确认的结构化 Content Brief")
+    brief_completeness = Column(Float, nullable=False, default=0.0, comment="Brief 完整度 0-1")
+    brief_missing_fields = Column(JSON, nullable=True, comment="Brief 仍缺失的必填字段")
 
     # 关联的热榜话题ID（可为空，用户也可以不基于热榜生成）
     hotlist_id = Column(

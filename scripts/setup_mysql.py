@@ -22,6 +22,7 @@ def apply_schema_migrations() -> None:
         for migration_name in (
             "migrate_memory_index_lock.sql",
             "migrate_content_production_p0.sql",
+            "migrate_content_production_p1.sql",
         ):
             migration_path = Path(__file__).with_name(migration_name)
             sql = "\n".join(

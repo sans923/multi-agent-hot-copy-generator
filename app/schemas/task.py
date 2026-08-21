@@ -43,6 +43,21 @@ class TaskCreate(BaseModel):
         return v
 
 
+class ContentBriefRequest(BaseModel):
+    topic: Optional[str] = Field(default=None, max_length=200)
+    audience: Optional[str] = Field(default=None, max_length=500)
+    goal: Optional[str] = Field(default=None, max_length=500)
+    key_points: list[str] = Field(default_factory=list, max_length=30)
+    constraints: dict[str, Any] = Field(default_factory=dict)
+
+
+class ContentBriefResponse(BaseModel):
+    task_id: int
+    brief: dict[str, Any]
+    completeness_score: float
+    missing_fields: list[str]
+
+
 class TaskResponse(BaseModel):
     """任务信息响应"""
     id: int
@@ -56,6 +71,9 @@ class TaskResponse(BaseModel):
     status_reason: Optional[str] = None
     status_updated_at: datetime
     parsed_requirement: Optional[Any] = None
+    content_brief: Optional[dict[str, Any]] = None
+    brief_completeness: float = 0.0
+    brief_missing_fields: Optional[list[str]] = None
     orchestration_meta: Optional[Any] = None
     error_message: Optional[str] = None
     created_at: datetime

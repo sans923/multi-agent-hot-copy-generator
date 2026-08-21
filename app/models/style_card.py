@@ -6,7 +6,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, Float, JSON, Index
+from sqlalchemy import Column, Integer, String, Text, DateTime, Float, JSON, Index, ForeignKey
 
 from app.database import Base
 
@@ -15,8 +15,19 @@ class StyleCard(Base):
     __tablename__ = "style_cards"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+        comment="空值为全局规则，否则仅归属指定用户",
+    )
     topic_cluster = Column(String(100), nullable=False, index=True, comment="话题簇/关键词")
     platform = Column(String(30), default="toutiao", nullable=False, comment="适用平台")
+    layer = Column(String(30), default="account", nullable=False, comment="platform/brand/account/campaign")
+    priority = Column(Integer, default=30, nullable=False, comment="同层规则优先级")
+    status = Column(String(20), default="active", nullable=False, index=True)
+    schema_version = Column(Integer, default=1, nullable=False)
     pattern_json = Column(JSON, nullable=False, comment="抽象写作规律 JSON")
     avg_like_count = Column(Integer, default=0, comment="来源文章平均点赞")
     source_article_ids = Column(JSON, nullable=True, comment="来源 article_id 列表")

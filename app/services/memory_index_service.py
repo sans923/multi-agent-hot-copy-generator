@@ -78,7 +78,7 @@ def process_pending_memory_index_jobs(
     completed = 0
     failed = 0
     processed = 0
-    from app.services.embedding_service import upsert_copy_to_chroma
+    from app.services import embedding_service
 
     for job in jobs:
         prior_status = job.status
@@ -105,7 +105,16 @@ def process_pending_memory_index_jobs(
         processed += 1
         db.refresh(job)
         try:
-            upsert_copy_to_chroma(user_id=job.user_id, **dict(job.payload or {}))
+            if job.job_type == "upsert_copy":
+                embedding_service.upsert_copy_to_chroma(
+                    user_id=job.user_id, **dict(job.payload or {})
+                )
+            elif job.job_type == "upsert_knowledge_chunk":
+                embedding_service.upsert_knowledge_chunk_to_chroma(
+                    user_id=job.user_id, **dict(job.payload or {})
+                )
+            else:
+                raise ValueError(f"不支持的索引任务类型: {job.job_type}")
             job.status = "completed"
             job.locked_at = None
             job.last_error = None
@@ -119,6 +128,31 @@ def process_pending_memory_index_jobs(
                 f"历史文案索引失败: job_id={job.id}, attempts={job.attempts}, error={exc}"
             )
         db.commit()
+
+        if job.job_type == "upsert_knowledge_chunk" and job.status == "completed":
+            from app.models.knowledge import KnowledgeChunk, KnowledgeSource
+
+            chunk = db.query(KnowledgeChunk).filter_by(id=job.entity_id).first()
+            if chunk is not None:
+                source = db.query(KnowledgeSource).filter_by(id=chunk.source_id).first()
+                source_chunk_ids = [
+                    item[0]
+                    for item in db.query(KnowledgeChunk.id)
+                    .filter(KnowledgeChunk.source_id == chunk.source_id)
+                    .all()
+                ]
+                unfinished = (
+                    db.query(MemoryIndexJob)
+                    .filter(
+                        MemoryIndexJob.job_type == "upsert_knowledge_chunk",
+                        MemoryIndexJob.entity_id.in_(source_chunk_ids),
+                        MemoryIndexJob.status != "completed",
+                    )
+                    .count()
+                )
+                if source is not None and unfinished == 0:
+                    source.index_status = "completed"
+                    db.commit()
 
     return {"processed": processed, "completed": completed, "failed": failed}
 

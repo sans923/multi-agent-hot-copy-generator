@@ -46,3 +46,8 @@ class StyleCardResponse(BaseModel):
     confidence: float
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    owner_id: int | None = None
+    layer: str = "account"
+    priority: int = 30
+    status: str = "active"
+    schema_version: int = 1

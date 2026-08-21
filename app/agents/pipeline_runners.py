@@ -167,6 +167,41 @@ def run_copywriter_stage(
 
     try:
         parsed_requirement = dict(state.get("parsed_requirement") or {})
+        task = db.query(Task).filter(Task.id == task_id).first()
+        if task and isinstance(task.content_brief, dict) and task.brief_completeness >= 1:
+            parsed_requirement.update(task.content_brief)
+            parsed_requirement["content_brief"] = dict(task.content_brief)
+
+        if task:
+            from app.services.knowledge_service import search_knowledge
+
+            knowledge_query = " ".join(filter(None, [
+                str(parsed_requirement.get("topic") or task.raw_requirement),
+                *[str(value) for value in (parsed_requirement.get("keywords") or [])],
+            ]))
+            knowledge_result = search_knowledge(
+                db,
+                user_id=task.user_id,
+                query=knowledge_query,
+                limit=5,
+            )
+            if knowledge_result["items"]:
+                parsed_requirement["knowledge_context"] = knowledge_result["items"]
+                meta = dict(task.orchestration_meta or {})
+                meta["knowledge_citations"] = knowledge_result["citations"]
+                task.orchestration_meta = meta
+                db.commit()
+                write_audit_log(
+                    db,
+                    task_id,
+                    "asset",
+                    "knowledge_retrieved",
+                    agent_name="copywriter_agent",
+                    output_summary={
+                        "item_count": len(knowledge_result["items"]),
+                        "source_ids": [item["source_id"] for item in knowledge_result["citations"]],
+                    },
+                )
         selected_style_card_id = state.get("selected_style_card_id")
         if selected_style_card_id:
             from app.models.style_card import StyleCard
