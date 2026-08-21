@@ -19,6 +19,27 @@ from functools import lru_cache
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.config import settings
+from app.services.embedding_service import (
+    EMBEDDING_MODEL_REPO_ID,
+    _huggingface_offline_mode,
+)
+
+
+def _resolve_embedding_model() -> tuple[str, bool]:
+    """Return a local snapshot when available, otherwise allow first download."""
+    from huggingface_hub import snapshot_download
+
+    try:
+        with _huggingface_offline_mode():
+            return (
+                snapshot_download(
+                    repo_id=EMBEDDING_MODEL_REPO_ID,
+                    local_files_only=True,
+                ),
+                True,
+            )
+    except OSError:
+        return settings.RAG_EMBEDDING_MODEL, False
 
 
 @lru_cache()
@@ -32,8 +53,13 @@ def get_embeddings() -> HuggingFaceEmbeddings:
     在整体流程中：
         被 get_toutiao_vectorstore() 注入到 Chroma，所有头条 RAG 向量操作都经此模型。
     """
+    model_name, local_files_only = _resolve_embedding_model()
+    model_kwargs = {"device": "cpu"}
+    if local_files_only:
+        model_kwargs["local_files_only"] = True
+
     return HuggingFaceEmbeddings(
-        model_name=settings.RAG_EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"},
+        model_name=model_name,
+        model_kwargs=model_kwargs,
         encode_kwargs={"normalize_embeddings": True},
     )
