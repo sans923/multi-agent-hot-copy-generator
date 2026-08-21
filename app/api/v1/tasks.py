@@ -16,8 +16,9 @@
 """
 
 from contextlib import contextmanager
+from threading import Event as ThreadEvent
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import event
+from sqlalchemy import event, select
 from sqlalchemy.orm import Session
 from typing import Any
 
@@ -56,9 +57,12 @@ def _assert_task_execution_lease(
     execution_job_id: int | None,
     lease_token: str | None,
     attempt: int | None,
+    lease_lost_event: ThreadEvent | None = None,
 ) -> None:
     if execution_job_id is None:
         return
+    if lease_lost_event is not None and lease_lost_event.is_set():
+        raise TaskExecutionLeaseLost(f"任务 Job {execution_job_id} 的 heartbeat 已失效")
     check_db = SessionLocal()
     try:
         current = check_db.query(TaskExecutionJob.id).filter(
@@ -73,27 +77,95 @@ def _assert_task_execution_lease(
         raise TaskExecutionLeaseLost(f"任务 Job {execution_job_id} 的执行租约已失效")
 
 
+def _lock_task_execution_lease(
+    db: Session,
+    execution_job_id: int,
+    lease_token: str | None,
+    attempt: int | None,
+    lease_lost_event: ThreadEvent | None,
+) -> None:
+    """在业务写事务内锁定当前 Job 行，封闭校验到写入的 TOCTOU 窗口。"""
+    if lease_lost_event is not None and lease_lost_event.is_set():
+        raise TaskExecutionLeaseLost(f"任务 Job {execution_job_id} 的 heartbeat 已失效")
+    statement = (
+        select(TaskExecutionJob.id)
+        .where(
+            TaskExecutionJob.id == execution_job_id,
+            TaskExecutionJob.status == "processing",
+            TaskExecutionJob.lease_token == lease_token,
+            TaskExecutionJob.attempts == attempt,
+        )
+        .with_for_update()
+    )
+    if db.connection().execute(statement).first() is None:
+        raise TaskExecutionLeaseLost(f"任务 Job {execution_job_id} 的执行租约已失效")
+
+
+def _install_task_execution_lease_guard(
+    db: Session,
+    execution_job_id: int,
+    lease_token: str | None,
+    attempt: int | None,
+    lease_lost_event: ThreadEvent | None = None,
+):
+    """同时覆盖 ORM flush 与 bulk UPDATE/DELETE，并返回可移除的监听器。"""
+    def before_flush(session, _flush_context, _instances) -> None:
+        _lock_task_execution_lease(
+            session, execution_job_id, lease_token, attempt, lease_lost_event
+        )
+
+    def before_orm_execute(execute_state) -> None:
+        if execute_state.is_update or execute_state.is_delete:
+            _lock_task_execution_lease(
+                execute_state.session,
+                execution_job_id,
+                lease_token,
+                attempt,
+                lease_lost_event,
+            )
+
+    event.listen(db, "before_flush", before_flush)
+    event.listen(db, "do_orm_execute", before_orm_execute)
+    return before_flush, before_orm_execute
+
+
+def _new_guarded_execution_session(
+    execution_job_id: int,
+    lease_token: str | None,
+    attempt: int | None,
+    lease_lost_event: ThreadEvent | None,
+) -> Session:
+    db = SessionLocal()
+    _install_task_execution_lease_guard(
+        db, execution_job_id, lease_token, attempt, lease_lost_event
+    )
+    return db
+
+
 @contextmanager
 def _task_execution_lease_guard(
     db: Session,
     execution_job_id: int | None,
     lease_token: str | None,
     attempt: int | None,
+    lease_lost_event: ThreadEvent | None = None,
 ):
     """在编排 Session 每次 flush 前校验 Job fencing token。"""
     if execution_job_id is None:
         yield
         return
 
-    def before_flush(_session, _flush_context, _instances) -> None:
-        _assert_task_execution_lease(execution_job_id, lease_token, attempt)
-
-    _assert_task_execution_lease(execution_job_id, lease_token, attempt)
-    event.listen(db, "before_flush", before_flush)
+    _assert_task_execution_lease(
+        execution_job_id, lease_token, attempt, lease_lost_event
+    )
+    before_flush, before_orm_execute = _install_task_execution_lease_guard(
+        db, execution_job_id, lease_token, attempt, lease_lost_event
+    )
     try:
         yield
     finally:
         event.remove(db, "before_flush", before_flush)
+        event.remove(db, "do_orm_execute", before_orm_execute)
 
 
 @router.put("/{task_id}/brief", response_model=ApiResponse[ContentBriefResponse])
@@ -133,6 +205,7 @@ def _run_agents_background(
     execution_job_id: int | None = None,
     lease_token: str | None = None,
     attempt: int | None = None,
+    lease_lost_event: ThreadEvent | None = None,
 ) -> dict[str, Any]:
     db = SessionLocal()
     engine = None
@@ -146,8 +219,12 @@ def _run_agents_background(
         meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
         engine_name = "langgraph" if meta.get("execution_mode") else settings.ORCHESTRATION_ENGINE
         engine = get_orchestration_engine(engine_name)
+        if execution_job_id is not None and hasattr(engine, "session_factory"):
+            engine.session_factory = lambda: _new_guarded_execution_session(
+                execution_job_id, lease_token, attempt, lease_lost_event
+            )
         with _task_execution_lease_guard(
-            db, execution_job_id, lease_token, attempt
+            db, execution_job_id, lease_token, attempt, lease_lost_event
         ):
             result = engine.run(db=db, task_id=task_id)
             logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
@@ -171,7 +248,7 @@ def _run_agents_background(
         if isinstance(e, TaskExecutionLeaseLost):
             raise
         with _task_execution_lease_guard(
-            db, execution_job_id, lease_token, attempt
+            db, execution_job_id, lease_token, attempt, lease_lost_event
         ):
             write_log(
                 db,
@@ -436,6 +513,7 @@ def _resume_task_background(
     execution_job_id: int | None = None,
     lease_token: str | None = None,
     attempt: int | None = None,
+    lease_lost_event: ThreadEvent | None = None,
 ) -> dict[str, Any]:
     """后台恢复 awaiting_human 任务。"""
     db = SessionLocal()
@@ -445,12 +523,16 @@ def _resume_task_background(
         from app.orchestration import get_orchestration_engine
 
         with _task_execution_lease_guard(
-            db, execution_job_id, lease_token, attempt
+            db, execution_job_id, lease_token, attempt, lease_lost_event
         ):
             task = db.query(Task).filter(Task.id == task_id).first()
             meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
             if meta.get("durability_mode") == "langgraph_sqlite_v1":
                 engine = get_orchestration_engine("langgraph")
+                if execution_job_id is not None:
+                    engine.session_factory = lambda: _new_guarded_execution_session(
+                        execution_job_id, lease_token, attempt, lease_lost_event
+                    )
                 try:
                     result = engine.resume(
                         db,
@@ -489,7 +571,7 @@ def _resume_task_background(
         if isinstance(e, TaskExecutionLeaseLost):
             raise
         with _task_execution_lease_guard(
-            db, execution_job_id, lease_token, attempt
+            db, execution_job_id, lease_token, attempt, lease_lost_event
         ):
             task = db.query(Task).filter(Task.id == task_id).first()
             meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}

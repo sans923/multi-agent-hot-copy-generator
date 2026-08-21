@@ -41,6 +41,7 @@ def execute_job(job: TaskExecutionJob) -> None:
         "execution_job_id": job.id,
         "lease_token": str(job.lease_token),
         "attempt": int(job.attempts),
+        "lease_lost_event": getattr(job, "_lease_lost_event", None),
     }
 
     if job.job_type == "start":

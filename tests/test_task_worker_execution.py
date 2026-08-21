@@ -49,6 +49,8 @@ def test_worker_forwards_job_fence_to_orchestration(monkeypatch):
 
     task_worker.execute_job(job)
 
+    lease_lost_event = seen.pop("lease_lost_event")
+    assert lease_lost_event is None
     assert seen == {
         "task_id": 42,
         "execution_job_id": 7,

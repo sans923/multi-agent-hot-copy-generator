@@ -274,6 +274,8 @@ def process_one_task_execution_job(
     attempt = int(job.attempts)
     stop_heartbeat = Event()
     lease_lost = Event()
+    # 仅运行时属性：让编排层所有 Session 共享即时失租信号。
+    job._lease_lost_event = lease_lost
     heartbeat_thread = None
     if heartbeat_session_factory is not None:
         interval = heartbeat_interval_seconds or max(1.0, lease_seconds / 3)
