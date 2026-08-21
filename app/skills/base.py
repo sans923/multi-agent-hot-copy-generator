@@ -276,6 +276,13 @@ class SkillExecutor:
             logger.error(f"Skill 参数解析失败: {function_name}, args: {function_args_json}")
             return json.dumps(error_result, ensure_ascii=False)
 
+        # 服务端可信执行上下文使用保留前缀，覆盖模型可能伪造的同名值。
+        # Skill 可以用它校验对象归属；这些字段不会出现在 Tool Schema 中。
+        if task_id is not None:
+            args["_task_id"] = task_id
+        if agent_name is not None:
+            args["_agent_name"] = agent_name
+
         # 4. 执行 Skill
         try:
             logger.info(f"执行 Skill: {function_name}, args: {args}")

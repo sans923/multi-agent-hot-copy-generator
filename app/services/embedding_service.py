@@ -44,6 +44,7 @@ paraphrase-multilingual-MiniLM-L12-v2
 import hashlib
 import json
 import os
+from contextlib import contextmanager
 from pathlib import Path
 import sqlite3
 from typing import Optional
@@ -61,6 +62,27 @@ _st_model = None  # 延迟加载，首次调用时初始化
 
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 EMBEDDING_DIM = 384  # 该模型的向量维度
+
+
+@contextmanager
+def _huggingface_offline_mode():
+    """Temporarily block hidden Hugging Face network calls during cache loads."""
+    import huggingface_hub.constants as hf_constants
+    from huggingface_hub.utils._http import reset_sessions
+
+    previous_env = os.environ.get("HF_HUB_OFFLINE")
+    previous_constant = hf_constants.HF_HUB_OFFLINE
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    hf_constants.HF_HUB_OFFLINE = True
+    try:
+        yield
+    finally:
+        hf_constants.HF_HUB_OFFLINE = previous_constant
+        if previous_env is None:
+            os.environ.pop("HF_HUB_OFFLINE", None)
+        else:
+            os.environ["HF_HUB_OFFLINE"] = previous_env
+        reset_sessions()
 
 
 def _schema_vector_space(schema: dict) -> str:
@@ -164,12 +186,18 @@ def _get_st_model():
     if _st_model is None:
         try:
             from sentence_transformers import SentenceTransformer
+            from huggingface_hub import snapshot_download
             logger.info(f"从本地缓存加载 Embedding 模型: {EMBEDDING_MODEL_NAME}")
             try:
-                _st_model = SentenceTransformer(
-                    EMBEDDING_MODEL_NAME,
-                    local_files_only=True,
-                )
+                with _huggingface_offline_mode():
+                    cached_model_path = snapshot_download(
+                        repo_id=EMBEDDING_MODEL_NAME,
+                        local_files_only=True,
+                    )
+                    _st_model = SentenceTransformer(
+                        cached_model_path,
+                        local_files_only=True,
+                    )
             except OSError:
                 logger.info(
                     f"本地无可用模型缓存，开始下载: {EMBEDDING_MODEL_NAME}"
@@ -213,6 +241,7 @@ def get_chroma_client() -> chromadb.PersistentClient:
 # ====================================================
 HOTLIST_COLLECTION = "hotlist_topics"    # 热榜话题
 DOCUMENTS_COLLECTION = "user_documents"  # 用户文档
+COPIES_COLLECTION = "copies"             # 按 user_id 隔离的历史文案
 
 
 # ====================================================
@@ -250,6 +279,58 @@ def embed_single(text: str) -> list[float]:
     """向量化单条文本（便捷方法）"""
     results = embed_texts([text])
     return results[0] if results else []
+
+
+def upsert_copy_to_chroma(
+    *,
+    copy_id: int,
+    task_id: int,
+    user_id: int,
+    content: str,
+    platform: str,
+    tone: str = "",
+    version: int = 1,
+    is_final: bool = False,
+    hot_keywords: list[str] | None = None,
+    title: str = "",
+    review_score: float = 0,
+) -> None:
+    """幂等写入历史文案索引；user_id 是检索时不可省略的硬过滤字段。"""
+    if not content.strip():
+        raise ValueError("历史文案内容不能为空")
+    embedding = embed_single(content)
+    if not embedding:
+        raise RuntimeError("历史文案向量化返回空结果")
+    collection = get_chroma_client().get_or_create_collection(
+        name=COPIES_COLLECTION,
+        metadata={"hnsw:space": "cosine"},
+    )
+    collection.upsert(
+        ids=[f"copy_{copy_id}"],
+        documents=[content],
+        embeddings=[embedding],
+        metadatas=[{
+            "copy_id": copy_id,
+            "task_id": task_id,
+            "user_id": user_id,
+            "title": title,
+            "platform": platform,
+            "tone": tone,
+            "version": version,
+            "is_final": bool(is_final),
+            "review_score": float(review_score or 0),
+            "hot_keywords": ",".join(hot_keywords or []),
+        }],
+    )
+
+
+def delete_copy_from_chroma(copy_id: int) -> None:
+    """删除可重建的历史文案派生索引；collection 不存在视为幂等成功。"""
+    try:
+        collection = get_chroma_client().get_collection(name=COPIES_COLLECTION)
+    except Exception:
+        return
+    collection.delete(ids=[f"copy_{copy_id}"])
 
 
 # ====================================================

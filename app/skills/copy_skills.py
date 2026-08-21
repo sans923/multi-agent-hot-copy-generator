@@ -630,6 +630,7 @@ class SaveFinalCopySkill(BaseSkill):
 
     def execute(self, db: Session, **kwargs) -> dict:
         from app.models.copy import Copy
+        from app.models.task import Task
 
         task_id = kwargs.get("task_id")
         title = kwargs.get("title", "")
@@ -641,12 +642,20 @@ class SaveFinalCopySkill(BaseSkill):
         version = kwargs.get("version", 1)
         is_final = kwargs.get("is_final", False)
         tokens_used = kwargs.get("tokens_used", 0)
+        trusted_task_id = kwargs.get("_task_id")
 
         if not content:
             return {"success": False, "error": "文案内容不能为空"}
 
         if not task_id:
             return {"success": False, "error": "task_id 不能为空"}
+
+        if trusted_task_id is not None and int(task_id) != int(trusted_task_id):
+            return {"success": False, "error": "task_id 与服务端任务上下文不一致"}
+
+        task = db.query(Task).filter(Task.id == task_id).first()
+        if task is None:
+            return {"success": False, "error": "任务不存在，无法保存文案"}
 
         # 创建文案记录
         copy = Copy(
@@ -668,17 +677,25 @@ class SaveFinalCopySkill(BaseSkill):
 
         logger.info(f"文案已保存: copy_id={copy.id}, task_id={task_id}, version={version}")
 
-        #trae 将文案向量化后存入 ChromaDB，供后续 RAG 检索使用
-        from app.services.embedding_service import upsert_copy_to_chroma
-        upsert_copy_to_chroma(
+        # 向量索引是可重建派生数据：使用 Outbox，索引故障不得回滚已保存的 Copy。
+        from app.services.memory_index_service import enqueue_copy_index
+
+        index_job = enqueue_copy_index(
+            db,
             copy_id=copy.id,
-            task_id=task_id,
-            content=content,
-            platform=platform,
-            tone=tone,
-            version=version,
-            is_final=is_final,
-            hot_keywords=hot_keywords,
+            user_id=task.user_id,
+            payload={
+                "copy_id": copy.id,
+                "task_id": task_id,
+                "content": content,
+                "title": title,
+                "platform": platform,
+                "tone": tone,
+                "version": version,
+                "is_final": is_final,
+                "hot_keywords": hot_keywords,
+                "review_score": float(copy.review_score or 0),
+            },
         )
 
         return {
@@ -686,5 +703,6 @@ class SaveFinalCopySkill(BaseSkill):
             "copy_id": copy.id,
             "task_id": task_id,
             "version": version,
+            "memory_index_status": index_job.status,
             "message": f"文案已保存，copy_id={copy.id}"
         }

@@ -27,6 +27,10 @@ from app.skills.base import BaseSkill
 from app.utils.logger import logger
 
 
+class MemoryIndexUnavailable(RuntimeError):
+    """向量索引不可用，应进入关系数据库安全降级。"""
+
+
 class SearchSimilarCopiesSkill(BaseSkill):
     """
     Skill 4: 检索相似历史文案
@@ -75,16 +79,34 @@ class SearchSimilarCopiesSkill(BaseSkill):
         query_text: str = kwargs.get("query_text", "")
         platform: str = kwargs.get("platform", "all")
         limit: int = min(kwargs.get("limit", 3), 5)
+        trusted_task_id = kwargs.get("_task_id") or kwargs.get("task_id")
 
         if not query_text:
             return {"success": False, "error": "查询文本不能为空", "similar_copies": []}
 
+        from app.models.task import Task
+
+        task = db.query(Task).filter(Task.id == trusted_task_id).first()
+        if task is None:
+            return {
+                "success": False,
+                "error": "缺少有效的任务上下文，无法安全检索历史文案",
+                "similar_copies": [],
+            }
+        user_id = task.user_id
+
         # 尝试从 ChromaDB 检索
+        retrieval_source = "chroma"
         try:
-            similar_copies = self._search_from_chromadb(query_text, platform, limit)
+            similar_copies = self._search_from_chromadb(
+                query_text, platform, limit, user_id=user_id
+            )
         except Exception as e:
             logger.warning(f"ChromaDB 检索失败，降级到数据库检索: {e}")
-            similar_copies = self._search_from_db(db, query_text, platform, limit)
+            similar_copies = self._search_from_db(
+                db, query_text, platform, limit, user_id=user_id
+            )
+            retrieval_source = "database_fallback"
 
         logger.info(f"相似文案检索: query='{query_text[:30]}...', 找到 {len(similar_copies)} 条")
 
@@ -98,40 +120,48 @@ class SearchSimilarCopiesSkill(BaseSkill):
         return {
             "success": True,
             "similar_copies": similar_copies,
+            "retrieval_source": retrieval_source,
             "message": f"找到 {len(similar_copies)} 条相似历史文案，可作为风格参考"
         }
 
-    def _search_from_chromadb(self, query_text: str, platform: str, limit: int) -> list[dict]:
+    def _search_from_chromadb(
+        self,
+        query_text: str,
+        platform: str,
+        limit: int,
+        *,
+        user_id: int,
+    ) -> list[dict]:
         """从 ChromaDB 向量库检索（语义搜索）"""
         import chromadb
         from app.config import settings
-        from app.services.embedding_service import EmbeddingService
+        from app.services.embedding_service import embed_single
 
         client = chromadb.PersistentClient(path=settings.CHROMA_PERSIST_PATH)
 
         # 获取文案 collection
         try:
             collection = client.get_collection("copies")
-        except Exception:
-            return []  # collection 还没创建，说明还没有历史文案
+        except Exception as exc:
+            raise MemoryIndexUnavailable("历史文案向量集合不存在") from exc
 
         # 用 embedding 服务把查询文本向量化
-        embedding_service = EmbeddingService()
-        query_vector = embedding_service.embed_text_sync(query_text)
+        query_vector = embed_single(query_text)
 
         if not query_vector:
             return []
 
         # 构建过滤条件
-        where = {}
+        conditions = [{"user_id": {"$eq": user_id}}]
         if platform and platform != "all":
-            where = {"platform": {"$eq": platform}}
+            conditions.append({"platform": {"$eq": platform}})
+        where = conditions[0] if len(conditions) == 1 else {"$and": conditions}
 
         # 向量检索
         results = collection.query(
             query_embeddings=[query_vector],
             n_results=limit,
-            where=where if where else None,
+            where=where,
             include=["documents", "metadatas", "distances"]
         )
 
@@ -152,18 +182,31 @@ class SearchSimilarCopiesSkill(BaseSkill):
 
         return copies
 
-    def _search_from_db(self, db: Session, query_text: str, platform: str, limit: int) -> list[dict]:
+    def _search_from_db(
+        self,
+        db: Session,
+        query_text: str,
+        platform: str,
+        limit: int,
+        *,
+        user_id: int,
+    ) -> list[dict]:
         """
         降级方案：从数据库用关键词搜索（当 ChromaDB 不可用时）
         效果不如向量搜索，但总比没有好
         """
         from app.models.copy import Copy
+        from app.models.task import Task
         from sqlalchemy import desc
 
         # 提取查询关键词（简单按空格和逗号分割）
         keywords = [w.strip() for w in query_text.replace("，", ",").replace(" ", ",").split(",") if w.strip()]
 
-        query = db.query(Copy).filter(Copy.review_score >= 70)  # 只取高质量文案
+        query = (
+            db.query(Copy)
+            .join(Task, Task.id == Copy.task_id)
+            .filter(Task.user_id == user_id, Copy.review_score >= 70)
+        )
 
         if platform and platform != "all":
             query = query.filter(Copy.platform == platform)
