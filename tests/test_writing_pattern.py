@@ -22,7 +22,7 @@ from app.services.writing_pattern_service import (
     deidentify_text,
     has_ngram_overlap,
 )
-from app.skills.copy_skills import GenerateOutlineSkill
+from app.skills.copy_skills import GenerateOutlineSkill, WriteCopyDraftSkill
 from app.skills.style_skills import (
     ExtractWritingPatternSkill,
     SearchHotArticlesByTopicSkill,
@@ -53,6 +53,25 @@ def db():
         yield session
     finally:
         session.close()
+
+
+def test_writing_brief_accepts_plain_text_hook_pattern():
+    """模型可能把 hook 返回为自然语言，写作摘要不应因此中断生成链路。"""
+    brief = WriteCopyDraftSkill()._build_writing_brief(
+        outline={"topic": "AI 办公", "platform": "weibo", "sections": []},
+        platform_rules={},
+        similar_copies=[],
+        hot_titles=[],
+        extra_requirements="",
+        writing_pattern={
+            "hook": "痛点式提问抓注意力",
+            "rhythm": "短句为主",
+            "cta": "提问式结尾",
+        },
+    )
+
+    assert brief["writing_pattern"]["hook_type"] == "痛点式提问抓注意力"
+    assert brief["writing_pattern"]["cta_pattern"] == "提问式结尾"
 
 
 def test_deidentify_text_masks_urls():
