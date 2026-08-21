@@ -320,7 +320,7 @@ def test_stale_dead_reviver_cannot_overwrite_a_new_claim(db):
     second_session.close()
 
 
-def test_heartbeat_failure_prevents_successful_ack(db):
+def test_heartbeat_failure_uses_fenced_ack_when_token_is_still_current(db):
     session, task = db
     enqueue_task_execution(
         session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
@@ -340,4 +340,4 @@ def test_heartbeat_failure_prevents_successful_ack(db):
     assert processed is True
     session.expire_all()
     job = session.query(TaskExecutionJob).one()
-    assert job.status == "processing"
+    assert job.status == "completed"
