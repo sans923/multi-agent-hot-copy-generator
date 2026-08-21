@@ -6,6 +6,7 @@ MySQL 初始化：测试连接并创建所有表
 """
 import sys
 import os
+from contextlib import contextmanager
 from pathlib import Path
 import re
 from collections.abc import Callable
@@ -16,6 +17,9 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.database import engine, create_tables
+
+
+_MIGRATION_LOCK_NAME = "hot_copy_generator_schema_migrations"
 
 
 def _expand_guarded_add_columns(
@@ -70,35 +74,55 @@ def _mysql_column_exists(connection, table_name: str, column_name: str) -> bool:
     return count > 0
 
 
+@contextmanager
+def _mysql_migration_lock(connection, timeout_seconds: int = 60):
+    """串行化同一 MySQL 实例上的轻量迁移，避免并发 DDL 竞态。"""
+    acquired = connection.execute(
+        text("SELECT GET_LOCK(:lock_name, :timeout_seconds)"),
+        {"lock_name": _MIGRATION_LOCK_NAME, "timeout_seconds": timeout_seconds},
+    ).scalar_one()
+    if acquired != 1:
+        raise RuntimeError("无法获取 MySQL 数据库迁移锁，请稍后重试")
+
+    try:
+        yield
+    finally:
+        connection.execute(
+            text("SELECT RELEASE_LOCK(:lock_name)"),
+            {"lock_name": _MIGRATION_LOCK_NAME},
+        )
+
+
 def apply_schema_migrations() -> None:
     """执行可重入的轻量 MySQL 迁移；正式生产应迁移到 Alembic。"""
     with engine.begin() as connection:
-        for migration_name in (
-            "migrate_memory_index_lock.sql",
-            "migrate_content_production_p0.sql",
-            "migrate_content_production_p1.sql",
-            "migrate_content_production_p2.sql",
-        ):
-            migration_path = Path(__file__).with_name(migration_name)
-            sql = "\n".join(
-                line
-                for line in migration_path.read_text(encoding="utf-8").splitlines()
-                if not line.lstrip().startswith("--")
-            )
-            statements = [
-                statement.strip()
-                for statement in sql.split(";")
-                if statement.strip()
-            ]
-            for statement in statements:
-                expanded_statements = _expand_guarded_add_columns(
-                    statement,
-                    column_exists=lambda table_name, column_name: _mysql_column_exists(
-                        connection, table_name, column_name
-                    ),
+        with _mysql_migration_lock(connection):
+            for migration_name in (
+                "migrate_memory_index_lock.sql",
+                "migrate_content_production_p0.sql",
+                "migrate_content_production_p1.sql",
+                "migrate_content_production_p2.sql",
+            ):
+                migration_path = Path(__file__).with_name(migration_name)
+                sql = "\n".join(
+                    line
+                    for line in migration_path.read_text(encoding="utf-8").splitlines()
+                    if not line.lstrip().startswith("--")
                 )
-                for expanded_statement in expanded_statements:
-                    connection.exec_driver_sql(expanded_statement)
+                statements = [
+                    statement.strip()
+                    for statement in sql.split(";")
+                    if statement.strip()
+                ]
+                for statement in statements:
+                    expanded_statements = _expand_guarded_add_columns(
+                        statement,
+                        column_exists=lambda table_name, column_name: _mysql_column_exists(
+                            connection, table_name, column_name
+                        ),
+                    )
+                    for expanded_statement in expanded_statements:
+                        connection.exec_driver_sql(expanded_statement)
 
 
 def main() -> None:
