@@ -18,6 +18,7 @@ from app.services.task_execution_queue import (
     mark_task_execution_completed,
     mark_task_execution_failed,
     process_one_task_execution_job,
+    renew_task_execution_lease,
 )
 
 
@@ -127,8 +128,11 @@ def test_completed_job_releases_its_lease(db):
     claimed = claim_task_execution_job(session, worker_id="worker-a")
     assert claimed is not None
 
-    mark_task_execution_completed(session, claimed.id)
+    completed = mark_task_execution_completed(
+        session, claimed.id, claimed.lease_token, claimed.attempts
+    )
 
+    assert completed is True
     session.refresh(claimed)
     assert claimed.status == "completed"
     assert claimed.worker_id is None
@@ -168,3 +172,99 @@ def test_create_task_persists_job_without_fastapi_background_task(db):
     assert job.job_type == "start"
     assert job.status == "pending"
     assert job.dedupe_key == f"start:{response.data.id}"
+
+
+def test_stale_worker_cannot_overwrite_reclaimed_job(db):
+    session, task = db
+    job = enqueue_task_execution(
+        session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
+    )
+    first = claim_task_execution_job(session, worker_id="worker-a", lease_seconds=1)
+    assert first is not None
+    first_token = first.lease_token
+    first_attempt = first.attempts
+    first.locked_at = datetime.utcnow() - timedelta(minutes=1)
+    session.commit()
+
+    second = claim_task_execution_job(session, worker_id="worker-b", lease_seconds=1)
+    assert second is not None
+    assert second.lease_token != first_token
+
+    assert mark_task_execution_completed(
+        session, job.id, first_token, first_attempt
+    ) is False
+    session.refresh(second)
+    assert second.status == "processing"
+    assert second.worker_id == "worker-b"
+
+
+def test_lease_heartbeat_requires_current_fencing_token(db):
+    session, task = db
+    enqueue_task_execution(
+        session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
+    )
+    claimed = claim_task_execution_job(session, worker_id="worker-a")
+    assert claimed is not None
+    old_locked_at = claimed.locked_at
+
+    assert renew_task_execution_lease(
+        session, claimed.id, "stale-token", claimed.attempts
+    ) is False
+    assert renew_task_execution_lease(
+        session,
+        claimed.id,
+        claimed.lease_token,
+        claimed.attempts,
+        now=old_locked_at + timedelta(seconds=10),
+    ) is True
+    session.refresh(claimed)
+    assert claimed.locked_at == old_locked_at + timedelta(seconds=10)
+
+
+def test_expired_final_attempt_is_reaped_as_dead(db):
+    session, task = db
+    job = enqueue_task_execution(
+        session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
+    )
+    job.status = "processing"
+    job.attempts = 3
+    job.worker_id = "crashed-worker"
+    job.lease_token = "expired-token"
+    job.locked_at = datetime.utcnow() - timedelta(minutes=10)
+    session.commit()
+
+    assert claim_task_execution_job(
+        session, worker_id="replacement", lease_seconds=60, max_attempts=3
+    ) is None
+    session.refresh(job)
+    assert job.status == "dead"
+    assert "租约过期" in job.last_error
+
+
+def test_dead_human_retry_job_can_be_revived(db):
+    session, task = db
+    job = enqueue_task_execution(
+        session,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=f"resume:{task.id}:retry:v1",
+        payload={"action": "retry"},
+    )
+    job.status = "dead"
+    job.attempts = 3
+    job.last_error = "temporary outage"
+    session.commit()
+
+    revived = enqueue_task_execution(
+        session,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=job.dedupe_key,
+        payload={"action": "retry"},
+        revive_terminal=True,
+    )
+
+    assert revived.id == job.id
+    assert revived.status == "pending"
+    assert revived.attempts == 0
+    assert revived.last_error is None

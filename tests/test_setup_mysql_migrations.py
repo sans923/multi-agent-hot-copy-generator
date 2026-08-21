@@ -2,7 +2,11 @@
 
 from unittest.mock import MagicMock
 
-from scripts.setup_mysql import _expand_guarded_add_columns, _mysql_migration_lock
+from scripts.setup_mysql import (
+    _expand_guarded_add_columns,
+    _initialize_schema,
+    _mysql_migration_lock,
+)
 
 
 class _ScalarResult:
@@ -65,3 +69,16 @@ def test_expand_guarded_add_columns_preserves_regular_statements():
         statement,
         column_exists=lambda _table, _column: False,
     ) == [statement]
+
+
+def test_schema_initialization_locks_create_all_and_migrations():
+    connection = MagicMock()
+    events = []
+
+    _initialize_schema(
+        connection,
+        create_all=lambda bind: events.append(("create", bind)),
+        apply_migrations=lambda bind: events.append(("migrate", bind)),
+    )
+
+    assert events == [("create", connection), ("migrate", connection)]
