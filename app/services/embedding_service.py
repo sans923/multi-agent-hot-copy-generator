@@ -61,6 +61,7 @@ from app.utils.logger import logger
 _st_model = None  # 延迟加载，首次调用时初始化
 
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
+EMBEDDING_MODEL_REPO_ID = f"sentence-transformers/{EMBEDDING_MODEL_NAME}"
 EMBEDDING_DIM = 384  # 该模型的向量维度
 
 
@@ -191,7 +192,7 @@ def _get_st_model():
             try:
                 with _huggingface_offline_mode():
                     cached_model_path = snapshot_download(
-                        repo_id=EMBEDDING_MODEL_NAME,
+                        repo_id=EMBEDDING_MODEL_REPO_ID,
                         local_files_only=True,
                     )
                     _st_model = SentenceTransformer(
