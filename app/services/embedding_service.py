@@ -42,7 +42,6 @@ paraphrase-multilingual-MiniLM-L12-v2
 """
 
 import hashlib
-import json
 import os
 from contextlib import contextmanager
 from pathlib import Path
@@ -86,94 +85,24 @@ def _huggingface_offline_mode():
         reset_sessions()
 
 
-def _schema_vector_space(schema: dict) -> str:
-    """Read the distance metric stored by Chroma's newer schema format."""
-    vector_config = (
-        schema.get("keys", {})
-        .get("#embedding", {})
-        .get("float_list", {})
-        .get("vector_index", {})
-        .get("config", {})
-    )
-    space = vector_config.get("space", "l2")
-    return space if space in {"l2", "ip", "cosine"} else "l2"
+class IncompatibleChromaStoreError(RuntimeError):
+    """Raised when the persisted store is newer than the locked Chroma runtime."""
 
 
-def _migrate_chroma_collection_configs(database_path: Path) -> int:
-    """Repair Chroma 1.x collection configs for the locked Chroma 0.6 runtime."""
+def _validate_chroma_store_compatibility(database_path: Path) -> None:
+    """Reject newer Chroma stores instead of attempting an unsafe downgrade."""
     if not database_path.exists():
-        return 0
+        return
 
     with sqlite3.connect(database_path) as connection:
         columns = {
             row[1] for row in connection.execute("PRAGMA table_info(collections)")
         }
-        required_columns = {"id", "config_json_str", "schema_str"}
-        if not required_columns.issubset(columns):
-            return 0
-
-        pending_repairs: list[tuple[str, str]] = []
-        rows = connection.execute(
-            "SELECT id, config_json_str, schema_str FROM collections"
-        ).fetchall()
-
-        for collection_id, config_json, schema_json in rows:
-            try:
-                config = json.loads(config_json or "{}")
-            except (TypeError, json.JSONDecodeError):
-                continue
-            if isinstance(config, dict) and config.get("_type"):
-                continue
-
-            try:
-                schema = json.loads(schema_json or "{}")
-            except (TypeError, json.JSONDecodeError):
-                schema = {}
-
-            from chromadb.api.configuration import (
-                CollectionConfigurationInternal,
-                ConfigurationParameter,
-                HNSWConfigurationInternal,
-            )
-
-            hnsw_config = HNSWConfigurationInternal.from_legacy_params(
-                {"hnsw:space": _schema_vector_space(schema)}
-            )
-            collection_config = CollectionConfigurationInternal(
-                [
-                    ConfigurationParameter(
-                        name="hnsw_configuration",
-                        value=hnsw_config,
-                    )
-                ]
-            )
-            pending_repairs.append(
-                (collection_config.to_json_str(), collection_id)
-            )
-
-    if not pending_repairs:
-        return 0
-
-    backup_path = database_path.with_suffix(".sqlite3.pre-0.6-config.bak")
-    if not backup_path.exists():
-        with (
-            sqlite3.connect(database_path) as source,
-            sqlite3.connect(backup_path) as backup,
-        ):
-            source.backup(backup)
-
-    with sqlite3.connect(database_path) as connection:
-        connection.executemany(
-            "UPDATE collections SET config_json_str = ? WHERE id = ?",
-            pending_repairs,
+    if "schema_str" in columns:
+        raise IncompatibleChromaStoreError(
+            "检测到新版 Chroma 创建的向量库，不能由当前锁定的 Chroma 0.6 "
+            "安全原地降级；请备份旧目录后重建向量索引。"
         )
-
-    logger.warning(
-        "已迁移 {} 个 Chroma collection 的旧配置，备份位于 {}",
-        len(pending_repairs),
-        backup_path,
-    )
-    return len(pending_repairs)
 
 
 def _get_st_model():
@@ -220,7 +149,7 @@ def _create_chroma_client() -> chromadb.PersistentClient:
     路径：settings.CHROMA_PERSIST_PATH（如 ./data/chroma）
     """
     os.makedirs(settings.CHROMA_PERSIST_PATH, exist_ok=True)
-    _migrate_chroma_collection_configs(
+    _validate_chroma_store_compatibility(
         Path(settings.CHROMA_PERSIST_PATH) / "chroma.sqlite3"
     )
     return chromadb.PersistentClient(path=settings.CHROMA_PERSIST_PATH)
