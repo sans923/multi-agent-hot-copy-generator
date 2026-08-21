@@ -8,6 +8,7 @@ def test_database_url_for_log_hides_password():
     )
 
     assert "secret-password" not in safe_url
+    assert "copygen:***@127.0.0.1" in safe_url
 
 
 def test_runtime_only_creates_tables_for_local_sqlite():
@@ -19,7 +20,6 @@ def test_runtime_only_creates_tables_for_local_sqlite():
     )
 
     assert calls == ["sqlite"]
-    assert "copygen:***@127.0.0.1" in safe_url
 
 
 def test_database_url_for_log_keeps_sqlite_path():

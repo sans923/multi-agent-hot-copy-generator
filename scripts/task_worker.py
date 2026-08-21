@@ -37,11 +37,17 @@ def execute_job(job: TaskExecutionJob) -> None:
     """把持久 Job 分发到现有编排入口。"""
     from app.api.v1.tasks import _resume_task_background, _run_agents_background
 
+    fence = {
+        "execution_job_id": job.id,
+        "lease_token": str(job.lease_token),
+        "attempt": int(job.attempts),
+    }
+
     if job.job_type == "start":
-        result = _run_agents_background(job.task_id)
+        result = _run_agents_background(job.task_id, **fence)
     elif job.job_type == "resume":
         action = str(dict(job.payload or {}).get("action") or "retry")
-        result = _resume_task_background(job.task_id, action)
+        result = _resume_task_background(job.task_id, action, **fence)
     else:
         raise ValueError(f"不支持的任务执行类型: {job.job_type}")
 

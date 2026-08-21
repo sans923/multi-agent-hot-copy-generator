@@ -27,6 +27,26 @@ services:
       retries: 10
       start_period: 30s
 
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    restart: "no"
+    command: ["python", "scripts/setup_mysql.py"]
+    env_file:
+      - .env
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: ${MYSQL_USER:-copygen}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-copy_generator}
+      DATABASE_URL: ""
+    depends_on:
+      mysql:
+        condition: service_healthy
+
   app:
     build:
       context: .
@@ -51,8 +71,8 @@ services:
       - app_data:/app/data
       - app_logs:/app/logs
     depends_on:
-      mysql:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s

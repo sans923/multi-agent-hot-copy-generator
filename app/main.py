@@ -44,6 +44,12 @@ def _database_url_for_log(database_url: str) -> str:
     except Exception:
         return "<invalid database URL>"
 
+
+def _prepare_runtime_schema(database_url: str, create_tables_fn=create_tables) -> None:
+    """SQLite 开发库可就地建表；MySQL Schema 必须由单一 migrate 进程管理。"""
+    if database_url.startswith("sqlite"):
+        create_tables_fn()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -64,9 +70,7 @@ async def lifespan(app: FastAPI):
     logger.info(f"  数据库: {_database_url_for_log(settings.DATABASE_URL)}")
     logger.info(f"{'='*50}")
 
-    # 创建所有数据库表（如果不存在）
-    # 注意：生产环境应该用 Alembic 迁移，而不是 create_all
-    create_tables()
+    _prepare_runtime_schema(settings.DATABASE_URL)
 
     # 启动 APScheduler 定时任务调度器
     from app.scheduler import start_scheduler, stop_scheduler

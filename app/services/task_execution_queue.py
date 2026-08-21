@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.task_execution_job import TaskExecutionJob
+from app.utils.logger import logger
 
 
 def enqueue_task_execution(
@@ -33,19 +34,31 @@ def enqueue_task_execution(
     )
     if existing is not None:
         if revive_terminal and existing.status == "dead":
-            existing.status = "pending"
-            existing.attempts = 0
-            existing.available_at = datetime.utcnow()
-            existing.locked_at = None
-            existing.worker_id = None
-            existing.lease_token = None
-            existing.last_error = None
-            existing.payload = payload or {}
+            updated = db.query(TaskExecutionJob).filter(
+                TaskExecutionJob.id == existing.id,
+                TaskExecutionJob.status == "dead",
+            ).update(
+                {
+                    TaskExecutionJob.status: "pending",
+                    TaskExecutionJob.attempts: 0,
+                    TaskExecutionJob.available_at: datetime.utcnow(),
+                    TaskExecutionJob.locked_at: None,
+                    TaskExecutionJob.worker_id: None,
+                    TaskExecutionJob.lease_token: None,
+                    TaskExecutionJob.last_error: None,
+                    TaskExecutionJob.payload: payload or {},
+                },
+                synchronize_session=False,
+            )
             if commit:
                 db.commit()
-                db.refresh(existing)
             else:
                 db.flush()
+            db.expire_all()
+            if updated == 0 and commit:
+                # 结束旧快照后返回当前认领状态，绝不覆盖 processing 租约。
+                db.rollback()
+            return db.query(TaskExecutionJob).filter_by(id=existing.id).one()
         return existing
 
     job = TaskExecutionJob(
@@ -260,39 +273,57 @@ def process_one_task_execution_job(
     lease_token = str(job.lease_token)
     attempt = int(job.attempts)
     stop_heartbeat = Event()
+    lease_lost = Event()
     heartbeat_thread = None
     if heartbeat_session_factory is not None:
         interval = heartbeat_interval_seconds or max(1.0, lease_seconds / 3)
 
         def heartbeat() -> None:
             while not stop_heartbeat.wait(interval):
-                heartbeat_db = heartbeat_session_factory()
                 try:
-                    if not renew_task_execution_lease(
-                        heartbeat_db, job.id, lease_token, attempt
-                    ):
+                    heartbeat_db = heartbeat_session_factory()
+                    try:
+                        renewed = renew_task_execution_lease(
+                            heartbeat_db, job.id, lease_token, attempt
+                        )
+                    finally:
+                        heartbeat_db.close()
+                    if not renewed:
+                        lease_lost.set()
                         return
-                finally:
-                    heartbeat_db.close()
+                except Exception:
+                    logger.exception(
+                        f"任务租约续期失败: job_id={job.id}, attempt={attempt}"
+                    )
+                    lease_lost.set()
+                    return
 
         heartbeat_thread = Thread(target=heartbeat, daemon=True)
         heartbeat_thread.start()
+    execution_error = None
     try:
         execute(job)
     except Exception as exc:
-        mark_task_execution_failed(
-            db,
-            job.id,
-            lease_token,
-            attempt,
-            exc,
-            max_attempts=max_attempts,
-            retry_delay_seconds=retry_delay_seconds,
-        )
-    else:
-        mark_task_execution_completed(db, job.id, lease_token, attempt)
+        execution_error = exc
     finally:
         stop_heartbeat.set()
         if heartbeat_thread is not None:
             heartbeat_thread.join(timeout=1)
+
+    if lease_lost.is_set():
+        logger.error(f"任务执行期间租约丢失，不写回队列状态: job_id={job.id}")
+    elif execution_error is not None:
+        updated = mark_task_execution_failed(
+            db,
+            job.id,
+            lease_token,
+            attempt,
+            execution_error,
+            max_attempts=max_attempts,
+            retry_delay_seconds=retry_delay_seconds,
+        )
+        if not updated:
+            logger.error(f"忽略已失效执行的失败写回: job_id={job.id}")
+    elif not mark_task_execution_completed(db, job.id, lease_token, attempt):
+        logger.error(f"忽略已失效执行的完成写回: job_id={job.id}")
     return True

@@ -8,9 +8,11 @@ from scripts import task_worker
 def test_worker_retries_when_orchestration_returns_failure(monkeypatch):
     monkeypatch.setattr(
         "app.api.v1.tasks._run_agents_background",
-        lambda _task_id: {"success": False, "error": "LLM unavailable"},
+        lambda _task_id, **_kwargs: {"success": False, "error": "LLM unavailable"},
     )
-    job = SimpleNamespace(job_type="start", task_id=42, payload={})
+    job = SimpleNamespace(
+        id=1, job_type="start", task_id=42, payload={}, lease_token="lease", attempts=1
+    )
 
     with pytest.raises(task_worker.RetryableTaskExecutionError, match="LLM unavailable"):
         task_worker.execute_job(job)
@@ -19,9 +21,11 @@ def test_worker_retries_when_orchestration_returns_failure(monkeypatch):
 def test_worker_accepts_explicit_awaiting_human_result(monkeypatch):
     monkeypatch.setattr(
         "app.api.v1.tasks._run_agents_background",
-        lambda _task_id: {"success": False, "awaiting_human": True},
+        lambda _task_id, **_kwargs: {"success": False, "awaiting_human": True},
     )
-    job = SimpleNamespace(job_type="start", task_id=42, payload={})
+    job = SimpleNamespace(
+        id=1, job_type="start", task_id=42, payload={}, lease_token="lease", attempts=1
+    )
 
     task_worker.execute_job(job)
 

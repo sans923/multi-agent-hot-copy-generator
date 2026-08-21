@@ -15,7 +15,9 @@
   前端轮询 GET /tasks/{task_id} 查看状态
 """
 
+from contextlib import contextmanager
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import event
 from sqlalchemy.orm import Session
 from typing import Any
 
@@ -24,6 +26,7 @@ from app.models.task import Task, TaskStatus, TaskPlatform
 from app.models.copy import Copy
 from app.models.user import User
 from app.models.style_card import StyleCard
+from app.models.task_execution_job import TaskExecutionJob
 from app.schemas.task import (
     TaskCreate,
     TaskResponse,
@@ -43,6 +46,54 @@ from app.services.task_execution_queue import enqueue_task_execution
 
 
 router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
+
+
+class TaskExecutionLeaseLost(RuntimeError):
+    """当前编排已不再拥有对应持久 Job 的执行权。"""
+
+
+def _assert_task_execution_lease(
+    execution_job_id: int | None,
+    lease_token: str | None,
+    attempt: int | None,
+) -> None:
+    if execution_job_id is None:
+        return
+    check_db = SessionLocal()
+    try:
+        current = check_db.query(TaskExecutionJob.id).filter(
+            TaskExecutionJob.id == execution_job_id,
+            TaskExecutionJob.status == "processing",
+            TaskExecutionJob.lease_token == lease_token,
+            TaskExecutionJob.attempts == attempt,
+        ).first()
+    finally:
+        check_db.close()
+    if current is None:
+        raise TaskExecutionLeaseLost(f"任务 Job {execution_job_id} 的执行租约已失效")
+
+
+@contextmanager
+def _task_execution_lease_guard(
+    db: Session,
+    execution_job_id: int | None,
+    lease_token: str | None,
+    attempt: int | None,
+):
+    """在编排 Session 每次 flush 前校验 Job fencing token。"""
+    if execution_job_id is None:
+        yield
+        return
+
+    def before_flush(_session, _flush_context, _instances) -> None:
+        _assert_task_execution_lease(execution_job_id, lease_token, attempt)
+
+    _assert_task_execution_lease(execution_job_id, lease_token, attempt)
+    event.listen(db, "before_flush", before_flush)
+    try:
+        yield
+    finally:
+        event.remove(db, "before_flush", before_flush)
 
 
 @router.put("/{task_id}/brief", response_model=ApiResponse[ContentBriefResponse])
@@ -76,7 +127,13 @@ def update_content_brief(
     ))
 
 
-def _run_agents_background(task_id: int) -> dict[str, Any]:
+def _run_agents_background(
+    task_id: int,
+    *,
+    execution_job_id: int | None = None,
+    lease_token: str | None = None,
+    attempt: int | None = None,
+) -> dict[str, Any]:
     db = SessionLocal()
     engine = None
     try:
@@ -89,39 +146,48 @@ def _run_agents_background(task_id: int) -> dict[str, Any]:
         meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
         engine_name = "langgraph" if meta.get("execution_mode") else settings.ORCHESTRATION_ENGINE
         engine = get_orchestration_engine(engine_name)
-        result = engine.run(db=db, task_id=task_id)
-        logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
-        write_log(
-            db,
-            category="task",
-            action="task.pipeline_complete",
-            message=f"任务 {task_id} 编排完成 success={result.get('success')}",
-            task_id=task_id,
-            extra={
-                "success": result.get("success"),
-                "task_mode": result.get("task_mode"),
-                "awaiting_human": result.get("awaiting_human"),
-            },
-            is_success=bool(result.get("success")),
-        )
+        with _task_execution_lease_guard(
+            db, execution_job_id, lease_token, attempt
+        ):
+            result = engine.run(db=db, task_id=task_id)
+            logger.info(f"后台任务执行完成: task_id={task_id}, success={result.get('success')}")
+            write_log(
+                db,
+                category="task",
+                action="task.pipeline_complete",
+                message=f"任务 {task_id} 编排完成 success={result.get('success')}",
+                task_id=task_id,
+                extra={
+                    "success": result.get("success"),
+                    "task_mode": result.get("task_mode"),
+                    "awaiting_human": result.get("awaiting_human"),
+                },
+                is_success=bool(result.get("success")),
+            )
         return result
     except Exception as e:
         logger.exception(f"后台任务执行异常: task_id={task_id}")
-        write_log(
-            db,
-            category="task",
-            action="task.pipeline_error",
-            message=f"任务 {task_id} 编排异常: {str(e)[:200]}",
-            task_id=task_id,
-            level="ERROR",
-            is_success=False,
-        )
-        # 更新任务状态为失败
-        task = db.query(Task).filter(Task.id == task_id).first()
-        if task:
-            set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
-            task.error_message = str(e)[:500]
-            db.commit()
+        db.rollback()
+        if isinstance(e, TaskExecutionLeaseLost):
+            raise
+        with _task_execution_lease_guard(
+            db, execution_job_id, lease_token, attempt
+        ):
+            write_log(
+                db,
+                category="task",
+                action="task.pipeline_error",
+                message=f"任务 {task_id} 编排异常: {str(e)[:200]}",
+                task_id=task_id,
+                level="ERROR",
+                is_success=False,
+            )
+            # 更新任务状态为失败
+            task = db.query(Task).filter(Task.id == task_id).first()
+            if task:
+                set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
+                task.error_message = str(e)[:500]
+                db.commit()
         raise
     finally:
         close = getattr(engine, "close", None)
@@ -363,7 +429,14 @@ def get_task_copies(
     )
 
 
-def _resume_task_background(task_id: int, action: str) -> dict[str, Any]:
+def _resume_task_background(
+    task_id: int,
+    action: str,
+    *,
+    execution_job_id: int | None = None,
+    lease_token: str | None = None,
+    attempt: int | None = None,
+) -> dict[str, Any]:
     """后台恢复 awaiting_human 任务。"""
     db = SessionLocal()
     try:
@@ -371,51 +444,59 @@ def _resume_task_background(task_id: int, action: str) -> dict[str, Any]:
         from app.config import settings
         from app.orchestration import get_orchestration_engine
 
-        task = db.query(Task).filter(Task.id == task_id).first()
-        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
-        if meta.get("durability_mode") == "langgraph_sqlite_v1":
-            engine = get_orchestration_engine("langgraph")
-            try:
-                result = engine.resume(
-                    db,
-                    task_id,
-                    thread_id=str(meta["thread_id"]),
-                    human_input={"action": action},
-                )
-            finally:
-                close = getattr(engine, "close", None)
-                if close:
-                    close()
-            logger.info(
-                f"Durable 任务恢复完成: task_id={task_id}, "
-                f"action={action}, success={result.get('success')}"
-            )
-            return result
-        mode = meta.get("resolved_mode") or (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
-        if mode != "agentic":
+        with _task_execution_lease_guard(
+            db, execution_job_id, lease_token, attempt
+        ):
             task = db.query(Task).filter(Task.id == task_id).first()
-            if task:
-                set_task_execution_status(task, TaskStatus.FAILED, reason="仅 agentic 模式支持恢复")
-                task.error_message = "仅 agentic 模式支持恢复"
-                db.commit()
-            return {
-                "success": False,
-                "retryable": False,
-                "error": "仅 agentic 模式支持恢复",
-            }
+            meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+            if meta.get("durability_mode") == "langgraph_sqlite_v1":
+                engine = get_orchestration_engine("langgraph")
+                try:
+                    result = engine.resume(
+                        db,
+                        task_id,
+                        thread_id=str(meta["thread_id"]),
+                        human_input={"action": action},
+                    )
+                finally:
+                    close = getattr(engine, "close", None)
+                    if close:
+                        close()
+                logger.info(
+                    f"Durable 任务恢复完成: task_id={task_id}, "
+                    f"action={action}, success={result.get('success')}"
+                )
+                return result
+            mode = meta.get("resolved_mode") or (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
+            if mode != "agentic":
+                task = db.query(Task).filter(Task.id == task_id).first()
+                if task:
+                    set_task_execution_status(task, TaskStatus.FAILED, reason="仅 agentic 模式支持恢复")
+                    task.error_message = "仅 agentic 模式支持恢复"
+                    db.commit()
+                return {
+                    "success": False,
+                    "retryable": False,
+                    "error": "仅 agentic 模式支持恢复",
+                }
 
-        result = resume_agentic_pipeline(db, task_id, action=action)  # type: ignore[arg-type]
-        logger.info(f"任务恢复完成: task_id={task_id}, action={action}, success={result.get('success')}")
-        return result
+            result = resume_agentic_pipeline(db, task_id, action=action)  # type: ignore[arg-type]
+            logger.info(f"任务恢复完成: task_id={task_id}, action={action}, success={result.get('success')}")
+            return result
     except Exception as e:
         logger.exception(f"任务恢复异常: task_id={task_id}")
         db.rollback()
-        task = db.query(Task).filter(Task.id == task_id).first()
-        meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
-        if task and meta.get("durability_mode") != "langgraph_sqlite_v1":
-            set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
-            task.error_message = str(e)[:500]
-            db.commit()
+        if isinstance(e, TaskExecutionLeaseLost):
+            raise
+        with _task_execution_lease_guard(
+            db, execution_job_id, lease_token, attempt
+        ):
+            task = db.query(Task).filter(Task.id == task_id).first()
+            meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+            if task and meta.get("durability_mode") != "langgraph_sqlite_v1":
+                set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
+                task.error_message = str(e)[:500]
+                db.commit()
         raise
     finally:
         db.close()
