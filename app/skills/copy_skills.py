@@ -134,12 +134,24 @@ class GenerateOutlineSkill(BaseSkill):
         writing_pattern: dict,
     ) -> dict:
         """根据抽象写作规律动态生成大纲段落。"""
-        hook = writing_pattern.get("hook", {}) or {}
+        raw_hook = writing_pattern.get("hook", {}) or {}
+        hook = raw_hook if isinstance(raw_hook, dict) else {"type": str(raw_hook)}
         hook_type = hook.get("type", "疑问式")
-        title_formula = writing_pattern.get("title_formula", {}) or {}
+        raw_title_formula = writing_pattern.get("title_formula", {}) or {}
+        title_formula = (
+            raw_title_formula
+            if isinstance(raw_title_formula, dict)
+            else {"pattern": str(raw_title_formula)}
+        )
         structure = writing_pattern.get("structure") or []
+        if not isinstance(structure, list):
+            structure = [structure]
         rhythm = writing_pattern.get("rhythm", {}) or {}
-        cta_pattern = writing_pattern.get("cta_pattern", "引导互动")
+        cta_pattern = (
+            writing_pattern.get("cta_pattern")
+            or writing_pattern.get("cta")
+            or "引导互动"
+        )
         emotion_arc = writing_pattern.get("emotion_arc") or []
 
         sections = []
@@ -163,9 +175,17 @@ class GenerateOutlineSkill(BaseSkill):
         })
 
         if structure:
-            for block in structure:
+            for index, raw_block in enumerate(structure, start=1):
+                block = (
+                    raw_block
+                    if isinstance(raw_block, dict)
+                    else {"section": f"段落{index}", "function": str(raw_block)}
+                )
                 ratio = block.get("ratio", 0)
-                word_hint = f"约占全文 {int(float(ratio) * 100)}%" if ratio else ""
+                try:
+                    word_hint = f"约占全文 {int(float(ratio) * 100)}%" if ratio else ""
+                except (TypeError, ValueError):
+                    word_hint = ""
                 sections.append({
                     "name": block.get("section", "段落"),
                     "type": "body",
