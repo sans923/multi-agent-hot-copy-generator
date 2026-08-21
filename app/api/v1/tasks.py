@@ -9,14 +9,13 @@
 
 【任务执行方式】
 为了不让 HTTP 请求超时（3个Agent调用可能需要30-60秒），
-任务采用后台线程执行：
+任务采用数据库持久队列和独立 Worker 执行：
   POST /tasks -> 立即返回 task_id（状态=pending）
-  后台线程异步执行 AgentOrchestrator.run()
+  Worker 原子认领 Job 后执行 AgentOrchestrator.run()
   前端轮询 GET /tasks/{task_id} 查看状态
 """
 
-import threading
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db, SessionLocal
@@ -39,6 +38,7 @@ from app.core.deps import get_current_active_user
 from app.utils.log_writer import write_log
 from app.utils.logger import logger
 from app.services.task_lifecycle_service import set_task_execution_status
+from app.services.task_execution_queue import enqueue_task_execution
 
 
 router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
@@ -136,7 +136,6 @@ def _run_agents_background(task_id: int) -> None:
 )
 def create_task(
     task_data: TaskCreate,
-    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ) -> ApiResponse[TaskResponse]:
@@ -144,7 +143,7 @@ def create_task(
     创建任务流程：
     1. 创建 Task 记录（status=pending）
     2. 立即返回 task_id 给客户端
-    3. 后台异步启动 3 个 Agent 流程
+    3. 同事务写入持久执行 Job，由独立 Worker 异步执行
     
     客户端拿到 task_id 后，每隔 3-5 秒轮询 GET /tasks/{task_id}
     直到 status 变为 completed 或 failed
@@ -190,6 +189,14 @@ def create_task(
         },
     )
     db.add(task)
+    db.flush()
+    enqueue_task_execution(
+        db,
+        task_id=task.id,
+        job_type="start",
+        dedupe_key=f"start:{task.id}",
+        commit=False,
+    )
     db.commit()
     db.refresh(task)
 
@@ -212,14 +219,9 @@ def create_task(
         f"platform={task_data.platform}"
     )
 
-    # 后台异步执行 Agent（不阻塞 HTTP 响应）
-    # BackgroundTasks 是 FastAPI 内置的后台任务，请求返回后自动执行
-    # 注意：对于耗时很长的任务，推荐用 Celery，这里用线程够用了
-    background_tasks.add_task(_run_agents_background, task.id)
-
     return ApiResponse(
         success=True,
-        message="任务已创建，正在后台生成文案，请轮询任务状态",
+        message="任务已创建并进入持久队列，请轮询任务状态",
         data=TaskResponse.model_validate(task)
     )
 
@@ -419,7 +421,6 @@ def _resume_task_background(task_id: int, action: str) -> None:
 def resume_task(
     task_id: int,
     body: TaskResumeRequest,
-    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ) -> ApiResponse[TaskResponse]:
@@ -444,10 +445,19 @@ def resume_task(
     meta = task.orchestration_meta if isinstance(task.orchestration_meta, dict) else {}
     if meta.get("durability_mode") == "langgraph_sqlite_v1":
         if body.action == "retry":
-            background_tasks.add_task(_resume_task_background, task.id, "retry")
+            enqueue_task_execution(
+                db,
+                task_id=task.id,
+                job_type="resume",
+                dedupe_key=(
+                    f"resume:{task.id}:retry:"
+                    f"{task.status_updated_at.isoformat() if task.status_updated_at else 'unknown'}"
+                ),
+                payload={"action": "retry"},
+            )
             return ApiResponse(
                 success=True,
-                message="恢复请求已接收，请轮询状态",
+                message="恢复请求已进入持久队列，请轮询状态",
                 data=TaskResponse.model_validate(task),
             )
 
@@ -495,10 +505,19 @@ def resume_task(
         )
 
     # retry
-    background_tasks.add_task(_resume_task_background, task.id, "retry")
+    enqueue_task_execution(
+        db,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=(
+            f"resume:{task.id}:retry:"
+            f"{task.status_updated_at.isoformat() if task.status_updated_at else 'unknown'}"
+        ),
+        payload={"action": "retry"},
+    )
     db.refresh(task)
     return ApiResponse(
         success=True,
-        message="任务已重新执行，请轮询状态",
+        message="任务恢复已进入持久队列，请轮询状态",
         data=TaskResponse.model_validate(task),
     )

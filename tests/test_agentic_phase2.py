@@ -5,7 +5,6 @@ Phase 2 测试：Judge、checkpoint、人工介入恢复
 from unittest.mock import patch
 
 import pytest
-from fastapi import BackgroundTasks
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -19,6 +18,7 @@ from app.agents.pipeline_state import init_pipeline_state
 from app.api.v1.tasks import resume_task
 from app.database import Base
 from app.models.task import Task, TaskPlatform, TaskStatus
+from app.models.task_execution_job import TaskExecutionJob
 from app.models.user import User
 from app.schemas.task import TaskResumeRequest
 from app.services.judge_service import judge_goal_alignment
@@ -257,18 +257,15 @@ def test_resume_accept_draft_rejects_copy_from_another_task(db):
     assert foreign_copy.is_final is False
 
 
-def test_resume_retry_api_leaves_state_for_background_runner(db):
+def test_resume_retry_api_persists_worker_job(db):
     task = _create_task(db)
     task.status = TaskStatus.AWAITING_HUMAN
     task.orchestration_meta = {"checkpoint": {"current_step": 1}}
     db.commit()
     user = db.query(User).filter(User.id == task.user_id).one()
-    background_tasks = BackgroundTasks()
-
     response = resume_task(
         task.id,
         TaskResumeRequest(action="retry"),
-        background_tasks,
         current_user=user,
         db=db,
     )
@@ -276,7 +273,9 @@ def test_resume_retry_api_leaves_state_for_background_runner(db):
     assert response.success is True
     db.refresh(task)
     assert task.status == TaskStatus.AWAITING_HUMAN
-    assert len(background_tasks.tasks) == 1
+    job = db.query(TaskExecutionJob).filter_by(task_id=task.id).one()
+    assert job.job_type == "resume"
+    assert job.status == "pending"
 
 
 def test_retry_execution_can_only_be_claimed_once(db):
@@ -312,7 +311,6 @@ def test_durable_resume_api_routes_action_through_langgraph_engine(
     response = resume_task(
         task.id,
         TaskResumeRequest(action="cancel"),
-        BackgroundTasks(),
         current_user=user,
         db=db,
     )

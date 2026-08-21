@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from collections.abc import Callable
 from typing import Any
 
 from sqlalchemy import or_
@@ -132,3 +133,36 @@ def mark_task_execution_failed(
     job.worker_id = None
     job.last_error = str(error)[:1000]
     db.commit()
+
+
+def process_one_task_execution_job(
+    db: Session,
+    *,
+    worker_id: str,
+    execute: Callable[[TaskExecutionJob], None],
+    lease_seconds: int = 300,
+    max_attempts: int = 3,
+    retry_delay_seconds: int = 5,
+) -> bool:
+    """认领并执行一个 Job；业务异常进入有限重试而不会退出 Worker。"""
+    job = claim_task_execution_job(
+        db,
+        worker_id=worker_id,
+        lease_seconds=lease_seconds,
+        max_attempts=max_attempts,
+    )
+    if job is None:
+        return False
+    try:
+        execute(job)
+    except Exception as exc:
+        mark_task_execution_failed(
+            db,
+            job.id,
+            exc,
+            max_attempts=max_attempts,
+            retry_delay_seconds=retry_delay_seconds,
+        )
+    else:
+        mark_task_execution_completed(db, job.id)
+    return True

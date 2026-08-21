@@ -102,6 +102,7 @@ def apply_schema_migrations() -> None:
                 "migrate_content_production_p0.sql",
                 "migrate_content_production_p1.sql",
                 "migrate_content_production_p2.sql",
+                "migrate_task_execution_queue.sql",
             ):
                 migration_path = Path(__file__).with_name(migration_name)
                 sql = "\n".join(

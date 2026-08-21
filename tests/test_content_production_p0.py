@@ -1,7 +1,6 @@
 """真实内容生产 P0：三域状态、生成快照和用户反馈版本。"""
 
 import pytest
-from fastapi import BackgroundTasks
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -205,7 +204,6 @@ def test_task_creation_freezes_the_active_style_card_version():
             platform=TaskPlatform.TOUTIAO,
             style_card_id=card.id,
         ),
-        BackgroundTasks(),
         current_user=_current_user(),
         db=db,
     )

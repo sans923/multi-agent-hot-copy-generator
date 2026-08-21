@@ -3,7 +3,6 @@
 from datetime import datetime
 
 import pytest
-from fastapi import BackgroundTasks
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -186,7 +185,6 @@ def test_toutiao_task_persists_selected_style_card():
             execution_mode="plan",
             style_card_id=card.id,
         ),
-        BackgroundTasks(),
         current_user=admin,
         db=db,
     )

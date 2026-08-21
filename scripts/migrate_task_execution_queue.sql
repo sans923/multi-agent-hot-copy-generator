@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS task_execution_jobs (
+  id INT NOT NULL AUTO_INCREMENT,
+  task_id INT NOT NULL,
+  job_type VARCHAR(20) NOT NULL,
+  dedupe_key VARCHAR(160) NOT NULL,
+  payload JSON NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  attempts INT NOT NULL DEFAULT 0,
+  available_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  locked_at DATETIME NULL,
+  worker_id VARCHAR(120) NULL,
+  last_error TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_task_execution_job_task FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+  CONSTRAINT uq_task_execution_job_dedupe_key UNIQUE (dedupe_key),
+  INDEX ix_task_execution_jobs_task_id (task_id),
+  INDEX ix_task_execution_jobs_status (status),
+  INDEX ix_task_execution_jobs_available_at (available_at),
+  INDEX ix_task_execution_jobs_locked_at (locked_at),
+  INDEX ix_task_execution_ready (status, available_at, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

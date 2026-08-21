@@ -62,6 +62,32 @@ services:
       retries: 3
       start_period: 60s
 
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: copy_generator_worker
+    restart: unless-stopped
+    command: ["python", "scripts/task_worker.py"]
+    env_file:
+      - .env
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: copygen
+      MYSQL_PASSWORD: copygen123
+      MYSQL_DATABASE: copy_generator
+      DATABASE_URL: ""
+      CHROMA_PERSIST_PATH: /app/data/chroma
+      LOG_FILE_PATH: /app/logs/worker.log
+    volumes:
+      - app_data:/app/data
+      - app_logs:/app/logs
+    depends_on:
+      app:
+        condition: service_healthy
+
   nginx:
     image: nginx:alpine
     container_name: copy_generator_nginx
