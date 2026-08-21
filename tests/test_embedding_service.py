@@ -4,30 +4,48 @@ import sqlite3
 import sys
 import types
 
+import huggingface_hub
+
 from app.services import embedding_service
 
 
 def test_embedding_model_prefers_local_cache(monkeypatch):
     calls = []
+    snapshot_calls = []
     cached_model = object()
+    cached_path = "C:/model-cache/snapshot"
 
     def fake_sentence_transformer(model_name, **kwargs):
         calls.append((model_name, kwargs, os.environ.get("HF_HUB_OFFLINE")))
         return cached_model
+
+    def fake_snapshot_download(**kwargs):
+        snapshot_calls.append((kwargs, os.environ.get("HF_HUB_OFFLINE")))
+        return cached_path
 
     monkeypatch.setitem(
         sys.modules,
         "sentence_transformers",
         types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
     )
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_snapshot_download)
     monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
     monkeypatch.setattr(embedding_service, "_st_model", None)
 
     assert embedding_service._get_st_model() is cached_model
     assert calls == [
         (
-            embedding_service.EMBEDDING_MODEL_NAME,
+            cached_path,
             {"local_files_only": True},
+            "1",
+        )
+    ]
+    assert snapshot_calls == [
+        (
+            {
+                "repo_id": embedding_service.EMBEDDING_MODEL_NAME,
+                "local_files_only": True,
+            },
             "1",
         )
     ]
@@ -39,25 +57,22 @@ def test_embedding_model_downloads_only_when_local_cache_is_missing(monkeypatch)
 
     def fake_sentence_transformer(model_name, **kwargs):
         calls.append((model_name, kwargs, os.environ.get("HF_HUB_OFFLINE")))
-        if kwargs.get("local_files_only"):
-            raise OSError("model is not cached")
         return downloaded_model
+
+    def fake_snapshot_download(**_kwargs):
+        raise FileNotFoundError("model is not cached")
 
     monkeypatch.setitem(
         sys.modules,
         "sentence_transformers",
         types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
     )
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_snapshot_download)
     monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
     monkeypatch.setattr(embedding_service, "_st_model", None)
 
     assert embedding_service._get_st_model() is downloaded_model
     assert calls == [
-        (
-            embedding_service.EMBEDDING_MODEL_NAME,
-            {"local_files_only": True},
-            "1",
-        ),
         (embedding_service.EMBEDDING_MODEL_NAME, {}, None),
     ]
 
