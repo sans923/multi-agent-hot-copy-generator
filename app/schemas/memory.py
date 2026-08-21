@@ -85,3 +85,36 @@ class MemoryItemResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PublicationCreateRequest(BaseModel):
+    task_id: int = Field(ge=1)
+    copy_id: int = Field(ge=1)
+    platform: str = Field(min_length=1, max_length=30)
+    status: Literal["submitted", "published", "failed", "removed"] = "submitted"
+    external_id: str | None = Field(default=None, max_length=255)
+    url: str | None = Field(default=None, max_length=1000)
+    metrics: dict[str, float] = Field(default_factory=dict)
+    idempotency_key: str = Field(min_length=8, max_length=100)
+
+
+class PublicationMetricsPatch(BaseModel):
+    metrics: dict[str, float] = Field(min_length=1, max_length=30)
+
+
+class PublicationResponse(BaseModel):
+    id: int
+    task_id: int
+    copy_id: int
+    platform: str
+    status: str
+    external_id: str | None = None
+    url: str | None = None
+    metrics: dict[str, Any]
+    idempotency_key: str
+    submitted_at: datetime
+    published_at: datetime | None = None
+    metrics_updated_at: datetime | None = None
+
+    class Config:
+        from_attributes = True

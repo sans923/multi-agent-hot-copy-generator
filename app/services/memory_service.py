@@ -223,6 +223,9 @@ def record_copy_feedback(
     )
     db.add(memory)
     db.commit()
+    from app.services.feedback_learning_service import promote_repeated_preferences
+
+    promote_repeated_preferences(db, user_id=user_id)
     return row
 
 

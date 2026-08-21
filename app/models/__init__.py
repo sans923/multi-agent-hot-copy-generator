@@ -18,7 +18,7 @@ from app.models.system_log import SystemLog
 from app.models.toutiao_reference import ToutiaoReference
 from app.models.style_card import StyleCard
 from app.models.memory_index_job import MemoryIndexJob
-from app.models.memory import MemoryFeedback, MemoryItem, StyleCardVersion, UserPreference
+from app.models.memory import MemoryFeedback, MemoryItem, PublicationRecord, StyleCardVersion, UserPreference
 from app.models.knowledge import KnowledgeChunk, KnowledgeSource
 
 __all__ = [

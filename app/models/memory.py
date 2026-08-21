@@ -165,3 +165,28 @@ class StyleCardVersion(Base):
         UniqueConstraint("style_card_id", "version", name="uq_style_card_version"),
         Index("ix_style_card_version_status", "style_card_id", "status"),
     )
+
+
+class PublicationRecord(Base):
+    __tablename__ = "publication_records"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    task_id = Column(Integer, ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False, index=True)
+    copy_id = Column(Integer, ForeignKey("copies.id", ondelete="CASCADE"), nullable=False, index=True)
+    platform = Column(String(30), nullable=False, index=True)
+    status = Column(String(30), nullable=False, default="submitted", index=True)
+    external_id = Column(String(255), nullable=True)
+    url = Column(String(1000), nullable=True)
+    metrics = Column(JSON, nullable=False, default=dict)
+    idempotency_key = Column(String(100), nullable=False)
+    submitted_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    published_at = Column(DateTime, nullable=True)
+    metrics_updated_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "idempotency_key", name="uq_publication_user_idempotency"),
+        Index("ix_publication_user_created", "user_id", "created_at"),
+    )

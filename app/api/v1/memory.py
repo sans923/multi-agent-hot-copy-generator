@@ -17,11 +17,74 @@ from app.schemas.memory import (
     MemoryItemResponse,
     PreferencePatchRequest,
     PreferenceResponse,
+    PublicationCreateRequest,
+    PublicationMetricsPatch,
+    PublicationResponse,
+)
+from app.services.feedback_learning_service import (
+    build_memory_insights,
+    record_publication,
+    update_publication_metrics,
 )
 from app.services.memory_service import record_copy_feedback, upsert_user_preferences
 
 
 router = APIRouter(prefix="/memory", tags=["长期记忆"])
+
+
+@router.get("/insights", response_model=ApiResponse[dict])
+def get_insights(
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    return ApiResponse(data=build_memory_insights(db, user_id=current_user.id))
+
+
+@router.post(
+    "/publications",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ApiResponse[PublicationResponse],
+)
+def create_publication(
+    body: PublicationCreateRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        row = record_publication(
+            db,
+            user_id=current_user.id,
+            task_id=body.task_id,
+            copy_id=body.copy_id,
+            platform=body.platform,
+            publication_status=body.status,
+            external_id=body.external_id,
+            url=body.url,
+            metrics=body.metrics,
+            idempotency_key=body.idempotency_key,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    return ApiResponse(message="发布结果已记录", data=PublicationResponse.model_validate(row))
+
+
+@router.patch(
+    "/publications/{publication_id}/metrics",
+    response_model=ApiResponse[PublicationResponse],
+)
+def patch_publication_metrics(
+    publication_id: int,
+    body: PublicationMetricsPatch,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        row = update_publication_metrics(
+            db, user_id=current_user.id, publication_id=publication_id, metrics=body.metrics
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return ApiResponse(message="发布指标已更新", data=PublicationResponse.model_validate(row))
 
 
 @router.get("/preferences", response_model=ApiResponse[PreferenceResponse])

@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from app.models.memory import StyleCardVersion, UserPreference
+from app.models.memory import MemoryItem, StyleCardVersion, UserPreference
 from app.models.style_card import StyleCard
 
 
@@ -63,6 +63,26 @@ def resolve_style_snapshot(
         if brand_pattern:
             pattern = _deep_merge(pattern, brand_pattern)
             layers.append({"layer": "brand", "preference_version": preference.version})
+
+    learned_rows = (
+        db.query(MemoryItem)
+        .filter(
+            MemoryItem.user_id == user_id,
+            MemoryItem.memory_type == "inferred_preference",
+            MemoryItem.status == "active",
+        )
+        .order_by(MemoryItem.updated_at, MemoryItem.id)
+        .all()
+    )
+    learned_pattern: dict[str, Any] = {}
+    for learned in learned_rows:
+        payload = dict(learned.content_json or {})
+        key = payload.get("preference_key")
+        if key:
+            learned_pattern[str(key)] = payload.get("preference_value")
+    if learned_pattern:
+        pattern = _deep_merge(pattern, learned_pattern)
+        layers.append({"layer": "learned", "evidence_count": len(learned_rows)})
 
     selected_version = 0
     selected_sources: list[str] = []
