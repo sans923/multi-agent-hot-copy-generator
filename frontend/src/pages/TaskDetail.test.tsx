@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getTask, preparePublication } from "../api/tasks";
+import { submitFeedback } from "../api/memory";
 import { ApiError } from "../api/client";
 import { openExternalApp } from "../utils/externalNavigation";
 import { ToastProvider } from "../contexts/ToastContext";
@@ -13,6 +14,7 @@ vi.mock("../api/tasks", () => ({
   preparePublication: vi.fn(),
   resumeTask: vi.fn(),
 }));
+vi.mock("../api/memory", () => ({ submitFeedback: vi.fn() }));
 vi.mock("../components/AgentPipeline", () => ({ AgentPipeline: () => null }));
 vi.mock("../components/AuditTimeline", () => ({
   AuditTimeline: ({ refreshKey }: { refreshKey: number }) => (
@@ -27,6 +29,14 @@ const task = {
   raw_requirement: "生成长文",
   platform: "toutiao",
   status: "completed" as const,
+  execution_status: "succeeded" as const,
+  content_status: "approved" as const,
+  publication_status: "ready" as const,
+  status_reason: null,
+  status_updated_at: "2026-08-13T00:00:00Z",
+  content_brief: { topic: "企业 AI", audience: "技术负责人", goal: "预约演示", key_points: ["审计"] },
+  brief_completeness: 1,
+  brief_missing_fields: [],
   created_at: "2026-08-13T00:00:00Z",
   updated_at: "2026-08-13T00:00:00Z",
   copies: [{
@@ -37,6 +47,11 @@ const task = {
     hashtags: ["AI"],
     review_score: 90,
     is_final: true,
+    parent_copy_id: 40,
+    user_edited: true,
+    applied_style_snapshot: { layers: [{ layer: "brand" }], pattern: { brand_voice: "专业克制" } },
+    knowledge_citations: [{ source_id: 9, chunk_id: 12, title: "产品说明", source_uri: "internal://product", version: 2 }],
+    change_summary: { changed_fields: ["content"], content_char_delta: 12 },
   }],
 };
 
@@ -63,6 +78,38 @@ describe("TaskDetail assisted publishing", () => {
   });
 
   afterEach(() => cleanup());
+
+  it("shows independent production states and the frozen generation evidence", async () => {
+    renderPage();
+
+    expect(await screen.findByText("执行成功")).toBeInTheDocument();
+    expect(screen.getByText("内容已采用")).toBeInTheDocument();
+    expect(screen.getByText("发布就绪")).toBeInTheDocument();
+    expect(screen.getByText("产品说明 · v2")).toBeInTheDocument();
+    expect(screen.getByText(/专业克制/)).toBeInTheDocument();
+    expect(screen.getByText(/正文 \+12 字符/)).toBeInTheDocument();
+  });
+
+  it("submits an explicit adoption decision for the visible copy", async () => {
+    vi.mocked(submitFeedback).mockResolvedValue({
+      success: true,
+      message: "ok",
+      data: {
+        id: 88, task_id: 7, copy_id: 41, result_copy_id: 41,
+        action: "accepted", rating: 1, comment: null, metrics: {},
+        idempotency_key: "feedback-accepted-41", created_at: "2026-08-13T00:00:00Z",
+      },
+    });
+    renderPage();
+    fireEvent.click(await screen.findByRole("button", { name: "采用此版本" }));
+
+    await waitFor(() => expect(submitFeedback).toHaveBeenCalledWith(expect.objectContaining({
+      task_id: 7,
+      copy_id: 41,
+      action: "accepted",
+      rating: 1,
+    })));
+  });
 
   it("binds the visible final copy to the Toutiao package request", async () => {
     const popup = { location: { href: "" }, opener: window, close: vi.fn() };
