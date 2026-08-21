@@ -7,6 +7,8 @@ MySQL 初始化：测试连接并创建所有表
 import sys
 import os
 from pathlib import Path
+import re
+from collections.abc import Callable
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -14,6 +16,58 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.database import engine, create_tables
+
+
+def _expand_guarded_add_columns(
+    statement: str,
+    column_exists: Callable[[str, str], bool],
+) -> list[str]:
+    """将 MySQL 不支持的 ADD COLUMN IF NOT EXISTS 展开为可执行语句。"""
+    alter_match = re.match(
+        r"^\s*ALTER\s+TABLE\s+`?(\w+)`?\s+(.+)$",
+        statement,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not alter_match or "ADD COLUMN IF NOT EXISTS" not in statement.upper():
+        return [statement]
+
+    table_name, alter_body = alter_match.groups()
+    clauses = re.split(
+        r",\s*(?=ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS)",
+        alter_body,
+        flags=re.IGNORECASE,
+    )
+    expanded: list[str] = []
+    for clause in clauses:
+        column_match = re.match(
+            r"^\s*ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS\s+`?(\w+)`?\s+(.+?)\s*$",
+            clause,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if not column_match:
+            return [statement]
+        column_name, definition = column_match.groups()
+        if not column_exists(table_name, column_name):
+            expanded.append(
+                f"ALTER TABLE {table_name} ADD COLUMN {column_name} {definition}"
+            )
+    return expanded
+
+
+def _mysql_column_exists(connection, table_name: str, column_name: str) -> bool:
+    count = connection.execute(
+        text(
+            """
+            SELECT COUNT(*)
+            FROM information_schema.columns
+            WHERE table_schema = DATABASE()
+              AND table_name = :table_name
+              AND column_name = :column_name
+            """
+        ),
+        {"table_name": table_name, "column_name": column_name},
+    ).scalar_one()
+    return count > 0
 
 
 def apply_schema_migrations() -> None:
@@ -37,7 +91,14 @@ def apply_schema_migrations() -> None:
                 if statement.strip()
             ]
             for statement in statements:
-                connection.exec_driver_sql(statement)
+                expanded_statements = _expand_guarded_add_columns(
+                    statement,
+                    column_exists=lambda table_name, column_name: _mysql_column_exists(
+                        connection, table_name, column_name
+                    ),
+                )
+                for expanded_statement in expanded_statements:
+                    connection.exec_driver_sql(expanded_statement)
 
 
 def main() -> None:
