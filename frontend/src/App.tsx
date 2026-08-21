@@ -13,6 +13,7 @@ import { Hotlist } from "./pages/Hotlist";
 import { Profile } from "./pages/Profile";
 import { AdminUsers } from "./pages/AdminUsers";
 import { ContentAssets } from "./pages/ContentAssets";
+import { KnowledgeBase } from "./pages/KnowledgeBase";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="/create" element={<CreateTask />} />
                 <Route path="/tasks/:taskId" element={<TaskDetail />} />
                 <Route path="/hotlist" element={<Hotlist />} />
+                <Route path="/knowledge" element={<KnowledgeBase />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route element={<AdminRoute />}>
                   <Route path="/admin/users" element={<AdminUsers />} />

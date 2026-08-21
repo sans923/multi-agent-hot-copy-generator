@@ -17,6 +17,7 @@ export function Layout() {
           </NavLink>
           <NavLink to="/create">生成文案</NavLink>
           <NavLink to="/hotlist">热榜</NavLink>
+          <NavLink to="/knowledge">知识与记忆</NavLink>
           {user?.is_admin && (
             <>
               <NavLink to="/admin/content-assets">内容资产</NavLink>

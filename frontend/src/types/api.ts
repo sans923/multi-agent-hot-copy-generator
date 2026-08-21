@@ -44,6 +44,9 @@ export type TaskPlatform =
   | "xiaohongshu"
   | "zhihu";
 export type ExecutionMode = "fast" | "plan";
+export type ExecutionStatus = "queued" | "running" | "paused" | "succeeded" | "failed" | "cancelled";
+export type ContentStatus = "brief_missing" | "brief_ready" | "drafting" | "in_review" | "changes_requested" | "approved";
+export type PublicationStatus = "not_prepared" | "blocked" | "ready" | "submitted" | "published" | "failed";
 
 export interface QualityGateMeta {
   passed?: boolean;
@@ -136,6 +139,14 @@ export interface Task {
   raw_requirement: string;
   platform: string;
   status: TaskStatus;
+  execution_status: ExecutionStatus;
+  content_status: ContentStatus;
+  publication_status: PublicationStatus;
+  status_reason?: string | null;
+  status_updated_at: string;
+  content_brief?: ContentBrief | null;
+  brief_completeness?: number;
+  brief_missing_fields?: string[] | null;
   parsed_requirement?: Record<string, unknown> | null;
   orchestration_meta?: OrchestrationMeta | null;
   error_message?: string | null;
@@ -151,6 +162,74 @@ export interface CopySummary {
   hashtags: string[] | null;
   review_score: number | null;
   is_final: boolean;
+  parent_copy_id?: number | null;
+  user_edited?: boolean;
+  applied_style_snapshot?: Record<string, unknown> | null;
+  knowledge_citations?: KnowledgeCitation[] | null;
+  change_summary?: Record<string, unknown> | null;
+}
+
+export interface ContentBrief {
+  topic?: string;
+  audience?: string;
+  goal?: string;
+  key_points?: string[];
+  constraints?: Record<string, unknown>;
+}
+
+export interface KnowledgeCitation {
+  source_id: number;
+  chunk_id: number;
+  title: string;
+  source_uri?: string | null;
+  version: number;
+}
+
+export type FeedbackAction = "accepted" | "rejected" | "edited" | "published";
+
+export interface FeedbackResponse {
+  id: number;
+  task_id: number;
+  copy_id: number;
+  result_copy_id: number | null;
+  action: FeedbackAction;
+  rating: number;
+  comment: string | null;
+  metrics: Record<string, unknown>;
+  idempotency_key: string;
+  created_at: string;
+}
+
+export type KnowledgeType = "brand_fact" | "product_fact" | "campaign_material" | "platform_rule" | "external_reference";
+
+export interface KnowledgeSource {
+  id: number;
+  user_id: number | null;
+  knowledge_type: KnowledgeType;
+  title: string;
+  source_uri: string | null;
+  status: string;
+  version: number;
+  metadata: Record<string, unknown>;
+  valid_from: string | null;
+  valid_to: string | null;
+  index_status: string;
+  created_at: string;
+}
+
+export interface KnowledgeSearchItem {
+  source_id: number;
+  chunk_id: number;
+  knowledge_type: KnowledgeType;
+  content: string;
+  score: number;
+  citation: KnowledgeCitation;
+}
+
+export interface MemoryInsights {
+  feedback: { total: number; adoption_rate: number; edit_rate: number; rejection_rate: number };
+  publication: { total: number; metrics: Record<string, number> };
+  memory: { active_inferred_preferences: number };
 }
 
 export interface TaskDetail extends Task {

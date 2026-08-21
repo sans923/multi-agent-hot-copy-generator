@@ -9,6 +9,7 @@ import type {
   PublishMediaType,
   PublishPlatform,
   PublishPreparation,
+  ContentBrief,
 } from "../types/api";
 
 export async function createTask(payload: {
@@ -48,6 +49,18 @@ export async function resumeTask(
   return request<Task>(`/api/v1/tasks/${taskId}/resume`, {
     method: "POST",
     body: JSON.stringify({ action }),
+  });
+}
+
+export async function updateContentBrief(taskId: number, brief: ContentBrief) {
+  return request<{
+    task_id: number;
+    brief: ContentBrief;
+    completeness_score: number;
+    missing_fields: string[];
+  }>(`/api/v1/tasks/${taskId}/brief`, {
+    method: "PUT",
+    body: JSON.stringify(brief),
   });
 }
 

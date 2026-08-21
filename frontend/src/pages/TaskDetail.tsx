@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getTask, preparePublication, resumeTask } from "../api/tasks";
+import { getTask, preparePublication, resumeTask, updateContentBrief } from "../api/tasks";
+import { submitFeedback } from "../api/memory";
 import { AgentPipeline } from "../components/AgentPipeline";
 import { AuditTimeline } from "../components/AuditTimeline";
 import { useToast } from "../contexts/ToastContext";
@@ -9,6 +10,8 @@ import type {
   PublishMediaType,
   TaskDetail as TaskDetailType,
   TaskStatus,
+  ContentBrief,
+  FeedbackAction,
 } from "../types/api";
 import { PLATFORM_LABELS, STATUS_LABELS } from "../types/api";
 import { ApiError } from "../api/client";
@@ -16,6 +19,19 @@ import { openExternalApp } from "../utils/externalNavigation";
 
 const POLL_INTERVAL = 3000;
 const TERMINAL: TaskStatus[] = ["completed", "failed"];
+
+const EXECUTION_LABELS: Record<string, string> = {
+  queued: "排队中", running: "执行中", paused: "已暂停", succeeded: "执行成功",
+  failed: "执行失败", cancelled: "已取消",
+};
+const CONTENT_LABELS: Record<string, string> = {
+  brief_missing: "简报待补充", brief_ready: "简报已就绪", drafting: "撰写中",
+  in_review: "内容待审", changes_requested: "待修改", approved: "内容已采用",
+};
+const PUBLICATION_LABELS: Record<string, string> = {
+  not_prepared: "未准备发布", blocked: "发布受阻", ready: "发布就绪",
+  submitted: "已提交平台", published: "已发布", failed: "发布失败",
+};
 
 async function copyToClipboard(text: string): Promise<void> {
   try {
@@ -89,6 +105,13 @@ export function TaskDetail() {
     useState<PublishMediaType>("image");
   const [publishBlockers, setPublishBlockers] = useState<string[]>([]);
   const [fallbackCreatorUrl, setFallbackCreatorUrl] = useState<string | null>(null);
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackAction, setFeedbackAction] = useState<FeedbackAction | null>(null);
+  const [editingCopy, setEditingCopy] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedContent, setEditedContent] = useState("");
+  const [briefDraft, setBriefDraft] = useState<ContentBrief>({});
+  const [savingBrief, setSavingBrief] = useState(false);
 
   const load = useCallback(async () => {
     if (!id || Number.isNaN(id)) return;
@@ -107,6 +130,10 @@ export function TaskDetail() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (task?.content_brief) setBriefDraft(task.content_brief);
+  }, [task?.id, task?.content_brief]);
 
   useEffect(() => {
     if (!task || TERMINAL.includes(task.status)) {
@@ -156,6 +183,57 @@ export function TaskDetail() {
     copyList.find((c) => c.is_final) ?? copyList[copyList.length - 1];
   const displayCopy: CopySummary | undefined =
     copyList.find((c) => c.id === selectedCopyId) ?? finalCopy;
+
+  const handleFeedback = async (action: FeedbackAction) => {
+    if (!task || !displayCopy) return;
+    setFeedbackAction(action);
+    try {
+      const response = await submitFeedback({
+        task_id: task.id,
+        copy_id: displayCopy.id,
+        action,
+        rating: action === "rejected" ? -1 : 1,
+        comment: feedbackComment.trim(),
+        metrics: {},
+        idempotency_key: `feedback-${action}-${displayCopy.id}-${Date.now()}`,
+        ...(action === "edited"
+          ? { edited_title: editedTitle, edited_content: editedContent }
+          : {}),
+      });
+      if (action === "edited" && response.data?.result_copy_id) {
+        setSelectedCopyId(response.data.result_copy_id);
+      }
+      toast.success(action === "accepted" ? "已采用该版本" : action === "rejected" ? "已退回修改" : "已保存人工修订版本");
+      setFeedbackComment("");
+      setEditingCopy(false);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : "反馈提交失败");
+    } finally {
+      setFeedbackAction(null);
+    }
+  };
+
+  const startEditing = () => {
+    if (!displayCopy) return;
+    setEditedTitle(displayCopy.title ?? "");
+    setEditedContent(displayCopy.content);
+    setEditingCopy(true);
+  };
+
+  const handleBriefSave = async () => {
+    if (!task) return;
+    setSavingBrief(true);
+    try {
+      await updateContentBrief(task.id, briefDraft);
+      toast.success("内容简报已保存");
+      await load();
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : "内容简报保存失败");
+    } finally {
+      setSavingBrief(false);
+    }
+  };
 
   const handleCopy = async (text: string) => {
     try {
@@ -300,6 +378,25 @@ export function TaskDetail() {
               创建：{new Date(task.created_at).toLocaleString("zh-CN")}
             </span>
           </div>
+
+          <section className="production-state-grid" aria-label="内容生产状态">
+            <div><span>执行状态</span><strong>{EXECUTION_LABELS[task.execution_status] ?? task.execution_status}</strong></div>
+            <div><span>内容状态</span><strong>{CONTENT_LABELS[task.content_status] ?? task.content_status}</strong></div>
+            <div><span>发布状态</span><strong>{PUBLICATION_LABELS[task.publication_status] ?? task.publication_status}</strong></div>
+            {task.status_reason && <p>{task.status_reason}</p>}
+          </section>
+
+          <details className="brief-workbench">
+            <summary>内容简报 · 完整度 {Math.round((task.brief_completeness ?? 0) * 100)}%</summary>
+            <div className="brief-fields">
+              <label>主题<input value={briefDraft.topic ?? ""} onChange={(event) => setBriefDraft({ ...briefDraft, topic: event.target.value })} /></label>
+              <label>目标受众<input value={briefDraft.audience ?? ""} onChange={(event) => setBriefDraft({ ...briefDraft, audience: event.target.value })} /></label>
+              <label>内容目标<input value={briefDraft.goal ?? ""} onChange={(event) => setBriefDraft({ ...briefDraft, goal: event.target.value })} /></label>
+              <label>关键要点（每行一项）<textarea value={(briefDraft.key_points ?? []).join("\n")} onChange={(event) => setBriefDraft({ ...briefDraft, key_points: event.target.value.split("\n").map((item) => item.trim()).filter(Boolean) })} /></label>
+            </div>
+            {(task.brief_missing_fields ?? []).length > 0 && <p className="brief-missing">待补充：{task.brief_missing_fields?.join("、")}</p>}
+            <button type="button" className="btn-secondary" disabled={savingBrief} onClick={handleBriefSave}>{savingBrief ? "保存中…" : "保存内容简报"}</button>
+          </details>
 
           {!TERMINAL.includes(task.status) && (
             <AgentPipeline status={task.status} />
@@ -574,6 +671,28 @@ export function TaskDetail() {
                     {displayCopy.hashtags.map((t) => `#${t}`).join(" ")}
                   </p>
                 )}
+                <div className="generation-evidence-grid">
+                  <details>
+                    <summary>冻结风格快照</summary>
+                    <pre>{JSON.stringify(displayCopy.applied_style_snapshot ?? {}, null, 2)}</pre>
+                  </details>
+                  <details open={(displayCopy.knowledge_citations ?? []).length > 0}>
+                    <summary>知识引用（{displayCopy.knowledge_citations?.length ?? 0}）</summary>
+                    <ul>
+                      {(displayCopy.knowledge_citations ?? []).map((citation) => (
+                        <li key={`${citation.source_id}-${citation.chunk_id}`}>
+                          {citation.source_uri ? <a href={citation.source_uri}>{citation.title} · v{citation.version}</a> : <span>{citation.title} · v{citation.version}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                  {displayCopy.change_summary && (
+                    <div className="change-summary">
+                      <strong>版本变化</strong>
+                      <span>{Array.isArray(displayCopy.change_summary.changed_fields) ? displayCopy.change_summary.changed_fields.map((field) => field === "content" ? "正文" : field === "title" ? "标题" : String(field)).join("、") : "人工修订"} {typeof displayCopy.change_summary.content_char_delta === "number" && `${displayCopy.change_summary.content_char_delta >= 0 ? "+" : ""}${displayCopy.change_summary.content_char_delta} 字符`}</span>
+                    </div>
+                  )}
+                </div>
                 <div className="copy-actions">
                   <button
                     type="button"
@@ -586,6 +705,24 @@ export function TaskDetail() {
                     再写一篇
                   </Link>
                 </div>
+                <section className="feedback-workbench" aria-label="版本决策">
+                  <label>反馈说明（可选）<input value={feedbackComment} onChange={(event) => setFeedbackComment(event.target.value)} placeholder="说明采用或退回原因" /></label>
+                  <div className="copy-actions">
+                    <button type="button" className="btn-primary" disabled={feedbackAction !== null} onClick={() => handleFeedback("accepted")}>采用此版本</button>
+                    <button type="button" className="btn-secondary" disabled={feedbackAction !== null} onClick={() => handleFeedback("rejected")}>退回修改</button>
+                    <button type="button" className="btn-secondary" disabled={feedbackAction !== null} onClick={startEditing}>编辑生成新版本</button>
+                  </div>
+                  {editingCopy && (
+                    <div className="copy-editor">
+                      <label>修订标题<input value={editedTitle} onChange={(event) => setEditedTitle(event.target.value)} /></label>
+                      <label>修订正文<textarea value={editedContent} onChange={(event) => setEditedContent(event.target.value)} /></label>
+                      <div className="copy-actions">
+                        <button type="button" className="btn-primary" disabled={!editedContent.trim() || feedbackAction !== null} onClick={() => handleFeedback("edited")}>保存为新版本</button>
+                        <button type="button" className="btn-secondary" onClick={() => setEditingCopy(false)}>取消编辑</button>
+                      </div>
+                    </div>
+                  )}
+                </section>
               </article>
 
             {displayCopy.is_final && (
