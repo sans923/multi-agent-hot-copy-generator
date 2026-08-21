@@ -525,3 +525,7 @@ SQLAlchemy / MySQL + ChromaDB + 审计日志
 > 我先确认不是查询写错，而是代码 Schema 与已有 MySQL 表漂移：`create_all()` 只能补不存在的表，不会 ALTER 旧表。项目的迁移又用了目标 MySQL 8.0.46 不接受的 `ADD COLUMN IF NOT EXISTS`，所以我把受控 SQL 展开成 `information_schema` 检查加标准逐列 ALTER，并补旧列存在、缺列和重复执行测试。
 >
 > 接着代码审查发现“检查后 ALTER”仍有并发窗口，我在同一数据库连接上用 MySQL named lock 串行化整段增量迁移，并保证异常释放。最终在真实 MySQL 连续执行两次初始化，原始 Task ORM count 查询成功，完整后端 215 项通过。边界也说清楚：轻量脚本没有迁移版本表，多 DDL 不能事务回滚，全新空库的 create_all 还需统一锁；生产会由单一 Alembic migration job 管理，而不是让每个 Web 实例抢着改表。
+
+## 二十三、React 接口失败无限请求排障话术
+
+> 我会先区分“请求为什么失败”和“为什么不断重试”。本例 404 是旧后端进程未加载新路由；无限请求则来自 React 引用依赖：失败 Toast 让 Provider 重渲染，新的 Context value 改变页面回调身份，从而再次触发 Effect。修复时既要重启后端消除 404，也要 memoize Context value，并用失败路径测试证明一次错误只产生一次请求，避免把服务端故障放大成客户端请求风暴。

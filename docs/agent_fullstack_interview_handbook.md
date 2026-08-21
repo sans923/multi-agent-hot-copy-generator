@@ -4094,3 +4094,9 @@ LLM Tool Calling 的 JSON Schema 只是约束提示和校验基础，实际返�
 增量迁移至少要同时解决方言兼容、可重入和并发。不要假设 `ADD COLUMN IF NOT EXISTS` 在目标 MySQL 版本可用；可先查询 `information_schema.columns`，再对缺列执行标准 ALTER。但单独的“先查再改”有竞态，两个启动者都可能看到列不存在。轻量方案可让检查与 DDL 在同一个 MySQL Connection 内，并用 `GET_LOCK` 串行化整个迁移序列；DDL 隐式提交不会释放 named lock，连接结束则由服务端回收。
 
 这种脚本仍不是完整迁移框架：多条 DDL 没有事务原子性，也没有版本表、依赖关系和标准回滚。生产系统应由单一迁移 Job 执行 Alembic 等版本化迁移，应用实例只做 Schema 版本兼容检查。测试应覆盖旧表升级、重复运行、锁获取失败和原始 ORM 查询；真实目标版本数据库验证不能被 SQLite 单测替代。
+
+## 57. React Context 引用稳定性与 Effect 请求循环
+
+`useEffect` 是否重跑比较的是依赖引用，不是对象内容。Context Provider 若在每次渲染时直接创建 `{ success: ..., error: ... }`，消费者拿到的对象每次都不同；消费者再用它构造 `useCallback` 并作为 Effect 依赖，就可能把一次错误提示变成循环：请求失败更新 Toast 状态，Provider 重渲染，Context value 改变，Effect 再请求。
+
+解决方向是让 Provider 暴露的函数用 `useCallback` 固定，并用 `useMemo` 固定 value；消费者优先依赖具体稳定函数，而不是整个上下文对象。失败路径测试应断言接口 404/500 时只发起一次请求和一次通知，因为成功路径往往不会触发 Provider 状态更新，容易掩盖这个问题。
