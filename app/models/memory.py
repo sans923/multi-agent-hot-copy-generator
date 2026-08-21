@@ -67,11 +67,16 @@ class MemoryFeedback(Base):
     rating = Column(Integer, nullable=False, default=0)
     comment = Column(Text, nullable=True)
     metrics = Column(JSON, nullable=False, default=dict)
-    idempotency_key = Column(String(100), nullable=False, unique=True)
+    idempotency_key = Column(String(100), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     __table_args__ = (
         CheckConstraint("rating >= -1 AND rating <= 1", name="ck_memory_feedback_rating"),
+        UniqueConstraint(
+            "user_id",
+            "idempotency_key",
+            name="uq_memory_feedback_user_idempotency",
+        ),
         Index("ix_memory_feedback_user_created", "user_id", "created_at"),
     )
 

@@ -22,6 +22,7 @@ class MemoryIndexJob(Base):
     payload = Column(JSON, nullable=False, default=dict)
     status = Column(String(20), nullable=False, default="pending", index=True)
     attempts = Column(Integer, nullable=False, default=0)
+    locked_at = Column(DateTime, nullable=True, index=True)
     last_error = Column(Text, nullable=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(

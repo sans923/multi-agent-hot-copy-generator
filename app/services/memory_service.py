@@ -87,12 +87,13 @@ def record_copy_feedback(
 ) -> MemoryFeedback:
     existing = (
         db.query(MemoryFeedback)
-        .filter(MemoryFeedback.idempotency_key == idempotency_key)
+        .filter(
+            MemoryFeedback.user_id == user_id,
+            MemoryFeedback.idempotency_key == idempotency_key,
+        )
         .first()
     )
     if existing is not None:
-        if existing.user_id != user_id:
-            raise ValueError("无权访问该反馈记录")
         return existing
     owned = (
         db.query(Copy)
