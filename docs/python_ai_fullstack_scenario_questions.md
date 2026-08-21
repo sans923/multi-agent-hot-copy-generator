@@ -285,3 +285,22 @@ MySQL 中热榜数据正常，Chroma 持久库在启动向量化时抛出 `'_typ
 ### 项目落地状态
 
 项目已有按关键词取 1～3 篇高点赞文章的离线脚本、结构化规律抽取、去标识化、Prompt 注入边界、连续文本重叠检查和 StyleCardVersion。尚缺学习 Batch/Item、逐篇特征表、语义去重、多样化采样、候选审核和留出集评测，因此当前只能称为批量脚本雏形，不能称为生产级批量学习平台。
+
+## 15. Worker 执行 20 分钟后租约过期，旧 Worker 又恢复，怎样避免互相覆盖？
+
+### 情景
+
+Worker A 认领一个 Agent 任务后发生长时间网络抖动，租约过期；Worker B 回收并重新执行。随后 A 恢复并尝试写 completed。同时，最后一次尝试的 Worker 直接崩溃，Job 一直停留在 processing。
+
+### 回答要点
+
+1. 每次认领生成唯一 lease token，并递增 attempt；`worker_id` 只用于观察，不能作为可靠 fencing token。
+2. heartbeat 使用独立 Session 周期更新 `locked_at`，不能复用正在执行长事务的业务 Session。
+3. renew/complete/fail 均条件更新 processing + token + attempt；更新 0 行表示所有权已丢失，旧 Worker 不得确认。
+4. 认领器或定时 reaper 把过期且已达到最大尝试次数的 processing Job 转为 dead，避免永久悬挂。
+5. 业务副作用仍需幂等：数据库写入用 execution key/唯一约束，第三方调用传平台幂等键或查询不确定结果；队列 fencing 本身不保证 exactly-once。
+6. 测试应覆盖续租、过期回收、旧 token 写回失败、最终尝试 reaper、物理 kill/restart 和网络分区；只测“两个顺序 claim”不够。
+
+### 项目落地状态
+
+项目已实现 token + attempt fencing、独立 Session heartbeat、有限重试、dead/revive 和最终租约 reaper；单元回归与真实 MySQL 并发入队、真实 Worker 三次失败已验证。物理杀死正在执行真实 LLM 的 Worker 并跨租约恢复尚未演练，因此极端故障恢复仍不能写成实测事实。

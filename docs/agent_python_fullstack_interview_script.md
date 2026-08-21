@@ -244,13 +244,13 @@ SQLAlchemy / MySQL + ChromaDB + 审计日志
 
 ### Q2：项目真的充分异步吗？
 
-> 不能夸大。API 框架是 ASGI，部分外部调用使用 HTTP 客户端，但 Agent 主链路和 SQLAlchemy 会话仍有同步部分，任务执行目前使用 FastAPI BackgroundTasks。它适合单机 MVP，不等同于可靠的分布式任务队列。
+> 不能夸大。API 框架是 ASGI，部分外部调用使用 HTTP 客户端，但 Agent 主链路和 SQLAlchemy 会话仍有同步部分。长时生成已经迁到 MySQL 持久 Job 和独立 Worker，具备租约、heartbeat、fencing、有限重试和 dead 状态；它仍是数据库轮询队列，不等同于 Kafka/Celery 等成熟分布式任务平台，也还没有全局并发闸门和完整队列指标。
 
 ### Q3：BackgroundTasks 有什么限制？
 
 > `BackgroundTasks` 本质上是把函数及参数附加到当前 Response，`add_task()` 只登记，响应发送后才在当前 Web 进程执行。同步 `def` 通常进入 Starlette 线程池，异步 `async def` 由事件循环执行；它不会自动变成多进程任务。多个任务按加入顺序运行，前一个未处理异常还可能阻止后续任务。
 >
-> 它的核心限制是和 Web 进程同生命周期：Worker 重启、容器部署或进程崩溃时任务可能丢失，也没有完整的持久化、跨节点调度、状态查询和自动重试。因此我只把它用于短小、非关键、允许失败的响应后操作。长时间 Agent 编排和发布作业应迁移到 Celery、RQ、Dramatiq 或消息队列，并增加幂等键、任务租约、重试和死信处理。实现时只传 `task_id` 等稳定数据，不复用请求级数据库 Session。
+> 它的核心限制是和 Web 进程同生命周期：Worker 重启、容器部署或进程崩溃时任务可能丢失，也没有完整的持久化、跨节点调度、状态查询和自动重试。因此我只把它用于短小、非关键、允许失败的响应后操作。本项目的长时间 Agent 编排已迁到独立数据库 Worker；实现时只传 `task_id` 和租约凭证，不复用请求级数据库 Session。
 
 ### 追问：它和 `await`、`asyncio.create_task()` 有什么区别？
 
@@ -536,3 +536,11 @@ SQLAlchemy / MySQL + ChromaDB + 审计日志
 > 我不会把几百篇文章直接放进一次 Prompt。我的方案是先建立可恢复的离线批次：来源先做授权、完整性、内容 hash、语义去重和质量归一化，再限制单作者与单热点占比做多样化采样。每篇文章独立抽取标题公式、钩子、结构比例、段落节奏、论证配比、情绪曲线和 CTA，并保存字段级置信度和证据；具体事实与故事不进入风格卡。
 >
 > 聚合阶段按平台、内容类型和主题分簇，类别字段看支持率，数值字段看分位数，同时保留反例和可选变体。批次只生成 candidate 风格版本，先用未参与学习的 Brief 做旧版/候选版对照生成，检查风格符合、事实性、合规、来源近似度和多样性，再由人激活。线上采用、编辑和发布指标达到最小样本量后才调整权重，任何版本都可回滚。当前项目已有三篇抽取脚本、去标识化、防重叠和风格版本，但 Batch/Item、逐篇特征、候选审核与留出评测仍是下一阶段，不能把现有脚本夸大成完整批量学习系统。
+
+## 二十五、持久任务队列与独立 Worker 话术
+
+### 面试官：你怎样保证 Web 重启后 Agent 长任务不丢，并避免两个 Worker 重复确认？
+
+> 我把生成任务从 FastAPI BackgroundTasks 迁到了数据库持久队列。创建 Task 和 start Job 在同一事务提交，API 立即返回；独立 Worker 用条件更新认领。每次认领生成新的 lease token，attempt 同时递增，heartbeat 用独立 Session 续租，完成、失败和续租都必须匹配 token 与 attempt，所以旧 Worker 无法覆盖新租约。异常和 success=false 会进入有限重试，最后一次 Worker 崩溃则由 reaper 转 dead；人工 retry 可显式 revive dead Job。
+>
+> 我还处理了三个容易漏掉的边界：并发入队不能只先查后插，唯一键冲突要在 savepoint 后结束旧快照再读取已有 Job；durable LangGraph 每个节点的新 Session 也必须带同一 fencing guard；Compose 不能用明文密码覆盖 `.env`，并且要由一次性 migrate 成功后再启动 Web。验证不仅有 238 项后端测试，还在真实 MySQL 用 8 个线程写同一 key，结果只有一行且无错误，并让真实 Worker 执行失败 Job 三次后进入 dead。这个方案已经脱离 Web 生命周期，但我不会说它 exactly-once：创建接口仍要补用户级幂等键，第三方副作用还要平台幂等键或结果查询，Worker 也要继续补并发闸门和队列指标。

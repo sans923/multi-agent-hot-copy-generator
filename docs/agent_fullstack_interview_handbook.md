@@ -3661,7 +3661,7 @@ GET /health
 
 ## 42. 初学者版本的1分钟回答
 
-> 我之前主要做前端，这个项目是我向Python Agent全栈转型的实践。前端使用React展示任务创建、执行进度、质量报告和审计时间线；后端使用FastAPI提供API，SQLAlchemy和MySQL保存任务、文案和日志。Agent部分把需求理解、内容生成和审核拆成不同角色，通过Function Calling调用热点检索、RAG和审核Skill。复杂任务用LangGraph保存状态并按条件流转，系统限制工具次数、步骤、超时和重写次数，失败后可以保存Checkpoint等待人工决定。当前方案适合学习和中小规模应用，生产化还需要把BackgroundTasks替换成持久化任务队列，并补充RAG离线评测和分布式存储。
+> 我之前主要做前端，这个项目是我向Python Agent全栈转型的实践。前端使用React展示任务创建、执行进度、质量报告和审计时间线；后端使用FastAPI提供API，SQLAlchemy和MySQL保存任务、文案、持久Job和日志。Agent部分把需求理解、内容生成和审核拆成不同角色，通过Function Calling调用热点检索、RAG和审核Skill。复杂任务用LangGraph保存状态并按条件流转，独立Worker通过租约、heartbeat、fencing和有限重试可靠消费。当前方案适合学习和中小规模应用，生产化还需补入口幂等、队列背压/指标、RAG离线评测和共享向量存储。
 
 这段话的优点：
 
@@ -3685,7 +3685,7 @@ GET /health
 
 如果还不能独立写，应回答：
 
-> 我在独立项目中使用过FastAPI，目前更准确的描述是“掌握基础使用”或“具备项目实践”，还没有大规模线上后端经验。我理解路由、依赖注入、Pydantic、Session生命周期和后台任务的基本机制，也清楚当前BackgroundTasks方案的生产限制。
+> 我在独立项目中使用过FastAPI，目前更准确的描述是“掌握基础使用”或“具备项目实践”，还没有大规模线上后端经验。我理解路由、依赖注入、Pydantic、Session生命周期、BackgroundTasks 与持久 Worker 的边界，也实现过数据库租约、heartbeat、fencing 和有限重试。
 
 ### 面试官：为什么不用一个Agent完成？
 
@@ -3701,7 +3701,7 @@ GET /health
 
 ### 面试官：最大技术不足是什么？
 
-> 第一是Agent任务目前依赖Web进程的BackgroundTasks，进程重启可能丢任务；第二是本地Chroma不适合多实例共享；第三是RAG还缺带标准答案的离线评测集；第四是多Worker中启动Scheduler可能重复执行。生产化会依次改为任务队列、共享向量服务、评测体系和独立调度器。
+> 第一是创建任务入口仍缺用户级幂等键和结果回放；第二是数据库队列还缺全局/用户并发闸门和等待时间指标；第三是本地Chroma不适合多实例共享，RAG 也缺标准答案离线评测集；第四是多 Web Worker 中启动 Scheduler 仍需独立调度所有权。长时任务脱离 Web 生命周期已经完成，下一步是入口幂等、背压、共享向量服务、评测体系和独立调度器。
 
 ---
 
@@ -4109,3 +4109,11 @@ LLM Tool Calling 的 JSON Schema 只是约束提示和校验基础，实际返�
 逐篇抽取的价值是可重试和可聚合。每篇保存 Schema、模型/Prompt 版本、字段级置信度、证据和失败原因；聚合时类别字段看支持率，数值字段看分位数，结构变体保留反例和覆盖范围。批次输出只能是 candidate，不能直接覆盖 active；发布前要用留出 Brief 比较旧版与候选版，并检查风格符合、事实性、合规、来源近似风险和多样性。
 
 真实验收需要四层指标：管道成功率与成本、抽取 Schema/证据质量、离线对照生成质量、线上采用/编辑/发布效果。导入文章数和 LLM 调用成功率只能说明任务运行，不代表风格学习有效。
+
+## 59. 数据库持久队列中的租约、续租与 fencing
+
+数据库任务队列至少要分清“消息已落库”“某个 Worker 暂时拥有执行权”和“业务已经成功”。API 应把业务记录与 Job 放在同一短事务中；Worker 通过条件更新认领，不能先 SELECT 再无条件 UPDATE。`worker_id` 只方便观察，真正的所有权凭证应是每次认领生成的不可复用 lease token，并把 attempt 一并作为 fencing 条件。
+
+长时任务必须在独立数据库 Session 中周期续租；完成、失败和续租都执行 `WHERE status='processing' AND lease_token=? AND attempts=?`。这样旧 Worker 即使在租约过期后恢复，也不能覆盖新 Worker 的状态。达到最大尝试次数且租约过期的 processing Job 还需要 reaper 转为 dead，否则会永久卡住。heartbeat 与 fencing 解决的是执行权和状态覆盖，不等于第三方副作用 exactly-once；外部发布或扣费仍要使用对方幂等键、业务结果查询或补偿。
+
+并发幂等不能只有“先查再插”。数据库唯一约束是最终裁判，应用应使用原子 upsert，或在 savepoint 捕获唯一键冲突后开启可看到并发提交的新事务再读取既有记录。人工 retry 还要定义 terminal Job 策略：dead 可以显式 revive 并重置尝试次数，completed 是否允许再次发起则应由新的业务版本或请求键决定。

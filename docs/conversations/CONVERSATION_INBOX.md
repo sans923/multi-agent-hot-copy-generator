@@ -401,3 +401,17 @@
 - 面试价值：可回答“如何从爆文中学习风格但避免洗稿、数据偏差和自动污染线上规则”的系统设计题。
 - 应更新的目标文档：项目优化指南、Python AI 全栈知识手册、项目面试话术、Python AI 全栈情景题。
 - 状态：已处理；本轮未读取侧边栏聊天，不更新同步游标。
+
+### 2026-08-22｜彻底收尾浏览器请求环、Toast 资源与持久 Worker
+
+- 日期：2026-08-22
+- 来源任务或聊天：当前 Codex 项目任务（任务 ID 未向模型暴露）
+- 用户原始问题：此前分支未推送、真实浏览器长期网络曲线未测、Toast 定时器待清理、P1 持久队列与独立 Worker 未实现，要求全部彻底解决后再停止。
+- AI 回答摘要：以 TDD 清理 Toast timeout；实现数据库持久 Job、独立 Worker、原子入队、有限重试、dead/revive、lease token/attempt fencing、heartbeat 和最终租约 reaper；修复异常吞噬、并发唯一键快照、Compose 明文密码和首次建表锁；完成真实 Chrome 120 秒网络曲线、MySQL 8 线程同键和真实 Worker 三次失败验证。
+- 新增知识点：heartbeat 防止长任务误回收，fencing 防止旧所有者写回；最终尝试需要 reaper；MySQL REPEATABLE READ 下捕获唯一键冲突后要结束旧快照；队列可靠交付不等于外部副作用 exactly-once；StrictMode 固定初始请求与持续增长应分开判断。
+- 新增专有名词：lease token、fencing token、heartbeat、dead job revive、reaper、REPEATABLE READ snapshot、数据库持久队列。
+- 项目事实：完整后端 238 项通过；前端 12 项及构建通过；真实 Chrome 0～120 秒 insights 请求数稳定为 4；真实 MySQL 8 线程并发同 key 只有 1 行且无错误；真实 Worker 失败 Job 三次后 dead；关系库普通 flush、bulk update 与 durable LangGraph 节点 Session 已接入同事务 fencing；一次性 migrate 启动顺序已通过审查；最终 Web/Worker 已重启且健康检查 200。
+- 推断或假设：物理 kill 正在执行真实 LLM 的 Worker 后可按租约恢复属于尚未执行的预期；极端网络分区下第三方副作用仍不保证 exactly-once；入口用户级幂等、背压和队列指标仍应继续实现。
+- 面试价值：可用于回答 BackgroundTasks 生产化、数据库队列认领、租约续期、旧 Worker fencing、并发幂等、死信与 exactly-once 边界。
+- 应更新的目标文档：项目优化指南、Python AI 全栈知识手册、项目面试话术、Python AI 全栈情景题。
+- 状态：已处理；本轮未读取侧边栏聊天，`SYNC_STATE.md` 的既有未提交改动不属于本任务。
