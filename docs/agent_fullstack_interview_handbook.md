@@ -1609,6 +1609,106 @@ background_tasks.add_task(run_pipeline(task_id))
 - 审计日志；
 - 编排状态。
 
+## 12.1 用 Excel 理解关系数据库
+
+初学者可以先把关系数据库想成“有严格规则、支持多人并发和事务的 Excel”，但两者能力差别很大：
+
+| 数据库概念 | 通俗理解 | 示例 |
+| --- | --- | --- |
+| Database | 一个业务的数据仓库 | `hot_copy` |
+| Table | 一类数据的表格 | `users`、`tasks` |
+| Row / Record | 一条完整记录 | 某一个任务 |
+| Column / Field | 记录的一个属性 | `status`、`created_at` |
+| Schema | 表结构和约束的定义 | 字段类型、索引、外键 |
+| Query | 向数据库提出的一次读写请求 | 查询最近 20 个任务 |
+
+关系模型里的 `relation` 更接近“一张符合关系模型约束的表”；表与表之间的业务关联，再通过主键、外键和 `JOIN` 表达。例如：
+
+```text
+users.id = tasks.user_id
+```
+
+这表示一个用户可以拥有多个任务。数据库并不是把整个用户对象重复复制到每条任务里，而是让任务保存用户主键。
+
+## 12.2 主键、外键和约束
+
+### 主键 Primary Key
+
+主键唯一标识一行数据：
+
+```sql
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
+```
+
+主键应稳定、唯一且不可为空。业务邮箱可能变化，因此通常用自增 ID、UUID 等代理主键，把邮箱另设为唯一约束。
+
+### 外键 Foreign Key
+
+外键保证引用的数据真实存在：
+
+```sql
+CREATE TABLE tasks (
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    CONSTRAINT fk_tasks_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+外键能保护引用完整性，但删除父记录时必须明确选择：拒绝删除、级联删除或把外键置空。不能看到 `CASCADE` 方便就到处使用，否则删除用户可能连带删除大量业务数据。
+
+### 常见约束
+
+- `NOT NULL`：该字段必须有值；
+- `UNIQUE`：值不能重复，可从数据库层抵抗并发重复写入；
+- `CHECK`：值必须满足条件；
+- `DEFAULT`：未传值时使用默认值；
+- `FOREIGN KEY`：引用目标必须存在。
+
+Pydantic 校验的是一次 API 输入，数据库约束保护的是所有写入入口。脚本、后台 Worker、迁移和其他服务都可能绕过 API，因此关键规则不能只写在前端或 Pydantic 中。
+
+## 12.3 数据类型怎么选
+
+字段类型会影响正确性、空间和索引：
+
+- 金额不要用二进制浮点数 `FLOAT`，通常使用最小货币单位整数或 `DECIMAL`；
+- 时间要统一时区策略，业务上通常保存 UTC，并明确 `created_at` 与 `updated_at` 的含义；
+- 状态字段要限制合法值，避免同一状态出现 `done`、`finished`、`complete` 多种写法；
+- 长正文与短标题使用不同长度类型，不应所有字符串都无脑设成超长文本；
+- JSON 适合结构变化快、整体读取的扩展字段，不适合替代所有关系表和可查询列。
+
+## 12.4 一对一、一对多和多对多
+
+- 一对一：一个用户对应一个用户配置；
+- 一对多：一个用户拥有多个任务；
+- 多对多：一篇文章有多个标签，一个标签也属于多篇文章，需要中间表。
+
+多对多不能把 ID 用逗号拼成字符串：
+
+```text
+错误：article.tag_ids = "1,5,9"
+正确：article_tags(article_id, tag_id)
+```
+
+中间表还能添加 `created_at`、排序权重和来源等关系自身的属性。
+
+## 12.5 范式与反范式
+
+范式的目标是减少重复数据和更新异常。以用户邮箱为例，如果每条任务都复制一份邮箱，用户修改邮箱时就要更新所有任务；拆出 `users` 表后只需修改一处。
+
+初中级面试掌握前三范式的直觉即可：
+
+- 第一范式：一个字段保存一个可直接使用的值，不把多个标签塞进一个字符串；
+- 第二范式：非主键字段应依赖整个主键；
+- 第三范式：非主键字段不要再依赖另一个非主键字段。
+
+但范式不是越高越好。为了报表性能，可以有意识地保存快照或冗余字段，这叫反范式。关键是说明数据真源、同步方式和允许的不一致窗口，而不是随意复制数据。
+
+你可以用自己的话这样理解：建表不是“把对象字段抄进数据库”，而是在设计数据身份、关系、合法范围和并发情况下仍能成立的规则。
+
 ---
 
 <a id="chapter-13"></a>
@@ -1625,6 +1725,97 @@ FROM tasks
 WHERE user_id = 1
 ORDER BY created_at DESC;
 ```
+
+SQL 常见操作可以按 CRUD 记忆：
+
+```sql
+-- Create
+INSERT INTO tasks (user_id, status, title)
+VALUES (1, 'pending', '数据库基础');
+
+-- Read
+SELECT id, title, status
+FROM tasks
+WHERE user_id = 1;
+
+-- Update
+UPDATE tasks
+SET status = 'completed'
+WHERE id = 100 AND status = 'processing';
+
+-- Delete
+DELETE FROM tasks
+WHERE id = 100 AND user_id = 1;
+```
+
+更新和删除必须先确认 `WHERE` 条件。生产操作前通常先把相同条件改成 `SELECT` 检查目标行，并通过事务、备份和权限降低误操作风险。
+
+SQL 语句还可分为：
+
+- DDL：定义结构，如 `CREATE`、`ALTER`、`DROP`；
+- DML：操作数据，如 `INSERT`、`UPDATE`、`DELETE`；
+- DQL：查询数据，主要是 `SELECT`；
+- TCL：控制事务，如 `COMMIT`、`ROLLBACK`；
+- DCL：授权与回收权限，如 `GRANT`、`REVOKE`。
+
+### `WHERE`、`GROUP BY`、`HAVING` 和 `ORDER BY`
+
+```sql
+SELECT user_id, COUNT(*) AS task_count
+FROM tasks
+WHERE created_at >= '2026-08-01'
+GROUP BY user_id
+HAVING COUNT(*) >= 5
+ORDER BY task_count DESC
+LIMIT 20;
+```
+
+- `WHERE` 在分组前过滤行；
+- `GROUP BY` 把相同键归为一组；
+- `HAVING` 过滤聚合后的组；
+- `ORDER BY` 排序；
+- `LIMIT` 限制返回数量。
+
+### JOIN
+
+```sql
+SELECT t.id, t.title, u.email
+FROM tasks AS t
+JOIN users AS u ON u.id = t.user_id
+WHERE t.status = 'completed';
+```
+
+- `INNER JOIN`：只保留两边都匹配的记录；
+- `LEFT JOIN`：保留左表全部记录，右侧没有匹配时为 `NULL`。
+
+JOIN 条件遗漏可能产生笛卡尔积，让结果行数爆炸。关联字段还应考虑索引。
+
+### `NULL` 不是空字符串
+
+`NULL` 表示未知或缺失，不能写：
+
+```sql
+WHERE deleted_at = NULL
+```
+
+应写：
+
+```sql
+WHERE deleted_at IS NULL
+```
+
+聚合函数对 `NULL` 的处理也不同：`COUNT(*)` 统计行数，`COUNT(column)` 不统计该列为 `NULL` 的行。
+
+### 参数化查询防 SQL 注入
+
+不要把用户输入直接拼入 SQL：
+
+```python
+# 错误示意
+sql = f"SELECT * FROM users WHERE email = '{email}'"
+```
+
+应使用 SQLAlchemy 或数据库驱动的绑定参数。参数化主要保护“值”，动态表名、列名和排序方向仍需白名单，不能把用户输入直接当 SQL 标识符。
 
 ## 13.2 ORM 是什么
 
@@ -1685,6 +1876,33 @@ Session 是 ORM 工作单元：
 - 从连接池借用连接。
 
 Session 不应作为全局单例，也不应跨线程共享。
+
+### FastAPI 请求中的 Session 生命周期
+
+典型做法是每个请求获取独立 Session，并在结束时关闭：
+
+```python
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```
+
+`close()` 不等于关闭整个数据库，它通常是清理 ORM 状态并把连接归还连接池。异常后如果事务已经失败，应先 `rollback()`，否则 Session 可能处于不可继续使用的失败状态。
+
+长时间 Agent 任务不要把请求级 Session 一直握住，也不要跨线程传递。更安全的做法是传 `task_id`，在 Worker 的每个短事务阶段重新创建 Session。
+
+### 连接池不是越大越好
+
+池太小会排队，池太大会耗尽 MySQL `max_connections`，并增加数据库上下文切换。容量估算至少要考虑：
+
+```text
+总潜在连接 ≈ 实例数 × 每实例进程数 × (pool_size + max_overflow)
+```
+
+还要给迁移、监控、管理连接和其他服务预留空间。真正调优需要连接等待时间、活跃连接数和查询延迟，不能只凭用户数拍脑袋加池。
 
 ---
 
@@ -1757,6 +1975,66 @@ WHERE id = 123 AND status = 'awaiting_human';
 
 检查影响行数，只有一个请求能成功抢到执行权。这是基于数据库的原子状态迁移。
 
+## 14.3 四种隔离级别
+
+从弱到强通常是：
+
+1. `READ UNCOMMITTED`：可能脏读；
+2. `READ COMMITTED`：只读已提交数据，但同一事务重复读取可能变化；
+3. `REPEATABLE READ`：同一事务中的一致性读取通常保持快照，MySQL InnoDB 常用此级别；
+4. `SERIALIZABLE`：效果最接近事务串行执行，并发代价通常最高。
+
+隔离级别不是“越高越专业”。订单查询、报表、库存扣减对一致性要求不同，应结合锁、唯一约束和原子 SQL 设计。
+
+## 14.4 MVCC、快照读和当前读
+
+MVCC 是多版本并发控制。数据库保留行的多个版本，让普通查询在很多情况下读取一致性快照，而不必和写操作互相长时间阻塞。
+
+- 快照读：普通 `SELECT` 通常读取事务可见版本；
+- 当前读：`SELECT ... FOR UPDATE`、`UPDATE`、`DELETE` 等需要读取最新可锁定版本。
+
+MVCC 不等于没有锁。写写冲突、唯一约束检查和当前读仍会涉及锁。
+
+## 14.5 乐观锁和悲观锁
+
+悲观锁假设冲突较多，先锁住目标行：
+
+```sql
+SELECT stock
+FROM products
+WHERE id = 1
+FOR UPDATE;
+```
+
+乐观锁假设冲突较少，更新时检查版本：
+
+```sql
+UPDATE user_preferences
+SET content = ?, version = version + 1
+WHERE id = ? AND version = ?;
+```
+
+影响行数为 0 说明数据已被别人修改，需要提示冲突、重新读取或有限重试。乐观锁不会自动重跑整个复杂业务，更不能无上限重试第三方副作用。
+
+## 14.6 死锁与事务边界
+
+两个事务以不同顺序锁定资源时可能死锁：
+
+```text
+事务 A：先锁任务 1，再等任务 2
+事务 B：先锁任务 2，再等任务 1
+```
+
+数据库通常会回滚其中一个事务。降低死锁的方法包括：
+
+- 所有业务按一致顺序访问资源；
+- 缩短事务，事务中不等待 LLM 或第三方 API；
+- 为查询建立合适索引，减少锁扫描范围；
+- 捕获明确的死锁错误，只对可安全重试的事务做有限退避重试；
+- 记录操作标识，保证重试不会重复产生外部副作用。
+
+Agent 调用模型可能耗时几十秒，因此不应在数据库事务中发起模型请求。常见做法是短事务保存阶段状态并提交，执行外部调用，再用新的短事务保存结果；跨阶段一致性用状态机、幂等键和 Outbox 管理。
+
 ---
 
 <a id="chapter-15"></a>
@@ -1814,6 +2092,101 @@ ORDER BY sequence_no;
 - 接口只返回所需字段。
 
 是否选择 join 还要考虑数据重复、分页和结果集大小。
+
+## 15.4 B+Tree、选择性和覆盖索引
+
+MySQL InnoDB 常用 B+Tree 索引。它适合等值查询、范围查询和按索引顺序排序。索引设计要关注选择性：`user_id` 通常比只有两三个取值的布尔字段更能缩小范围。
+
+联合索引 `(user_id, status, created_at)` 可能支持：
+
+```sql
+WHERE user_id = ? AND status = ?
+ORDER BY created_at DESC
+```
+
+但不能机械背“最左前缀”。范围条件、排序方向、查询列、数据分布和数据库版本都会影响执行计划。
+
+如果查询所需列全部可从索引取得，就可能形成覆盖索引，减少回表；但为了覆盖所有查询不断加宽索引会显著增加写入和存储成本。
+
+## 15.5 用 `EXPLAIN` 看执行计划
+
+查询慢时不要第一反应就是加缓存或加索引，先观察真实 SQL 和执行计划：
+
+```sql
+EXPLAIN
+SELECT id, title, created_at
+FROM tasks
+WHERE user_id = 1 AND status = 'completed'
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+重点关注：
+
+- 实际使用了哪个索引；
+- 预计扫描多少行；
+- 是否全表扫描；
+- 是否出现额外排序或临时表；
+- 过滤后还剩多少数据。
+
+`EXPLAIN` 是估算，不等于完整真实性能结论。还要结合慢查询日志、真实参数、数据量、P95/P99 延迟和锁等待。生产环境使用 `EXPLAIN ANALYZE` 时要了解它会实际执行查询，对写语句尤其谨慎。
+
+## 15.6 OFFSET 分页与游标分页
+
+传统分页：
+
+```sql
+SELECT id, created_at
+FROM tasks
+ORDER BY created_at DESC, id DESC
+LIMIT 20 OFFSET 100000;
+```
+
+深分页需要跳过大量记录，而且数据新增时可能重复或漏项。连续滚动列表可以使用 Keyset/Cursor 分页：
+
+```sql
+SELECT id, created_at
+FROM tasks
+WHERE (created_at, id) < (?, ?)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+```
+
+游标应包含稳定且唯一的排序键，例如 `created_at + id`。后台管理跳到指定页仍可用 OFFSET，选型取决于产品需求。
+
+## 15.7 Schema 迁移、备份与恢复
+
+修改 ORM 模型不会自动升级已经存在的生产表，`create_all()` 通常只创建缺失表。正式项目应使用 Alembic 等迁移工具维护版本化升级：
+
+```text
+修改模型 → 生成/编写迁移 → 审查 SQL → 备份
+→ 在测试库执行 → 发布时单一迁移者升级 → 验证 Schema 和业务查询
+```
+
+迁移要考虑：
+
+- 大表加列或建索引是否锁表；
+- 新旧代码是否需要兼容窗口；
+- 回滚是反向迁移，还是应用回滚但保留兼容 Schema；
+- 多实例不能各自并发执行同一 DDL；
+- 数据迁移要可重入、可观测，并记录处理进度。
+
+备份不等于恢复能力。必须验证备份能否恢复，并明确：
+
+- RPO：最多允许丢失多长时间的数据；
+- RTO：故障后多久恢复服务；
+- 全量备份、增量日志和异地备份策略；
+- 恢复演练以及备份加密、权限和保留期。
+
+## 15.8 数据库、Redis 和向量库的职责
+
+- 关系数据库：用户、任务、权限、事务状态等业务真源；
+- Redis：缓存、限流、短期状态和队列协调，不能默认替代持久业务库；
+- 向量库：按语义近似度检索，是可重建派生索引，不承担关系事务与唯一约束。
+
+在 Agent 项目中，应先明确哪份数据是 Source of Truth。向量索引损坏时可从关系库重建；反过来不能只靠向量库恢复完整用户、权限和业务状态。
+
+你可以用自己的话这样理解：数据库优化不是“多加索引”，而是从数据模型、约束、SQL、事务、锁、执行计划、迁移和恢复一起保证正确且足够快。
 
 ---
 
