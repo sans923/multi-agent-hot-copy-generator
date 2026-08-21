@@ -1353,7 +1353,7 @@ Agent 执行失败
 
 **修改文件范围：** 后端涉及 task/copy/memory/knowledge 模型、task/memory/knowledge API 与 Schema、生命周期/知识/风格解析/反馈学习/索引服务、Agent 注入点和三份迁移；前端涉及任务详情、知识页、API/类型、导航和样式；行为契约集中在三份 `test_content_production_p*.py`、迁移 helper 测试和 `TaskDetail.test.tsx`。
 
-**测试方法与实际结果：** P0 RED 为 `5 failed`，P1 初始 RED 为 `4 failed`，P2 RED 为 `3 failed`，前端 RED 为缺少 `api/memory` 模块；各阶段修复后定向测试转绿。最终 HEAD 执行完整 pytest，实际为 `215 passed, 9 warnings in 21.19s`；审查删除重复风格快照组装后再跑 P0/P1 为 `16 passed, 9 warnings`；MySQL 迁移 helper 与并发锁为 `4 passed`。前端 `npm test` 为 `1 file / 9 tests passed`，TypeScript 检查和 Vite 构建成功（62 modules）。本轮未在真实 MySQL 执行三份新迁移，未运行真实 LLM/Embedding 端到端生成、并发压测、人工盲评或线上 A/B。
+**测试方法与实际结果：** P0 RED 为 `5 failed`，P1 初始 RED 为 `4 failed`，P2 RED 为 `3 failed`，前端 RED 为缺少 `api/memory` 模块；各阶段修复后定向测试转绿。最终 HEAD 执行完整 pytest，实际为 `215 passed, 9 warnings in 21.19s`；审查删除重复风格快照组装后再跑 P0/P1 为 `16 passed, 9 warnings`；MySQL 迁移 helper 与并发锁为 `4 passed`。前端 `npm test` 为 `1 file / 9 tests passed`，TypeScript 检查和 Vite 构建成功（62 modules）。三份新迁移随后已在真实 MySQL 8.0.46 连续执行，本代理又执行一次可重入复验并退出 0；本轮未运行真实 LLM/Embedding 端到端生成、并发压测、人工盲评或线上 A/B。
 
 **实际结果：** 自动化测试确认三轴状态不会随旧状态路径失同步、跨用户知识和风格资产不可见、知识检索保留引用、向量故障可降级、人工编辑形成可追溯新版本、发布记录用户内幂等、指标可回填、偏好在第 3 条稳定证据后才晋升并进入下一次风格解析。前端构建证明类型和交互可编译运行；这些结果不等同于真实采用率、生成质量或发布效果提升。
 
@@ -1364,6 +1364,24 @@ Agent 执行失败
 **面试时怎么讲：** “我把方案按证据链落地：执行、内容、发布三套状态分别驱动；知识事实放关系库真源，Chroma 只做可重建索引；风格按平台、品牌、学习偏好、账号和任务分层合并，并在生成时冻结；用户编辑创建父子版本和 diff，发布结果独立幂等记录。最关键的是学习准入——单次反馈不写长期偏好，同一结构化信号至少 3 次正向采用才晋升，而且每条结果都能回查反馈、知识引用和风格快照。215 项后端与 9 项前端测试证明实现边界，但真实质量收益仍要靠业务评测和线上数据。”
 
 **[下一个最值得处理的 P1]** 将长时生成从 `BackgroundTasks` 迁到持久队列/独立 Worker，并给创建任务增加用户作用域幂等键、请求摘要、租约和结果回放。当前知识/记忆索引已有 Outbox 与租约，但主生成任务仍可能在 Web 进程重启时丢失，这是现阶段最大的生产可靠性缺口。
+
+## 32.24 修复 MySQL 旧表缺列与并发迁移竞态（2026-08-21）
+
+**原始问题与触发场景：** 切换到已有 MySQL 数据库后，任务列表查询报 `(1054) Unknown column 'tasks.execution_status'`。ORM 已读取三轴状态和 Content Brief 字段，而旧 `tasks` 表仍停留在功能升级前的结构。
+
+**问题原因：** SQLAlchemy `create_all()` 只创建不存在的表，不会为已有表补列；P0/P1/P2 SQL 虽已加入初始化流程，但其中的 `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` 不是当前 MySQL 8.0.46 支持的语法。第一次真实修复时又并发启动了两个迁移进程，暴露 `information_schema` 检查与 `ALTER TABLE` 之间仍存在 check-then-act 竞态，并触发 1684 并发 DDL 错误。
+
+**解决方案与修改文件：** `scripts/setup_mysql.py` 将仓库受控的多列 `ADD COLUMN IF NOT EXISTS` 解析为逐列 `information_schema` 检查和标准 `ADD COLUMN`，已存在列直接跳过；整个增量迁移序列在同一 MySQL Connection 上使用 `GET_LOCK/RELEASE_LOCK` advisory lock 串行化，异常路径也在 `finally` 中释放。`tests/test_setup_mysql_migrations.py` 增加缺列展开、已有列跳过、锁获取/释放顺序和锁竞争失败测试。
+
+**测试方法与实际结果：** TDD 首轮因 `_mysql_migration_lock` 不存在而收集失败，实现后定向测试 `4 passed`。真实 MySQL 8.0.46 上 `scripts/setup_mysql.py` 连续执行两次均退出 0，并实际确认 `tasks` 新状态/Brief 列、`copies` 版本与引用列、`style_cards` 治理列和 `publication_records` 表存在。原报错对应的 `db.query(Task).filter(Task.user_id == 1).count()` 完整 ORM 查询成功返回 `0`；`/health` 返回 HTTP 200 和 `healthy`。最终完整后端回归 `215 passed, 9 warnings in 21.58s`，`compileall` 退出 0，`uv --no-cache pip check` 确认 149 个包兼容；同一任务较早执行的前端测试为 9 项通过，TypeScript 与 Vite 构建成功。
+
+**实际结果与边界：** 已从真实数据库和原始查询证明 1054 缺列错误消失，迁移可重复执行，增量 DDL 的检查与执行不会被另一个同类迁移进程穿插。代码审查确认 DDL 隐式提交不会释放连接级 named lock，连接丢失时 MySQL 会回收锁。尚未执行两个真实进程同时争锁的进程级故障注入；`create_tables()` 仍在 advisory lock 外，全新空库的两个初始化进程理论上仍可能在“检查表—建表”阶段竞争，顺序重试可恢复，但应在生产部署中保持单迁移者或进一步统一锁作用域。
+
+**缺点和代价：** 这是针对仓库固定 SQL 的轻量执行器，不提供 Alembic 的版本表、依赖图、升级/回滚历史和运维审计；named lock 依赖 MySQL 权限与连接存活，60 秒超时会让第二个启动者明确失败。DDL 本身有隐式提交，跨多个语句不能获得真正事务原子性，只能依靠逐步可重入和失败后重跑恢复。
+
+**面试时怎么讲：** “ORM 加字段不等于线上表自动升级，`create_all()` 也不会 ALTER 旧表。我先在真实 MySQL 复现 1054，再发现原迁移 SQL 的方言不兼容，于是用 `information_schema` 做可重入逐列升级。审查时又抓到检查后执行的并发窗口，因此把整段迁移放在同一连接的 MySQL named lock 内。最后连续跑两次真实迁移，并用原始 ORM 查询和 215 项回归证明修复。这个轻量方案适合当前项目，生产会继续迁到 Alembic 并统一初始化锁。”
+
+**[下一个最值得处理的 P1]** 业务侧仍优先把长时生成从 `BackgroundTasks` 迁到持久队列/独立 Worker并增加创建任务幂等；部署侧应把 `create_tables()` 与增量迁移纳入同一迁移所有权，并升级为带版本表的 Alembic 流程。
 
 ## 33. 活文档更新日志
 
@@ -1410,4 +1428,5 @@ Agent 执行失败
 | 2026-08-21 | 修复 MySQL、Chroma、Embedding 与真实文案生成链路 | 修复两条本地 Embedding 路径及并发加载、拒绝不安全 Chroma 降级、重建派生索引、锁定兼容 PostHog、脱敏数据库日志、归一化 LLM 写作规律字段；接入可重入 MySQL 租约迁移 | MySQL 8.0.46 实际连接，迁移连续执行两次成功；启动热榜 40 条向量化成功；真实任务 6 完成并保存 2 版/1 终稿；pytest `192 passed, 8 warnings`；前端 7 tests、类型检查和构建通过；149 个依赖兼容；HTTP 健康/Swagger/前端均 200 | 第 32.20、33 节及知识手册、面试话术、情景题、对话收件箱 | 本地完整链路已完成；旧 880 向量迁移、生产多 Worker/共享向量库、并发与质量收益待验证 |
 | 2026-08-21 | 恢复无法访问的本地开发服务 | 未修改代码或配置；重新以隐藏后台进程启动 Vite 与 Uvicorn，日志放入系统临时目录 | `netstat` 确认 5173/8000 监听；前端 HTTP 200；后端 `/health` HTTP 200 且 `healthy` | 第 32.21、33 节及对话收件箱 | 已完成；本地进程不具备系统重启后的自动恢复能力 |
 | 2026-08-21 | 详细解释幂等并补充多份知识文档 | 未修改业务代码或配置；补充幂等边界、数据库/消息/外部副作用实现、面试话术和并发场景题 | 关键词检索、`git diff --check`、相关文档差异与 Git 跟踪检查；代码测试未运行 | 第 32.22、33 节及知识手册、面试话术、情景题、对话收件箱 | 文档补充已完成；创建任务入口幂等和持久 Worker 仍待实现 |
-| 2026-08-21 | 完成真实内容生产 P0/P1/P2 与前端工作台 | 新增三轴状态、Brief、版本编辑与反馈、受治理知识库、分层风格快照、知识向量 Outbox、发布指标、偏好证据晋升、洞察 API、知识/记忆页及三份迁移 | TDD RED/GREEN；最终完整 pytest `215 passed, 9 warnings in 21.19s`；审查后 P0/P1 `16 passed`；迁移 helper/并发锁 `4 passed`；前端 `9 passed`；TypeScript/Vite 构建 62 modules；真实新迁移、真实模型、压测和线上 A/B 未运行 | 第 32.23、33 节及知识手册、面试话术、情景题、对话收件箱 | 仓库内全阶段已完成；生产 Worker、真实迁移与业务效果待验证 |
+| 2026-08-21 | 完成真实内容生产 P0/P1/P2 与前端工作台 | 新增三轴状态、Brief、版本编辑与反馈、受治理知识库、分层风格快照、知识向量 Outbox、发布指标、偏好证据晋升、洞察 API、知识/记忆页及三份迁移 | TDD RED/GREEN；最终完整 pytest `215 passed, 9 warnings in 21.19s`；审查后 P0/P1 `16 passed`；迁移 helper/并发锁 `4 passed`；前端 `9 passed`；TypeScript/Vite 构建 62 modules；真实 MySQL 迁移已执行，真实模型、压测和线上 A/B 未运行 | 第 32.23、33 节及知识手册、面试话术、情景题、对话收件箱 | 仓库内全阶段及真实迁移已完成；生产 Worker与业务效果待验证 |
+| 2026-08-21 | 修复 MySQL 旧表缺列与并发迁移竞态 | 初始化脚本增加受保护列展开和 MySQL named lock；新增缺列、跳过、锁顺序与竞争失败测试 | 迁移测试 `4 passed`；完整 pytest `215 passed, 9 warnings`；真实 MySQL 8.0.46 连续迁移及本轮再次可重入执行均退出 0；原 ORM 查询和健康检查成功；真实双进程故障注入未运行 | 第 32.24、33 节 | 已完成旧库升级与同类迁移串行化；Alembic 和统一初始化锁待处理 |

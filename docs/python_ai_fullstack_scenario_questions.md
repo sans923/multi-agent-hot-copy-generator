@@ -164,7 +164,7 @@ Multi-Agent 系统已经按角色只把部分 Tool Schema 发给模型。团队�
 
 ### 项目落地状态
 
-当前项目已经拆分 `execution_status/content_status/publication_status`，并实现 Content Brief、采用/拒绝/编辑反馈、父子 Copy 版本和 diff、冻结风格快照、知识引用、幂等发布记录、指标回填及三条同类正向证据后的偏好晋升。后端完整回归为 215 项，前端为 9 项且构建通过。尚未验证三份新迁移在生产 MySQL 的实际执行、真实平台回调、业务语料离线评测、人工盲评和线上效果。
+当前项目已经拆分 `execution_status/content_status/publication_status`，并实现 Content Brief、采用/拒绝/编辑反馈、父子 Copy 版本和 diff、冻结风格快照、知识引用、幂等发布记录、指标回填及三条同类正向证据后的偏好晋升。后端完整回归为 215 项，前端为 9 项且构建通过；三份新迁移已在真实 MySQL 8.0.46 可重入执行。尚未验证真实平台回调、业务语料离线评测、人工盲评和线上效果。
 
 ## 9. 热榜写库成功，但向量化报 `_type`，是否直接改 SQLite 配置？
 
@@ -208,3 +208,22 @@ MySQL 中热榜数据正常，Chroma 持久库在启动向量化时抛出 `'_typ
 ### 项目落地状态
 
 本项目已在记忆反馈中使用用户级联合幂等键，在终稿索引中实现 Outbox、数据库租约、有限重试和向量 upsert，并有并发消费与跨租户碰撞测试。创建 Agent 任务仍没有入口幂等键，长任务仍依赖 `BackgroundTasks`，生产多 Worker、进程故障注入和第三方发布结果不确定窗口尚未验证。
+
+## 11. 发布后 MySQL 报 ORM 字段不存在，多个实例还会同时启动迁移，怎么办？
+
+### 情景
+
+代码给 `tasks` 新增了 `execution_status` 等列，SQLite 新库正常，已有 MySQL 却报 1054。启动脚本调用了 `create_all()`，迁移 SQL 还写了 `ADD COLUMN IF NOT EXISTS`；两个应用实例同时启动时偶发 DDL 冲突。
+
+### 回答要点
+
+1. 对照 ORM、目标库 `information_schema` 和迁移历史确认 Schema 漂移；`create_all()` 不负责旧表 ALTER。
+2. 在目标 MySQL 版本真实执行迁移，不能用 SQLite 成功证明 MySQL 方言兼容；先用 RED 测试固定旧表升级行为。
+3. 迁移必须可重入：已存在列跳过，缺失列执行标准 ALTER，失败后允许从已完成步骤继续。
+4. `information_schema` 的先查后改不是原子操作；由单一迁移 Job 执行，或用同连接 advisory lock 串行化完整序列。
+5. 验证不仅看脚本退出码，还要连续执行两次、检查实际列，并重跑触发错误的原始 ORM 查询。
+6. 生产使用 Alembic 等版本表管理 upgrade 顺序；应用启动只检查版本，避免每个 Web Worker 自动 DDL。
+
+### 面试回答
+
+> 我会把它当作 Schema 发布流程故障，而不是给查询临时删字段。先确认 `create_all()` 的边界和目标 MySQL 方言，再把迁移改成可重入升级；对于多个实例，用单迁移者或同连接 named lock 消除检查与 ALTER 的竞态。验证要在真实目标库连续跑两次，并执行原始 ORM 查询。轻量脚本能救当前环境，但生产最终要进入带版本表、发布顺序和回滚预案的迁移体系。
