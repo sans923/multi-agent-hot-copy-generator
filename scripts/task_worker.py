@@ -17,6 +17,14 @@ from app.services.task_execution_queue import process_one_task_execution_job
 from app.utils.logger import logger, setup_logger
 
 
+def _configure_utf8_streams(*streams: object) -> None:
+    """避免 Windows 默认 GBK 控制台因日志中的 Unicode 字符而报错。"""
+    for stream in streams:
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="backslashreplace")
+
+
 def _worker_id() -> str:
     return f"{socket.gethostname()}:{os.getpid()}"
 
@@ -58,6 +66,7 @@ def main() -> None:
     parser.add_argument("--max-attempts", type=int, default=3)
     args = parser.parse_args()
 
+    _configure_utf8_streams(sys.stdout, sys.stderr)
     setup_logger()
     worker_id = _worker_id()
     logger.info(f"任务 Worker 启动: worker_id={worker_id}")
