@@ -418,13 +418,22 @@ class WriteCopyDraftSkill(BaseSkill):
             brief["extra_requirements"] = extra_requirements
 
         if writing_pattern and isinstance(writing_pattern, dict):
+            title_formula = writing_pattern.get("title_formula")
+            hook = writing_pattern.get("hook")
+
             # 只注入抽象规律，不注入参考全文
             brief["writing_pattern"] = {
-                "title_formula": (writing_pattern.get("title_formula") or {}).get("pattern"),
-                "hook_type": (writing_pattern.get("hook") or {}).get("type"),
+                "title_formula": (
+                    title_formula.get("pattern")
+                    if isinstance(title_formula, dict)
+                    else title_formula
+                ),
+                "hook_type": hook.get("type") if isinstance(hook, dict) else hook,
                 "rhythm": writing_pattern.get("rhythm"),
                 "emotion_arc": writing_pattern.get("emotion_arc"),
-                "cta_pattern": writing_pattern.get("cta_pattern"),
+                "cta_pattern": (
+                    writing_pattern.get("cta_pattern") or writing_pattern.get("cta")
+                ),
                 "argument_mix": writing_pattern.get("argument_mix"),
             }
             brief["anti_plagiarism"] = "禁止复制参考长文原句，仅按结构与节奏创作"
