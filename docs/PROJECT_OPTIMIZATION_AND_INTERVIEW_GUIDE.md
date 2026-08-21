@@ -1121,6 +1121,250 @@ Agent 执行失败
 
 **面试时怎么讲：** “我先核对官方能力，而不是把一键发布等同于发一个 HTTP 请求。头条公开接口当前不支持文章直发，抖音服务端代发又有严格准入，所以我把产品拆成辅助发布、用户确认投稿和获批后的服务端直发三级能力；技术上把发布建成独立状态机，用账号授权、内容快照、持久队列、outbox 和幂等键管理外部副作用，避免平台审核失败反向污染 Agent 生成任务。”
 
+## 32.12 首次侧边栏知识同步与 BackgroundTasks 补缺（2026-08-13）
+
+**原始问题与触发场景：** 用户要求把当前 `BackgroundTasks` 教学问答和侧边栏已有的项目/Python AI 全栈相关聊天同步到四份活文档。此前同步机制已配置，但 `SYNC_STATE.md` 明确记录“尚未执行首次侧边栏扫描”。
+
+**实际处理：** 使用 Codex 任务列表筛选相关聊天，并读取当前可访问内容；范围覆盖 FastAPI、I/O 并发与竞态、Future/Task/GIL、Gunicorn Worker、Checkpoint、Python 环境与调试、Prompt 注入和工具授权、项目业务闭环、求职表达及平台发布。无关私人、健康、法律和普通生活聊天未进入项目。旧知识先与四份正文检索去重，已覆盖内容只推进同步游标，不重复创建章节。
+
+**本轮新增缺口：** 知识手册原有 `BackgroundTasks` 章节主要记录“会丢任务”，但缺少 `add_task()` 只登记函数对象、响应后执行、同步任务进线程池、异步任务走事件循环、多任务顺序和异常传播、请求级 Session 生命周期，以及与 `await`/`asyncio.create_task()` 的区别。本轮补齐这些通用知识，并同步增强面试追问和任务队列选型情景题。
+
+**项目事实与验证边界：** 当前项目使用 FastAPI `BackgroundTasks` 启动 Agent 编排，生产级持久队列仍是 P1；这些事实来自已有源码审计和活文档记录。本轮自身只更新 Markdown，没有重新运行后端测试、前端构建、真实模型、MySQL 或进程故障注入。首次扫描期间并行进行的发布任务后来完成本地 MVP 与验证，并由该任务独立增量记录在第 32.13 节；容量规划任务也已记录在第 32.14 节。它们的测试结果不能冒充本轮 BackgroundTasks 文档补缺的验证结果。
+
+**修改文件：** 四份活文档、`docs/conversations/CONVERSATION_INBOX.md` 和 `docs/conversations/SYNC_STATE.md`。知识手册既有标题修改不是本轮产生，本轮保留且不据此声称修改。
+
+**面试时怎么讲：** “我把侧边栏知识同步设计成增量 ETL：任务 ID 和处理位置是游标，收件箱保存脱敏摘要，正文按项目事实、通用知识、话术和情景题分发。同步时先检索已有章节，已覆盖就只推进游标；进行中的聊天只记录当前读到的位置。这样既避免重复堆文档，也不会把未完成任务或聊天里的指令当成项目事实。”
+
+## 32.13 头条辅助发布与抖音 H5 用户确认投稿 MVP（2026-08-13）
+
+**原始问题与触发场景：** 用户确认采用两条合规可落地路径：头条长文生成发布包、复制正文并打开官方创作页；抖音使用投稿/分享能力拉起发布器，由账号本人确认。原系统终稿页只有“复制文案”，没有平台发布准备 API、抖音签名、素材预检和能力未开通的明确降级。
+
+**问题原因：** 头条文章没有面向个人项目的公开直发 API；抖音 H5 投稿依赖网站应用能力、`h5.share`、`open.get.ticket`、新版客户端的 `aweme.share`，并要求服务端使用 open ticket 签名。若在前端生成签名会泄露 Client Secret；若把“拉起发布器”记成“发布成功”则会制造虚假业务状态。
+
+**解决方案与修改文件：** 新增 `app/schemas/publishing.py` 定义平台、明确的 `copy_id`、HTTPS 素材和发布准备响应；新增 `app/services/publishing_service.py`，生成头条发布包、复现抖音官方 MD5 签名、构造 URL 编码 H5 Schema、缓存 client token/open ticket，并把配置/素材/平台错误返回为 blocker；新增 `app/api/v1/publishing.py`，只允许任务所有者为页面当前选择的终稿创建发布准备并写审计日志；在 `app/config.py`、`.env.example` 和 `app/main.py` 增加服务端配置与路由。前端在 `TaskDetail.tsx`、API 类型和样式中增加两张发布卡：头条复制完整发布包并打开创作页，弹窗被拦截时显示安全手动链接；抖音要求公网 HTTPS 图片/视频 URL，服务端准备成功后再拉起发布器，并持续提示“仍需本人确认”。剪贴板增加 legacy fallback。抖音素材进一步限制为 `DOUYIN_MEDIA_ALLOWED_HOSTS` 中的自有 CDN 精确域名，凭证 API 固定为官方 HTTPS 主机。
+
+**测试方法与实际结果：** 遵循 TDD。RED：新增测试首次 collection error，原因是 `app.schemas.publishing` 尚不存在；提交 `90755bbd` 保存失败证据。GREEN：首轮聚焦 `7 passed, 6 warnings` 后提交 `fb01fb96`；审查后增加终稿 ID 一致性、私网/凭据 URL、CDN 白名单、ticket 缓存及 secret 脱敏测试，发布聚焦测试最终 `15 passed, 6 warnings`。前端引入 Vitest、Testing Library 和 jsdom，最终 `7 passed`，覆盖终稿绑定、服务端 blocker、缺少媒体、弹窗拦截、API 错误、抖音成功拉起、跨平台状态清理及审计刷新。`compileall -q app tests scripts` 退出码 0；完整 pytest `155 passed, 6 warnings in 18.23s`；最终生产构建 59 modules transformed、1.10s；`git diff --check` 退出码 0。组合验证曾从根目录误执行 `npm test` 而得到 missing script，随后在 `frontend/` 使用同一命令成功，未掩盖失败记录。
+
+**安全与一致性边界：** Client Secret 只从服务端环境变量读取，不进入前端类型或响应；抖音凭证仅发送到固定的 `https://open.douyin.com`；open ticket 在内存中加锁缓存并预留 300 秒刷新窗口。任务按 `user_id` 做所有权检查，请求必须携带页面当前显示的 `copy_id`，后端再次验证它属于该任务且仍是终稿，避免多终稿时展示与发布错版。媒体 URL 拒绝非 HTTPS、私网/保留 IP、localhost、凭据和 fragment，并必须命中自有 CDN 白名单。后端不下载该 URL，因此没有新增服务端 SSRF 请求，但因为官方签名不绑定素材 URL，生产上仍需以“自有资产 ID 映射自有 CDN URL”作为更强边界。平台错误不回显 secret 或原始描述。返回值是 `assisted_export` 或 `user_confirmed_post`，没有创建“已发布”记录。
+
+**缺点、代价、遇到的坑与待验证项：** 抖音 H5 必须先获得平台能力且提供白名单内素材，本轮没有真实 Client Key/Secret、真实 open ticket、手机拉起、iOS/Android、抖音版本、二维码、发布结果查询或平台审核测试；因此抖音端到端效果仍是待验证。当前没有自动把长文渲染为图片/视频，也没有媒体对象存储、资产 ID、内容类型/文件大小探测和发布接口限流；用户仍要先提供自有 CDN URL。内存 ticket cache 不跨 Gunicorn worker，共享缓存与单飞锁是生产化后续项。头条页面地址和抖音 Schema 属于外部平台契约，未来可能变化。首次 npm/Vitest 操作因系统 cache 无写权限报 `EPERM`，改用工作区 cache；生成的根目录缓存噪音在提交前清理。
+
+**面试时怎么讲：** “我没有绕平台限制模拟点击，也没有把拉起发布器包装成发布成功。头条走辅助交付，抖音走用户确认投稿；服务端负责能力预检、open ticket 缓存和签名，前端只拿短时 Schema。用 TDD 先固定官方签名样例、所有权和终稿门控，再补安全降级。这样既交付了个人账号可用的 MVP，也保留了平台申请失败时的真实产品语义。”
+
+## 32.14 100 用户容量规划与服务器选型（2026-08-13）
+
+**原始问题与触发场景：** 用户询问项目如果有 100 人使用，应该购买什么样的服务器。这里必须区分“100 个总用户”和“100 个同时执行生成任务”；两者对容量的要求可能相差一个数量级以上。
+
+**代码确认的事实：** 当前 Docker 生产命令固定启动 2 个 Gunicorn `UvicornWorker`；Web、MySQL、Chroma 和本地数据目录由同一份 Compose 编排。创建任务后使用 FastAPI `BackgroundTasks` 执行同步 `_run_agents_background`，内部运行同步多 Agent/DeepSeek 调用，并没有持久队列或全局生成并发闸门。MySQL 连接池每个进程 `pool_size=10`、`max_overflow=20`；头条 RAG 的 HuggingFace Embedding 以 CPU 运行，源码注释约占 500 MB/进程；任务详情页每 3 秒轮询一次。FastAPI lifespan 在每个 Worker 内启动 APScheduler，因此多 Worker 下存在重复注册/执行热榜同步和清理任务的风险。模型生成走外部 DeepSeek API，所以当前架构不需要 GPU。
+
+**容量假设与推荐：** 若 100 表示总用户约 100、峰值同时在线 5～10、同时生成 2～5，推荐 Linux 4 核 16 GB、180～220 GB SSD、10～15 Mbps；预算有限可从 4 核 8 GB、120 GB SSD、10 Mbps 起步并立即监控。4 核 16 GB 的理由主要是给两个 Python Worker、本地 Embedding、Chroma、MySQL 和文件缓存留内存余量，不是因为文本 API 需要很大带宽。以腾讯云 2026-06-15 官方中国内地轻量应用服务器目录价为参考，入门型 4 核 8 GB/120 GB/10 Mbps 为 210 元/月，4 核 16 GB/180 GB/12 Mbps 为 305 元/月；通用型相近规格分别为 230 元/月和 325 元/月，年度价格另有官方折扣。价格会随地域、活动和购买时长变化，购买时应再次核价。官方页面：<https://cloud.tencent.com/document/product/1207/73452/>。
+
+**更高峰值的演进方案：** 同时生成 5～10 个时，先增加全局/用户级限流、任务队列长度和下游 API 429/超时监控；稳定需求达到 10～20 个时，优先把生成任务迁到持久队列和独立 Worker，拆出 Redis，并考虑托管 MySQL，然后按实测选择 8 核 16 GB 单机或多个 4 核 8/16 GB Worker。若 100 人真的同时点生成，必须采用排队、背压、幂等认领、故障恢复和横向扩容，不能承诺一台 8 核或 16 核机器直接解决。
+
+**500 用户规模补充：** 若 500 表示总用户约 500、峰值同时在线 20～50、同时生成 5～10，单机最低可用方案可提高到 Linux 8 核 32 GB、约 300 GB SSD、20 Mbps，但只适合作为低运维成本的过渡。生产推荐拆为 2 个 4 核 8 GB Web 实例、2 个 4 核 8/16 GB 生成 Worker、Redis 持久队列和托管 MySQL，Worker 总生成并发先限制为 4～8，再按 DeepSeek 限流和任务 P95 调整。腾讯云当前中国内地通用型 8 核 16 GB/270 GB/18 Mbps 与 8 核 32 GB/320 GB/22 Mbps 目录价分别为 500 元/月和 665 元/月；拆分架构还需另计数据库、Redis、负载均衡和备份费用。
+
+**500 用户下必须处理的扩容边界：** 本地 Chroma 和 SQLite checkpoint 不能被多个实例自然共享；APScheduler 必须独立成单例调度服务；数据库连接池总量会随实例与 Worker 数量倍增；进程内 ticket/cache 需要迁移到共享 Redis。若 500 个任务详情页同时按 3 秒轮询，理论请求量约为 `500 / 3 ≈ 167 QPS`，应引入 SSE 或指数退避轮询。若用户问题实际指 500 人同时生成，则不能先给固定机器规格，必须先确定模型 API 配额、最大可接受排队时间和单任务 P95，再反推 Worker 数量。
+
+**测试方法与实际结果：** 本轮仅执行源码、部署配置、既有文档和 Git 状态的静态检查，并核对腾讯云官方规格与目录价；未运行 pytest、前端构建、真实 DeepSeek、生产 MySQL、并发压测或资源监控。因此“4 核 16 GB 可承载上述常态场景”属于待压测容量假设，不是已验证吞吐结论。
+
+**缺点、代价、遇到的坑与待验证项：** 单机一体化最省运维，但 Web、后台任务、数据库和向量库共享故障域，扩 Worker 还会复制 Embedding 内存、数据库连接池和 APScheduler。轻量服务器目录价透明但 CPU 性能、活动价和地域网络会变化；只对比“核数”会忽略共享 CPU、内存余量和下游模型限流。拆队列、Redis 和托管数据库会增加费用与运维复杂度，但能提供背压、恢复和独立扩容。
+
+**面试时怎么讲：** “我先把 100 用户转换成峰值在线、任务到达率和同时生成数，再看单任务资源画像。当前模型在 DeepSeek 云端，所以不买 GPU；本机真正要留余量的是两个 Python Worker、本地 Embedding、Chroma 和 MySQL。小规模我会用 4 核 16 GB 起步并监控；并发生成超过 10 个时先上持久队列和并发闸门，再拆 Worker，而不是盲目升级单机。这个结论目前是静态容量假设，我会用 2、5、10 级并发压测校准。”
+
+**[下一个最值得处理的 P1]** 仍是把首次生成和 resume 从 FastAPI `BackgroundTasks` 迁移到持久任务队列/独立 Worker，并补幂等认领、并发上限、启动恢复和进程故障注入；完成后服务器容量数据才具有生产解释力。
+
+## 32.15 项目白名单机制源码复核（2026-08-19）
+
+**原始问题与触发场景：** 用户追问“该项目中白名单是怎么用的”。本轮不新增功能，而是回到当前源码区分生产运行时白名单、固定枚举约束和仅用于评测/知识治理的 allowlist，避免把所有出现 `allowed` 的地方都描述成同一种安全机制。
+
+**从代码确认的事实：** 生产 Agent 工具权限采用双层控制。`app/skills/__init__.py` 为 Requirement、Copywriter、Reviewer 和 Lead Agent 分别定义 Skill 名称子集；`BaseAgent._run_loop()` 先通过 `get_tools_by_names(self.skill_names)` 只向模型暴露该 Agent 的 Tool Schema，模型返回函数名后又把同一 `skill_names` 传给 `SkillExecutor.execute()`；执行器在查注册表和解析参数之前检查 `function_name not in allowed_function_names`，越权时直接返回失败且不执行 Skill。抖音发布准备使用 `DOUYIN_MEDIA_ALLOWED_HOSTS`：配置为空时默认全部阻断；非空时按英文逗号拆分、去空格、转小写、去尾点，并与素材 URL 的 host 做精确匹配。只有开关、Client Key/Secret、媒体 URL 和域名白名单都满足时，API 才请求 open ticket；服务层在生成 H5 Schema 前再次检查并返回 blocker。素材 Schema 还独立要求 HTTPS、无账号密码、无 fragment，并拒绝 localhost、私网/非全局 IP 和无点主机名。
+
+**其他白名单式约束：** 生产非 DEBUG 模式的 CORS `allow_origins` 当前固定为 `https://your-production-domain.com`，属于浏览器来源白名单，但仍是占位值且没有环境变量配置；`allow_methods`、`allow_headers` 仍为 `*`。LangGraph 人工恢复只接受 `retry`、`accept_draft`、`cancel`，展示列表和后端集合校验各做一次。`prompt_injection_ab.py` 中的 `allowed_tools` 只约束离线评测样例，不参与生产 Agent 执行。对话归档的内容白名单属于项目协作规则，也不属于 Web 请求或 Agent 运行时授权。
+
+**测试方法与实际结果：** 实际运行 `.venv\\Scripts\\python.exe -m pytest tests/test_skill_authorization.py tests/test_publish_preparation.py tests/test_orchestration.py -q`，结果为 `34 passed, 6 warnings in 76.28s`。测试确认注册但未授权的 Skill 不会执行、授权 Skill 可以执行、未传 allowlist 的遗留直接调用仍保持兼容；确认非白名单素材域名不会生成抖音 launch URL；确认人工恢复动作集合。警告来自 LangGraph `allowed_objects` 待变更提示和 Pydantic V2 class-based config 弃用提示，与本轮白名单行为无直接失败关系。
+
+**缺点、代价、遇到的坑与待验证项：** `SkillExecutor` 的 `allowed_function_names=None` 会允许所有已注册 Skill，以兼容非 Agent 直接调用；当前 `BaseAgent` 总会传入名单，但未来新增执行入口若忘记传参可能扩大权限，生产上更稳妥的是默认拒绝并为管理型调用设计显式授权类型。工具参数目前在 JSON 解析后直接进入 Skill，尚未看到按每个 `parameters_schema` 统一执行 JSON Schema 前置校验。CORS 生产域名硬编码会导致真实部署必须改源码，否则合法前端会被浏览器拦截。CDN 白名单采用精确主机匹配，不自动包含子域名；这降低误放行，但需要逐项维护。其检查不解析 DNS 最终地址；当前后端并不下载媒体 URL，因此未形成直接 SSRF 请求，但若未来增加服务端抓取，必须在连接时重新校验解析 IP，并防 DNS rebinding。
+
+**面试时怎么讲：** “项目的工具白名单不是只写在 Prompt 里。我先按 Agent 职责只把允许的 Tool Schema 发给模型，模型即使被提示注入诱导返回别的函数名，服务端 Executor 还会用同一 allowlist 再拦一次。发布侧也只接受自有 CDN 精确域名，配置为空默认阻断。这个设计体现最小权限和纵深防御；我也会主动说明当前兼容接口的 `None` 是 fail-open、CORS 仍是硬编码占位、工具参数统一 Schema 校验尚未补齐。”
+
+**[下一个最值得处理的 P1]** 仍是把首次生成和 resume 从 FastAPI `BackgroundTasks` 迁移到持久任务队列/独立 Worker；安全侧紧邻的高优先级改进是将 `SkillExecutor` 未传 allowlist 的默认行为改为拒绝，并补统一参数 Schema 校验，但需先梳理全部非 Agent 调用方以避免破坏兼容性。
+
+## 32.16 本地开发服务启动实录（2026-08-20）
+
+**原始问题与触发场景：** 用户要求直接“跑起来这个项目”。本轮首先按 README 核对启动入口、虚拟环境、前端依赖、配置文件、端口和数据库服务状态，没有修改业务代码、依赖声明或 `.env`。
+
+**[代码与环境事实] 问题原因：** 项目后端默认根据 `.env` 的 `MYSQL_*` 拼接 MySQL 连接串；本机 `MySQL5` 服务存在但处于停止状态，Docker daemon 未运行。尝试启动 `MySQL5` 时 Windows 返回无法打开该服务，因此默认 MySQL 路径不能在当前权限下继续。项目 `app/database.py` 已显式支持 SQLite，并会为 SQLite 启用 `check_same_thread=False` 和外键约束，所以本轮仅给后端进程设置 `DATABASE_URL=sqlite:///./data/dev_runtime.db`，没有覆盖持久配置。
+
+**解决方案与修改范围：** 后端使用仓库 `.venv` 的 Python 3.11.9 和 `run.py` 启动，前端使用 `npm run dev -- --host 127.0.0.1` 启动；两个进程均以隐藏窗口在后台运行，日志写到系统临时目录 `multi-agent-hot-copy-generator`。SQLite 运行库 `data/dev_runtime.db` 位于已被 `.gitignore` 排除的 `data/`，不纳入版本管理。本轮只增量修改本节、活文档更新日志和对话收件箱。
+
+**[实际测试结果]** `http://127.0.0.1:8000/health` 返回 `status=healthy`、应用名和版本 `1.0.0`；`http://127.0.0.1:8000/docs` 返回 HTTP 200；`http://127.0.0.1:5173` 返回 HTTP 200。首次冷启动包含 LangGraph/RAG 导入和 SQLite 建表，日志显示从 Uvicorn reloader 启动到应用完成启动约 1 分 50 秒。启动后的立即热榜同步从聚合数据源获取并写入 40 条记录，但随后的向量化任务报 `'_type'`；该错误被调度任务捕获，没有阻止 API 提供服务。未运行 pytest、前端生产构建、登录/创建任务、真实文案生成或 MySQL 端到端测试。
+
+**缺点、代价与遇到的坑：** SQLite 兜底只能证明单机开发服务可启动，不能替代 MySQL 的连接池、事务和迁移验证。开发模式的 Uvicorn reload 会产生父子进程，首次机器学习依赖导入明显延长冷启动；启动命令本身在 PowerShell 后台重定向场景中持续占用调用单元，但子进程仍正常运行。定时任务会在应用启动后立即请求外部热榜并写库，启动验证并非完全无外部副作用。向量化 `'_type'` 的根因本轮未诊断，不能写成已修复。
+
+**面试时怎么讲：** “启动项目时我先分层确认解释器和依赖、端口、数据库、Web 健康检查。默认 MySQL 因本机服务权限不可用后，我利用代码已有的 SQLite 适配做进程级配置覆盖，避免污染 `.env`，先验证前后端可用；同时明确这只覆盖开发启动，不代表 MySQL 生产链路通过。日志还暴露了热榜同步成功但向量化报 `'_type'` 的非阻断故障，我把它保留为可复现问题，而不是因为健康检查成功就忽略后台任务失败。”
+
+**[下一个最值得处理的 P1]** 项目整体 P1 仍是将首次生成和 resume 从 FastAPI `BackgroundTasks` 迁移到持久任务队列/独立 Worker；就当前运行闭环而言，最近的阻断项是恢复 MySQL 服务并执行真实 MySQL 初始化与 API 冒烟，紧邻的运行缺陷是定位启动时热榜向量化 `'_type'` 异常。
+
+## 32.17 记忆系统架构复核与演进设计（2026-08-21）
+
+**原始问题与触发场景：** 用户希望从高级 Python Agent 全栈架构视角判断项目记忆系统的不足，并给出更合理的设计。本轮只做源码分析、现有测试复验和架构设计，没有修改业务代码或数据库结构。
+
+**从代码确认的事实：** 当前项目已经存在四种分散的“类记忆”能力：`PipelineState`、Agent `messages` 和 LangGraph checkpoint 承担任务内工作记忆；`Task`、`Copy`、`AgentLog` 与审计日志保存任务事件；头条参考文章与 Chroma 承担内容语义记忆；`StyleCard.pattern_json` 承担可复用的写作程序记忆。但这些模块没有统一的记忆身份、作用域、写入准入、检索策略、反馈回流、版本和淘汰生命周期。`state_to_checkpoint()` 除 `db`、`result` 外几乎原样保存状态，缺少 checkpoint schema version、迁移器、大小预算和 TTL。
+
+**已确认的主要不足：**
+
+1. **[P0] 历史文案检索缺少租户隔离。** `SearchSimilarCopiesSkill` 的 Chroma 查询只按 `platform` 过滤，数据库降级查询也只按 `review_score`、平台和内容关键词过滤，没有通过 `Copy.task -> Task.user_id` 限定当前用户；同时 Skill 参数和执行上下文都没有 `user_id`。在多用户场景下，这可能把其他用户文案带入当前模型上下文。
+2. **[P0] 历史文案向量记忆读写链路没有闭环。** 源码能找到对 Chroma `copies` collection 的读取，却没有找到创建或写入该 collection 的生产路径；collection 不存在时 `_search_from_chromadb()` 返回空列表而不是抛错，因此外层不会进入数据库降级。除非由仓库外部预先建库，否则“历史文案语义记忆”会静默返回空结果。
+3. **[P1] 没有用户偏好与真实反馈记忆。** 当前没有品牌语气、禁用词、受众、保留项等用户画像，也没有满意/不满意、采用版本、定向修改、曝光、点击、互动或转化回流。`review_score` 是系统内部 Reviewer/Judge 分数，不等于真实业务效果，却被用作历史优质文案的筛选依据。
+4. **[P1] 风格卡写入治理不足。** 风格卡是全局共享资产，缺少 `owner_id/tenant_id`、状态、schema version、来源版本、有效期和人工审核字段；同话题保存采用查后更新或插入，没有数据库唯一约束，存在并发重复风险；更新直接覆盖旧 `pattern_json`，无法回滚或比较版本；删除或更新参考文章时没有看到关联风格卡失效机制。
+5. **[P1] 检索质量链路偏弱。** 风格卡使用 `%topic%` 模糊匹配；头条 RAG 只有向量 Top-K 和平台过滤，没有相似度阈值、关键词混合检索、rerank、按文章去重/多样性、新鲜度和来源质量权重，Top-K 块可能集中来自同一篇文章。当前测试主要覆盖风格抽取、注入边界和 API 行为，没有离线 Recall@K/nDCG、上下文命中率或生成增益评测。
+6. **[P1] 上下文与 checkpoint 没有预算治理。** Requirement Agent 的消息会传给 Copywriter；`context_messages` 允许 `system` 角色，既增加提示词优先级混淆风险，也可能把不必要的完整历史、工具结果和长文本持续带入后续轮次。当前有工具次数上限，但没有统一 token budget、摘要压缩、字段级裁剪和 checkpoint 大小监控。
+7. **[P2] 多套向量基础设施语义不统一。** 热榜、用户文档、历史文案和头条参考资料分属不同 collection/封装；历史文案使用手写 Chroma API，头条使用 LangChain Chroma。过滤字段、距离含义、错误降级、索引状态和删除策略不一致，增加维护与测试成本。
+
+**推荐设计：** 建立独立 `MemoryService`，将“写入、检索、压缩、反馈、失效、审计”从 Agent Skill 中抽出，并按作用域拆为五层：任务级 working memory、会话/任务级 episodic memory、租户级 user/brand memory、全局或租户级 semantic memory、版本化 procedural memory。所有记录至少携带 `tenant_id/user_id`、`memory_type`、`scope_id`、`source_id`、`content_hash`、`schema_version`、`status`、`created_at/updated_at/expires_at` 和证据/质量字段。检索执行“硬过滤（租户、权限、状态、平台、时效）→ BM25/向量混合召回 → 去重与 MMR → rerank → token budget 装配”，返回内容同时返回 `memory_id`、来源和分数，便于审计。
+
+**建议的数据闭环：** 文案完成时先写 `memory_events`/Outbox，不在主请求中同步做 Embedding；独立 Worker 幂等消费后生成 `memory_items` 与 `memory_embeddings`。用户偏好由显式配置或多次稳定反馈形成，单次模型输出不能直接污染长期记忆；风格卡先进入 candidate，经 schema 校验、来源检查和人工/离线评测后才能 active。发布后效果和用户反馈写入 `feedback_events`，按时间衰减、样本量与置信度更新排序特征，不直接改写原始记忆。记忆更新采用追加版本和 supersede，不原地覆盖历史证据。
+
+**分阶段落地顺序：** 第一阶段先修 P0：给历史文案检索贯穿 `user_id`、补 `copies` 写入/删除/重建链路、collection 缺失时正确降级，并增加双用户隔离测试。第二阶段增加 `user_preferences`、`copy_feedback`、`memory_item/version` 和风格卡状态/唯一约束，支持用户定向改稿与采用反馈。第三阶段实现混合检索、阈值、去重、rerank、上下文预算与离线评测集。第四阶段再迁移共享向量服务、Outbox/Worker、版本迁移、TTL/删除合规和线上指标闭环。
+
+**测试方法与实际结果：** 静态检索并复核 `base_agent.py`、`pipeline_state.py`、`orchestration_persistence.py`、`rag_skills.py`、`style_skills.py`、`content_asset_service.py`、`embedding_service.py`、RAG 入库/检索和相关 ORM/API。首次直接执行 `pytest` 因 PATH 无该命令而失败；改用仓库 `.venv\\Scripts\\python.exe -m pytest -q tests\\test_writing_pattern.py tests\\test_content_assets_api.py`，实际结果为 `15 passed, 6 warnings in 94.09s`。这些测试只验证既有风格抽取和内容资产行为，不验证上述 P0、反馈学习、检索质量或架构收益。
+
+**缺点、代价与待验证项：** 新设计会增加表、迁移、异步索引、评测和数据治理成本；混合检索与 rerank 增加延迟，必须用缓存、批处理和预算控制。是否需要独立向量数据库取决于数据量和多实例需求，当前没有语料规模、QPS、P95 或真实效果数据，不能断言迁移后质量或吞吐会提升。Redis 适合缓存、锁和短期状态，不应被当作唯一长期记忆真源；MySQL/PostgreSQL 保存权威元数据和事件，向量索引是可重建派生数据。
+
+**面试时怎么讲：** “我先把 checkpoint、RAG、风格卡和用户记忆分开：checkpoint 解决恢复，RAG 解决知识召回，风格卡保存程序化写作规律，真正的长期记忆还需要租户隔离、反馈和生命周期。源码复核发现历史文案 collection 只有读没有写，降级分支还会静默返回空；数据库检索也缺 user_id，这是优先于上 rerank 的 P0。我会先闭合安全的读写链路，再做混合检索和反馈学习，并用双用户隔离测试与离线检索指标证明，而不是把 Chroma 存在就称为完整记忆系统。”
+
+**[下一个最值得处理的 P1]** 先修历史文案记忆的租户隔离和读写闭环：让 `search_similar_copies` 从任务上下文获得 `user_id`，DB 与 Chroma 双路径都做硬过滤，终稿采用后通过幂等索引任务写入，collection 缺失时可靠降级，并补跨用户泄漏回归测试。该项同时具有安全、功能真实性和面试解释价值。
+
+## 32.18 面向真实文案生产的工作台、知识、风格与记忆产品设计（2026-08-21）
+
+**原始问题与触发场景：** 用户从高级产品经理视角追问：项目已有任务状态、内容资产、风格卡和历史文案组件，怎样重新组织才能满足真实 AI 文案生产，而不是只完成一次模型生成。本轮没有修改业务代码、数据库结构或 Prompt，只基于现有源码和前端交互形成产品架构方案。
+
+**从代码确认的现状：** `TaskStatus` 当前表达 `pending/processing/awaiting_human/completed/failed` 五种执行状态；任务详情页能显示 Agent Pipeline、质量门禁、版本和发布准备；内容资产页支持头条参考文章导入、重建索引和从 1～3 篇文章生成风格卡；创建任务时可人工选择一张头条风格卡；`Copy` 保存初稿/优化稿、Reviewer 分数和终稿标识。现有模型没有独立的业务交付状态、发布状态、用户编辑差异、采用反馈或平台效果回流，风格卡也没有版本、状态和生成时快照。
+
+**产品设计总原则：** 四块能力围绕同一内容生命周期工作，但数据语义必须分开：工作状态回答“现在卡在哪、谁该做什么”；知识库回答“哪些事实和素材可以引用”；风格卡回答“应该怎样表达”；历史记忆回答“这个用户过去接受、修改和拒绝了什么”。事实、规则、示例和反馈不能混成一个向量集合，也不能把模型自评分当成用户喜好。
+
+**工作状态设计：** 将单一 `Task.status` 拆成三个正交维度。`execution_status` 负责机器执行，可取 queued/running/retrying/waiting_human/succeeded/failed/canceled；`content_status` 负责业务交付，可取 brief_missing/brief_ready/drafting/in_review/changes_requested/approved/archived；`publication_status` 负责渠道结果，可取 not_prepared/ready/submitted/published/rejected/metrics_collecting。任务顶部展示一个用户可理解的主状态，详情页再展开 Agent 步骤和审计。每个状态必须包含进入时间、责任人、阻塞原因、下一步动作和 SLA/超时，避免“completed”同时指生成完成、审核通过和已经发布。
+
+**知识库设计：** 按用途拆成品牌事实、产品资料、活动素材、平台/合规规则和外部参考五类 Source；MySQL 保存权威文档、版本、权限、来源、有效期和索引状态，向量库只保存可重建 chunk 索引。入库流程执行解析、去重、切块、元数据标注、敏感内容检查、索引和抽样验收；查询先按 tenant、知识类型、平台、状态和有效期硬过滤，再做关键词/向量混合召回、按来源去重、rerank 和 token 预算。生成结果需要记录引用了哪些 source/chunk，并在事实冲突或证据不足时返回“需要补资料”，而不是让模型猜。
+
+**风格卡设计：** 将风格约束分成平台规则、品牌声音、栏目/账号风格、营销活动覆盖和本次任务临时要求五层；合规与禁用项优先级最高，其次是任务和活动，再到品牌与平台默认值。风格卡采用版本化 Schema，至少包含目标受众、语气维度、标题公式、开头钩子、段落节奏、叙事视角、论证比例、CTA、推荐词、禁用词、正反例、来源、置信度和状态（candidate/reviewed/active/deprecated）。自动推荐与人工选择并存；生成时保存合并后的 `applied_style_snapshot`，即使原卡之后更新，也能复现旧文案为什么这样写。
+
+**历史文案记忆设计：** 原始文案、用户编辑稿、采用版本、拒绝原因、定向修改指令和发布指标分别作为事件保存。只有“用户明确采用/编辑”“多次稳定偏好”或“有可信平台结果”的条目才进入候选长期记忆；未采用草稿和 Reviewer 高分不能自动强化。检索维度至少包含 tenant/user、品牌/账号、平台、内容类型、受众、主题、新鲜度和反馈质量；返回少量多样化样例、摘要出来的偏好与负面记忆，禁止把大量原文直接塞入 Prompt。长期偏好以追加版本和 supersede 更新，用户可查看、修正、停用和删除。
+
+**真实生产闭环：** 需求入口先形成结构化 Content Brief 并检查缺失字段；检索规划分别获取事实证据、平台规则、有效风格和历史偏好；模型先产标题/角度候选，由用户选择后再生成正文；质量门禁分事实、风格、合规、重复度和平台适配；人工可以逐段修改或提出定向意见；采用稿冻结为版本并进入发布准备；平台反馈进入独立 `feedback_events`；后台聚合任务再把稳定结论提升为候选偏好或风格版本。任何记忆提升都保留来源和审计，不在生成请求内直接改写全局规则。
+
+**建议核心数据对象：** 在现有 `Task/Copy/StyleCard/ToutiaoReference` 之上逐步引入 `content_briefs`、`copy_versions`、`knowledge_sources/knowledge_chunks`、`style_profiles/style_profile_versions`、`feedback_events`、`publication_records`、`memory_items/memory_versions` 与 `index_outbox`。不建议首期直接建立万能 `memories` 大表；先明确实体边界，再由 `MemoryService` 提供统一召回和上下文装配接口。
+
+**分阶段落地与验收：** P0 先拆三类状态、补 `copies` 的用户隔离与索引读写闭环、保存生成时风格快照，并增加“采用/拒绝/修改意见”API；验收看状态不混淆、双用户零串线、采用稿可复现和 collection 故障可降级。P1 再做风格卡版本/审核、知识来源治理、编辑 diff、引用溯源和混合检索；验收使用 Brief 完整率、人工采用率、平均改稿轮次、引用命中率、Recall@K/nDCG 和盲评。P2 接发布回流、偏好聚合、A/B 和线上排序；必须达到最小样本量再更新策略，不能用单篇爆文得出风格结论。
+
+**代价与尚未验证的预期：** 拆状态和版本会增加表、迁移、前端信息架构与事件一致性成本；混合检索、rerank 和引用会增加延迟；发布效果受渠道流量、选题、发布时间等混杂因素影响，不能简单归因于风格卡。上述设计预期提高可控性、复现性和个性化，但本轮没有业务用户、线上采用率、平台指标或 A/B 数据，所有质量与效率收益均待验证。
+
+**面试时怎么讲：** “我把真实文案生产拆成执行、交付和发布三套状态，避免模型跑完就被误认为业务完成；知识库只管事实证据，风格卡管表达规则，历史记忆只吸收用户采用、编辑和真实反馈。生成时保存引用证据和风格快照，发布后用事件回流形成候选记忆。这样系统不是越用数据越脏，而是每次学习都有来源、版本、权限和撤销路径。”
+
+**[下一个最值得处理的 P1]** 当前仍应先完成历史文案的租户隔离和读写闭环；产品层紧随其后的 P1 是拆分执行/内容/发布状态，并新增采用、拒绝和定向修改反馈，否则后续风格学习没有可信业务标签。
+
+## 32.19 记忆系统 P0/P1/P2 核心链路落地（2026-08-21）
+
+**原始问题与触发场景：** 在第 32.17 节完成架构复核后，用户要求按方案持续优化直至完成。本轮把可在当前仓库内闭环验证的租户隔离、索引一致性、显式偏好/反馈、版本治理、混合检索、上下文预算、Checkpoint 裁剪和离线评测落成代码；生产共享向量服务、真实用户效果和前端编辑差异采集不具备本轮外部条件，仍明确列为待验证或后续工作。
+
+**从代码确认的原始问题：** `SearchSimilarCopiesSkill` 的 Chroma 和数据库路径都没有通过任务所有者做硬过滤；`SaveFinalCopySkill` 虽调用历史文案写入函数，但目标函数并不存在，保存成功后可能在索引步骤报错；collection 不存在时返回空数组，外层无法判断需要降级；长期偏好、真实反馈、版本、失效和检索评测均无统一模型。索引若直接放在保存请求内，还会把可重建派生数据的失败错误地传播成业务保存失败。
+
+**解决方案与修改文件：**
+
+1. `app/skills/base.py` 注入可信 `_task_id/_agent_name`，服务端覆盖模型同名参数；`app/skills/rag_skills.py` 由 task 反查 owner，Chroma metadata 与 SQL join 双路径均硬过滤 `user_id`，collection 异常进入 SQL 降级，并加入关键词/向量混合、阈值、去重、上下文字符预算和反馈加权排序。
+2. `app/models/memory_index_job.py`、`app/services/memory_index_service.py` 与 `app/services/embedding_service.py` 建立终稿索引 Outbox、幂等 upsert、批量重建和有限重试。Worker 在外部向量写入前用数据库条件更新认领租约，多调度器不能同时消费同一任务；进程崩溃后可回收过期租约。`app/skills/copy_skills.py` 保存 Copy 后只提交 Outbox，使向量故障不回滚权威业务数据；`app/scheduler.py` 增加消费任务；`scripts/migrate_memory_index_lock.sql` 为已有 MySQL 表补充租约列和索引。
+3. `app/models/memory.py`、`app/services/memory_service.py`、`app/schemas/memory.py`、`app/api/v1/memory.py` 与 `app/main.py` 增加用户偏好、用户内幂等反馈、版本化 `MemoryItem`、风格卡追加版本、状态/过期时间、偏好乐观锁和当前用户 API。幂等键由全局唯一修正为 `(user_id, idempotency_key)` 联合唯一。
+4. `app/agents/copywriter_agent.py` 只装配当前用户 active 且未过期的记忆，并限制字符数；记忆以转义后的 `UNTRUSTED_MEMORY_JSON` 数据块进入 Prompt，明确禁止执行其中指令。`app/services/orchestration_persistence.py` 增加 checkpoint schema v2、未来版本拒绝和消息/决策/反思裁剪，兼容旧 v1 数据。
+5. `app/services/content_asset_service.py` 与 `app/skills/style_skills.py` 在风格卡创建或更新时保存追加版本；`app/evaluation/memory_retrieval.py` 提供宏平均 Recall@K、MRR、nDCG@K 和跨租户泄漏计数。新增四组测试文件覆盖隔离、索引、生命周期、API、调度、排序、预算与评测。
+
+**测试方法与实际结果：** 严格按 RED/GREEN 提交测试和实现。P0 初始测试为 `5 failed`，修复后 `5 passed`；生命周期组合测试 `14 passed`；API/运维组合测试 `19 passed`；质量评测测试初始 `4 failed`，修复后 `4 passed`；并发租约与用户级幂等边界初始 `2 failed, 5 passed`，修复后 `7 passed`。最终针对当前 HEAD 再执行 `.venv\\Scripts\\python.exe -m pytest -q`，结果 `187 passed, 8 warnings in 18.58s`；执行 `.venv\\Scripts\\python.exe -m compileall -q app tests`，退出码 0。覆盖率命令未进入测试：`pytest` 不识别 `--cov`，随后 `python -m coverage --version` 确认环境没有 `coverage` 模块，因此本轮没有可报告的覆盖率百分比。
+
+**实际结果与边界：** 已由自动化测试确认双用户检索零串线、collection 故障 SQL 降级、终稿写入与 Outbox 解耦、索引幂等重建、并发消费互斥、偏好版本冲突、用户级反馈幂等、active/expired 过滤、风格卡追加版本、checkpoint 预算以及 Recall/MRR/nDCG 计算。尚未验证真实 Chroma 多实例、MySQL 并发、真实 Embedding/LLM、生产迁移、吞吐、P95、人工采用率或生成质量提升；离线评测函数已经具备，但当前只有合成样例，不代表业务效果。
+
+**缺点和代价：** 新增关系表、定时消费和版本数据会增加迁移、清理与监控成本；已有索引任务表具备租约 SQL 脚本，但尚未在真实 MySQL 上执行验证。本地 Chroma 仍不是生产级共享向量服务；APScheduler 虽有租约避免重复写，但正式部署更适合独立持久 Worker；反馈目前已有 API，前端尚未采集逐段编辑 diff、拒绝原因和发布指标；字符预算是可预测的第一步，不等同于模型 tokenizer 的精确 token 预算。
+
+**遇到的坑：** 保存终稿的旧代码看似存在“入库调用”，但调用的是不存在的函数，不能仅靠搜索调用点判断读写链路闭合；Outbox 只做幂等键仍不足以防多个调度器同时消费，必须在外部副作用前原子认领并设计超时租约；全局幂等键会造成跨租户碰撞；覆盖率插件不在环境中时应记录“未测”，不能把测试通过率冒充代码覆盖率。
+
+**面试时怎么讲：** “我先用双租户 RED 测试证明历史文案会串线，再让 SkillExecutor 注入可信 task_id，由服务端反查 owner，SQL 和 Chroma 都先做权限硬过滤。终稿保存与向量索引用 Outbox 解耦，Worker 先用数据库租约认领再写 Chroma，索引可从 Copy 真源重建。长期记忆用关系库保存偏好、反馈、版本和失效状态，向量库只做派生召回；读取采用混合检索和预算装配，质量用 Recall@K、MRR、nDCG 与跨租户泄漏计数验证。最终 187 个测试通过，但真实线上生成增益仍需要盲评和业务反馈证明。”
+
+**[下一个最值得处理的 P1]** 在任务详情页接入“采用/拒绝/定向修改/逐段编辑 diff”采集，并把发布结果作为独立可信事件回流。后端已经具备偏好和反馈权威模型，但没有真实交互入口就无法形成高质量学习信号；同时应在备份和预发环境执行并验证现有 MySQL 租约迁移脚本，并把调度消费迁到独立 Worker/共享向量服务后再做并发压测。
+
+## 32.20 MySQL、Chroma 与真实生成链路修复（2026-08-21）
+
+**原始问题与触发场景：** 项目此前只能以 SQLite 降级启动；热榜虽写入 40 条，但 Chroma 向量化报 `'_type'`；MySQL、真实 DeepSeek 文案生成与完整测试均未验证。切换真实链路后又发现 LLM 返回的写作规律字段可能是字符串，代码却按对象调用 `.get()`，会消耗工具次数并可能使任务失败；已有 MySQL 的 `memory_index_jobs` 表也缺少新租约字段。
+
+**问题原因：** `data/chroma/chroma.sqlite3` 由更高版本 Chroma 写入，当前锁定的 Chroma 0.6.3 无法安全读取其 collection 配置；PostHog 7.x 与 Chroma 0.6.3 的遥测调用签名不兼容；Embedding 的短模型名会让 tokenizer 在已有缓存时仍访问 Hugging Face；`app/services/embedding_service.py` 与 `app/lang/embeddings.py` 又是两条独立加载路径。真实生成方面，`writing_pattern.hook/title_formula/structure/cta` 属于不可信 LLM 结构化输出，实际形状比声明的 JSON Schema 更宽。
+
+**解决方案与修改文件：** `app/services/embedding_service.py` 在打开持久库前识别不兼容的新版本 Schema 并明确拒绝，不做有损原地降级；旧目录已可恢复地移动到 `data/chroma-newer-backup-20260821`，当前 `data/chroma` 由锁定版本重建。Embedding 优先以完整仓库 ID 在本地 snapshot 中解析模型路径，并在离线上下文加载；两条模型加载路径共享可重入锁，避免进程级离线状态竞态和重复加载。`app/lang/embeddings.py` 同步采用同一策略。`requirements.txt`/`uv.lock` 将 PostHog 限制在兼容范围。`app/main.py` 使用 SQLAlchemy URL 渲染隐藏数据库口令。`app/skills/copy_skills.py` 对字符串或对象形式的 hook、beats、标题公式、段落结构、节奏和 CTA 做归一化。`scripts/migrate_memory_index_lock.sql` 通过 `information_schema` 实现可重入，`scripts/setup_mysql.py` 接入执行；本轮已在 MySQL 8.0.46 连续执行两次成功。
+
+**测试方法与实际结果：** 回归测试覆盖 Chroma 新版库拒绝且不改写、本地模型优先、并发 single-flight、下载降级、RAG 本地 snapshot、数据库日志脱敏和异常写作规律；最终 `.venv\Scripts\python.exe -m pytest -q` 为 `192 passed, 8 warnings in 18.48s`，`compileall` 退出码 0，`uv pip check` 检查 149 个包全部兼容。前端 Vitest 为 `1 file / 7 tests passed`，TypeScript 检查和 Vite 生产构建成功（59 modules）。在线验证 `/health`、`/docs`、前端分别返回 HTTP 200，健康状态为 `healthy`。MySQL `SELECT VERSION()` 返回 `8.0.46`；启动同步写入并向量化 40 条，无 `'_type'`、网络加载或遥测签名错误。
+
+**真实生成结果：** 任务 6 通过真实 DeepSeek/LangGraph 链路完成，创作 Agent 调用 10 次工具、审核 Agent 调用 7 次工具；MySQL 中保存 2 个版本、1 个终稿，任务错误为空，Reviewer 分数 85，合规与洗稿检查通过。记忆索引调度实际处理成功，当前 Chroma 有 `hotlist_topics=160`、`copies=4`；数字包含本轮多次启动同步和两次成功生成，不代表生产数据规模或质量收益。
+
+**缺点、代价与未验证项：** 旧库的 880 条向量只保留在备份中，未证明可被当前版本无损迁移；当前重建依赖 MySQL 权威数据，正式生产应采用受控迁移工具和备份校验。Docker Desktop 与 MySQL 容器在本机已运行，但 Windows `MySQL5` 服务仍因权限不足且版本 5.1.73 不适用。真实单任务已经验证，生产多 Worker、共享 Chroma、并发压测、模型限流和质量收益仍未验证。覆盖率工具未安装，不能报告覆盖率百分比。
+
+**遇到的坑：** 仅把 collection 配置补成旧格式会继续触发 `'dict' object has no attribute 'dimensionality'`，说明跨版本问题不止一个 JSON 字段，不能用局部篡改伪装兼容；仅修通一个 Embedding 服务不够，LangChain RAG 的第二加载路径仍会隐式联网；单元测试无法覆盖 LLM 返回字符串而非对象的真实漂移，必须保留一次端到端生成；SQLAlchemy `create_all()` 只建缺失表，不会给已有表自动补列。
+
+**面试时怎么讲：** “我没有把 `_type` 当成可忽略告警，而是追到持久化 Schema 与依赖版本不匹配。尝试局部修复后出现 dimensionality 二次错误，于是停止原地降级，保留旧库、从关系库重建派生向量索引。随后用真实 DeepSeek 任务发现 JSON Schema 之外的字符串形状，给两处写作规律消费点做归一化。最终在 MySQL 8 上跑通热榜、Embedding、RAG、生成、审核、终稿和异步索引，并用 188 个后端测试与前端构建回归。”
+
+**[下一个最值得处理的 P1]** 将 FastAPI `BackgroundTasks` 中的长时生成迁移到独立持久任务队列/Worker，补任务租约、重试、幂等和进程重启恢复。任务 3 因修复重启需要人工标记失败，已经证明当前进程内后台任务不具备生产级持久性。
+
+## 32.21 本地前后端服务恢复（2026-08-21）
+
+**原始问题与触发场景：** 用户访问 `http://127.0.0.1:5173` 被拒绝。实际检查确认 5173 没有监听进程，8000 后端也已停止；不是 React 页面或路由返回错误，而是上一次会话中的开发服务进程已经退出。
+
+**处理与修改范围：** 未修改业务代码、配置、依赖或数据库 Schema。使用仓库现有 Vite 与 Uvicorn 命令，以隐藏后台进程重新启动前端和后端；运行日志写入系统临时目录 `multi-agent-hot-copy-generator`，未在仓库留下运行日志。访问地址必须写成 `http://127.0.0.1:5173`，不能写成带反斜杠的 `http\://...`。
+
+**实际验证：** `netstat -ano` 确认 `127.0.0.1:5173` 与 `127.0.0.1:8000` 均处于 LISTENING；`Invoke-WebRequest http://127.0.0.1:5173` 返回 HTTP 200；`Invoke-WebRequest http://127.0.0.1:8000/health` 返回 HTTP 200 和 `healthy`。后端本次首次启动还创建了并行开发中新加入的知识库表，因此启动完成比前端慢；健康检查成功后才判定服务可用。
+
+**边界和下一个 P1：** 当前是本地开发后台进程，不保证 Windows 重启、用户注销或异常退出后自动恢复。后续仍应把生产启动交给 Docker Compose、Windows 服务或进程管理器；业务侧最高优先级仍是将长时生成从进程内 `BackgroundTasks` 迁移到持久队列与独立 Worker。
+
+## 32.22 幂等设计知识补充与项目边界澄清（2026-08-21）
+
+**原始问题与触发场景：** 用户希望进一步理解“幂等不是 Python 关键字，而是一种工程设计”，并要求同步补充多份项目知识文档。本轮没有修改业务代码、配置或数据库，只基于已经由源码和测试确认的项目实现，补充通用设计、面试话术和并发场景题。
+
+**代码确认的项目事实：** 记忆反馈的唯一作用域已经由全局 key 修正为 `(user_id, idempotency_key)`；终稿索引使用 Outbox、数据库条件更新租约、有限重试和向量 upsert，并已有并发消费与跨租户碰撞测试。创建 Agent 任务接口仍没有业务 `idempotency_key`，首次生成仍通过 Web 进程内 `BackgroundTasks` 启动；因此只能说部分关键链路具备幂等和防重能力，不能宣称全系统 exactly-once。
+
+**补充的设计结论：** 幂等保护的是受约束业务状态的最终效果，不要求代码只运行一次，也不要求每次 HTTP 返回完全相同。完整设计需要明确操作、租户、有效期、请求摘要和结果回放五个边界；数据库唯一约束负责消除并发重复落库，条件更新/租约负责决定并发执行权，Outbox 负责业务提交与事件产生的一致性，下游消费账本负责重复投递，第三方副作用还需要提供方幂等键、平台业务 ID 或不确定结果查询。单独使用“先查后写”、进程内集合或分布式锁都不足以形成持久幂等闭环。
+
+**修改文件：** `docs/agent_fullstack_interview_handbook.md` 扩展定义、FastAPI/数据库实现、消息消费、Outbox、exactly-once 区别和常见误区；`docs/agent_python_fullstack_interview_script.md` 更新项目口头回答；`docs/python_ai_fullstack_scenario_questions.md` 新增重复点击与多 Worker 并发题；`docs/conversations/CONVERSATION_INBOX.md` 归档本轮问答；本指南新增本节和更新日志。
+
+**验证方法与实际结果：** 本轮只修改 Markdown 文档，代码测试未运行。实际执行关键词检索、`git diff --check`、本轮相关文件差异和 Git 跟踪状态检查；结果以本轮最终命令为准。既有 `192 passed` 等结果仅作为项目历史事实引用，不是本轮重新执行的测试结果。
+
+**缺点和代价：** 引入幂等记录、请求 hash、结果缓存、租约与消费账本会增加表结构、清理策略、存储和故障状态处理复杂度；幂等键有效期过短会放过迟到重试，过长会增加存储并限制业务重新提交。第三方不支持幂等键时无法仅靠本地数据库证明外部副作用恰好一次。
+
+**面试时怎么讲：** “我不会把幂等解释成代码只执行一次。网络、网关和消息队列都可能重试，所以我把幂等拆成入口请求、Worker 认领、步骤副作用和外部平台四层：入口使用带用户作用域的 key 与请求摘要，Worker 用数据库条件更新或租约竞争执行权，步骤用唯一 execution key，业务事件通过 Outbox 投递，下游按 event ID 去重。项目的记忆索引已经采用这套思路，但创建任务和生产 Worker 还没闭环，所以我只声称业务效果防重，不声称 exactly-once。”
+
+**[下一个最值得处理的 P1]** 给创建 Agent 任务入口增加用户作用域的幂等键、请求摘要与结果回放，并把首次生成和 resume 迁移到持久队列/独立 Worker，补顺序重复、并发重复、Worker 崩溃、租约回收和同 key 不同参数测试。
+
+## 32.23 真实内容生产 P0/P1/P2 全阶段落地（2026-08-21）
+
+**原始问题与触发场景：** 第 32.18 节只完成了产品架构设计，执行状态、内容交付、发布结果、知识证据、风格快照和用户反馈仍未形成一个可操作闭环。用户要求继续完成全部阶段后再停止，因此本轮按 TDD 分 P0、P1、P2 和前端工作台四段实现。
+
+**问题原因：** 旧 `Task.status` 同时承担模型执行和业务完成语义；生成任务没有可校验 Content Brief；知识、风格和历史反馈虽有局部组件，但缺少统一租户边界、有效期、版本、引用与生成快照；用户编辑没有父版本和 diff；发布准备不等于发布结果；单次反馈若直接成为偏好会造成自我强化和记忆污染。
+
+**解决方案与修改文件：**
+
+1. P0 在任务、文案、记忆模型和编排服务中增加 `execution_status/content_status/publication_status` 三轴状态、阻塞原因、父版本、人工编辑标记、变更摘要、知识引用和冻结风格快照；`accepted/rejected/edited/published` 反馈会驱动业务状态，编辑反馈创建新 Copy 版本而不是覆盖原稿。
+2. P1 新增 `KnowledgeSource/KnowledgeChunk`、知识 API、混合检索服务和知识向量 Outbox。MySQL 保存版本、权限、状态、有效期与权威正文，Chroma 只保存可重建分块；向量召回后仍由关系库执行租户、类型、状态和有效期二次硬过滤。风格按平台、显式品牌偏好、已晋升偏好、账号风格卡和任务覆盖确定性合并；任务创建时冻结最终快照。
+3. P2 新增 `PublicationRecord`、幂等发布结果、指标回填和当前用户洞察。偏好学习只聚合结构化正向 `style_signals`，同一信号达到 3 条证据才创建 active `inferred_preference`；后续风格解析实际读取该记忆。单次采用不会自动污染长期偏好。
+4. 前端新增普通用户可访问的“知识与记忆”页面，以及任务详情生产工作台：展示三轴状态、编辑 Content Brief、采用/退回/人工修订版本、冻结风格快照、知识引用和变更摘要；知识页支持新增版本化来源、验证检索和查看采用率、发布记录与已晋升偏好。
+5. 新增三份内容生产迁移并接入初始化脚本。并行 RED 测试发现 MySQL 8 不支持项目 SQL 中的 `ADD COLUMN IF NOT EXISTS` 写法，初始化脚本现通过 `information_schema` 将受保护多列 ALTER 展开为逐列迁移；实现由提交 `7cde0d65` 闭环。
+
+**修改文件范围：** 后端涉及 task/copy/memory/knowledge 模型、task/memory/knowledge API 与 Schema、生命周期/知识/风格解析/反馈学习/索引服务、Agent 注入点和三份迁移；前端涉及任务详情、知识页、API/类型、导航和样式；行为契约集中在三份 `test_content_production_p*.py`、迁移 helper 测试和 `TaskDetail.test.tsx`。
+
+**测试方法与实际结果：** P0 RED 为 `5 failed`，P1 初始 RED 为 `4 failed`，P2 RED 为 `3 failed`，前端 RED 为缺少 `api/memory` 模块；各阶段修复后定向测试转绿。当前工作树执行完整 pytest，实际为 `213 passed, 9 warnings in 82.77s`；审查删除重复风格快照组装后再跑 P0/P1 为 `16 passed, 9 warnings`；MySQL 迁移 helper 为 `2 passed`。前端 `npm test` 为 `1 file / 9 tests passed`，TypeScript 检查和 Vite 构建成功（62 modules）。本轮未在真实 MySQL 执行三份新迁移，未运行真实 LLM/Embedding 端到端生成、并发压测、人工盲评或线上 A/B。
+
+**实际结果：** 自动化测试确认三轴状态不会随旧状态路径失同步、跨用户知识和风格资产不可见、知识检索保留引用、向量故障可降级、人工编辑形成可追溯新版本、发布记录用户内幂等、指标可回填、偏好在第 3 条稳定证据后才晋升并进入下一次风格解析。前端构建证明类型和交互可编译运行；这些结果不等同于真实采用率、生成质量或发布效果提升。
+
+**缺点和代价：** 表、迁移、状态转换和版本数据增多；知识向量仍由现有本地 Chroma 与调度器承担，不是多实例共享服务；偏好晋升目前采用固定阈值和显式信号，尚未加入负向证据抵消、时间衰减、置信区间或人工撤销 UI；发布指标由调用方回填，尚未接平台回调验签；混合检索没有业务语料上的 Recall@K/nDCG 基线和 reranker 效果证明。
+
+**遇到的坑：** 只有合并排序函数不代表真实混合检索，必须补齐知识分块写向量、异步索引和查询注入；创建任务曾保留旧快照组装后又调用新解析器，虽测试不失败但产生重复逻辑，审查后已删除；Windows 下 npm 默认缓存无写权限，改用仓库 `frontend/.npm-cache` 后完成测试；并行工作提交了 MySQL RED 测试和实现，最终通过 Git 历史与全量测试确认后保留，未重复提交或覆盖。
+
+**面试时怎么讲：** “我把方案按证据链落地：执行、内容、发布三套状态分别驱动；知识事实放关系库真源，Chroma 只做可重建索引；风格按平台、品牌、学习偏好、账号和任务分层合并，并在生成时冻结；用户编辑创建父子版本和 diff，发布结果独立幂等记录。最关键的是学习准入——单次反馈不写长期偏好，同一结构化信号至少 3 次正向采用才晋升，而且每条结果都能回查反馈、知识引用和风格快照。213 项后端与 9 项前端测试证明实现边界，但真实质量收益仍要靠业务评测和线上数据。”
+
+**[下一个最值得处理的 P1]** 将长时生成从 `BackgroundTasks` 迁到持久队列/独立 Worker，并给创建任务增加用户作用域幂等键、请求摘要、租约和结果回放。当前知识/记忆索引已有 Outbox 与租约，但主生成任务仍可能在 Web 进程重启时丢失，这是现阶段最大的生产可靠性缺口。
+
 ## 33. 活文档更新日志
 
 > 本表只记录实际发生的项目工作。测试或验证未执行时必须明确写“未运行”；预期收益只能标记为“待验证”，不能写成实际效果。历史记录只追加，不删除、不覆盖。
@@ -1149,3 +1393,21 @@ Agent 执行失败
 | 2026-08-13 | 讨论头条与抖音一键发布方案并核验平台边界 | 未修改业务代码；增量更新本活文档，记录独立发布域、辅助发布降级与平台准入边界 | 源码结构检索、Git 差异检查、抖音开放平台官方文档核验；pytest、前端构建、真实 OAuth/发布 API 均未运行 | 第 32.11、33 节 | 架构讨论已完成；平台能力申请、实现与真实账号端到端发布待验证 |
 | 2026-08-13 | 自动提交前复验当前工作区 | 未修改业务代码；仅追加本条验证记录 | `.venv\\Scripts\\python.exe -m pytest -q`：`140 passed, 6 warnings in 91.18s`；测试已完成，但并行工具调用在 120 秒总时限后返回超时码；随后单独执行 `.venv\\Scripts\\python.exe -m compileall -q app tests scripts`，退出码 0；`git diff --check` 通过 | 第 33 节 | 复验已完成；真实模型、MySQL、生产并发与跨模型效果仍待验证 |
 | 2026-08-13 | 澄清个人账号的抖音发布能力边界 | 未修改业务代码；更新对话收件箱、发布域方案和情景题，区分服务端代发与用户确认投稿 | 对照用户提供的官方准入文本并复核现有项目记录；代码测试未运行；文档差异检查见本轮最终结果 | 第 32.11、33 节及对话收件箱、情景题 | 能力边界已澄清；个人应用能否获批投稿能力和真实发布仍待平台审核验证 |
+| 2026-08-13 | 首次同步当前与侧边栏相关聊天 | 未修改业务代码；更新四份活文档、对话收件箱和同步游标，补齐 BackgroundTasks 执行语义与选型题 | 实际执行侧边栏列表/任务读取、关键词去重、UTF-8 文件检查及 Git 差异检查；代码测试未运行 | 第 32.12、33 节及知识手册、面试话术、情景题、对话状态 | 首次基线已完成；扫描期间的发布与容量规划任务已由各自记录增量衔接，未来新增聊天继续按游标同步 |
+| 2026-08-13 | 实现头条辅助发布与抖音 H5 用户确认投稿 MVP | 新增发布 Schema、服务、API、配置、审计日志、15 个后端聚焦测试和 7 个前端交互测试；任务详情页增加头条/抖音发布卡、终稿 ID 绑定、CDN 白名单、阻断提示、审计即时刷新与剪贴板/弹窗降级 | TDD RED collection error；GREEN `7 passed`；审查后聚焦 `15 passed, 6 warnings`；完整 pytest `155 passed, 6 warnings in 18.23s`；`compileall` 通过；前端最终 `7 passed`；构建 59 modules、1.10s；`git diff --check` 通过；根目录 `npm test` 曾因脚本位置错误失败，切到 `frontend/` 后成功 | 第 32.13、33 节及发布归档、面试话术、情景题 | 本地 MVP 与两轮审查修复已完成；真实开放平台资质、凭证、手机拉起和最终发布仍待验证 |
+| 2026-08-13 | 评估 100 用户规模的服务器规格与扩容路径 | 未修改业务代码或配置；更新容量规划、通用知识、面试话术、情景题和对话收件箱 | 静态检查 Docker/Gunicorn、BackgroundTasks、MySQL 连接池、Embedding、轮询与 APScheduler；核对腾讯云官方目录价；代码测试、真实模型和并发压测未运行 | 第 32.14、33 节及知识手册第 50 节、面试话术第 19 节、情景题 5、对话收件箱 | 静态评估已完成；推荐规格与最大并发仍待压测验证 |
+| 2026-08-13 | 将容量规划扩展到 500 用户规模 | 未修改业务代码或配置；补充单机过渡与 Web/Worker/Redis/MySQL 拆分方案 | 复核既有源码容量事实与腾讯云官方目录价；计算 3 秒轮询在 500 活跃页面下约 167 QPS；代码测试、真实模型和并发压测未运行 | 第 32.14、33 节及知识手册第 50.1 节、面试话术第 19 节、情景题 5、对话收件箱 | 静态架构估算已完成；在线率、任务时长、模型配额和实例数量待压测验证 |
+| 2026-08-13 | 每日侧边栏对话增量归档自动化 | 未修改业务代码或配置；任务列表服务两次有界等待均未返回，未读取聊天正文；记录不可访问扫描且未推进任何聊天游标 | `codex_app__list_threads` 读取尝试两次未返回；检查 `SYNC_STATE.md`、`CONVERSATION_INBOX.md` 与 `git diff --check`；代码测试未运行 | 第 33 节、对话收件箱与同步状态 | 部分完成：本地归档状态已如实记录；侧边栏扫描待服务可访问时重试 |
+| 2026-08-18 | 每日侧边栏对话增量归档自动化 | 未修改业务代码或配置；读取自动化记忆与既有游标后，任务列表服务在约一分钟的有界读取内未返回；未读取聊天正文且未推进游标 | `codex_app__list_threads({limit: 50})` 未在有界等待内返回；检查记忆文件、`SYNC_STATE.md`、`CONVERSATION_INBOX.md`、Git 状态和 `git ls-files`；代码测试未运行 | 第 33 节、对话收件箱与同步状态 | 部分完成：记录不可访问扫描；相关新增聊天无法判定，待服务可访问时重试 |
+| 2026-08-19 | 解释并复核项目中的白名单机制 | 未修改业务代码或配置；静态复核 Agent 工具、抖音素材域名、CORS、人工恢复动作及评测 allowlist；更新五份知识与审计文档 | 定向 pytest：`34 passed, 6 warnings in 76.28s`；随后执行文档 `git diff --check` 和 Git 差异检查 | 第 32.15、33 节及知识手册、面试话术、情景题、对话收件箱 | 已完成源码解释和现有回归验证；真实抖音、生产 CORS、工具参数统一 Schema 校验及 fail-closed 改造待验证 |
+| 2026-08-20 | 启动本地前后端开发服务 | 未修改业务代码或持久配置；后端进程级覆盖为 SQLite，生成被 Git 忽略的 `data/dev_runtime.db`；增量更新活文档与对话收件箱 | `/health` 返回 healthy；`/docs` 和前端首页均为 HTTP 200；热榜同步写入 40 条，向量化报 `'_type'`；pytest、前端构建、MySQL 和真实生成未运行 | 第 32.16、33 节及对话收件箱 | 部分完成：本地开发服务已运行；MySQL 链路和向量化异常待处理 |
+| 2026-08-19 | 每日侧边栏对话增量归档自动化 | 未修改业务代码或配置；读取自动化记忆与既有游标后，任务列表服务在约两分钟的有界读取内未返回，随后中止等待；未读取聊天正文且未推进游标 | `codex_app__list_threads({limit: 50})` 约两分钟未返回；检查自动化记忆、`SYNC_STATE.md`、`CONVERSATION_INBOX.md`、Git 状态与文档差异；代码测试未运行 | 第 33 节、对话收件箱与同步状态 | 部分完成：记录不可访问扫描；相关新增聊天无法判定，待服务可访问时重试 |
+| 2026-08-20 | 每日侧边栏对话增量归档自动化 | 未修改业务代码或配置；读取自动化记忆与既有游标后，任务列表服务在约两分钟的有界读取内未返回，随后中止等待；未读取标题、任务 ID 或聊天正文，未推进游标 | `codex_app__list_threads({limit: 50})` 约两分钟未返回后中止；检查自动化记忆、`SYNC_STATE.md`、`CONVERSATION_INBOX.md`、Git 状态与文档差异；代码测试未运行 | 第 33 节、对话收件箱与同步状态 | 部分完成：记录不可访问扫描；相关新增聊天无法判定，待服务可访问时重试 |
+| 2026-08-21 | 每日侧边栏对话增量归档自动化 | 未修改业务代码或配置；读取自动化记忆与既有游标后，任务列表服务在约一分钟的有界读取内未返回，随后中止等待；未读取标题、任务 ID 或聊天正文，未推进游标 | `codex_app__list_threads({limit: 50})` 约一分钟未返回后中止；检查自动化记忆、`SYNC_STATE.md`、`CONVERSATION_INBOX.md`、Git 状态与文档差异；代码测试未运行 | 第 33 节、对话收件箱与同步状态 | 部分完成：记录不可访问扫描；相关新增聊天无法判定，待服务可访问时重试 |
+| 2026-08-21 | 复核项目记忆系统并设计演进方案 | 未修改业务代码或配置；静态复核任务状态、checkpoint、历史文案检索、头条 RAG、风格卡与反馈链路；更新五份知识/审计文档 | 首次 `pytest` 因 PATH 无命令失败；随后 `.venv\\Scripts\\python.exe -m pytest -q tests\\test_writing_pattern.py tests\\test_content_assets_api.py`：`15 passed, 6 warnings in 94.09s`；历史文案隔离、写入、反馈与检索质量测试未运行 | 第 32.17、33 节及知识手册、面试话术、情景题、对话收件箱 | 架构复核已完成；P0 隔离与读写闭环、反馈系统和检索评测待实现 |
+| 2026-08-21 | 设计真实 AI 文案生产的工作状态、知识库、风格卡与历史记忆 | 未修改业务代码、配置或数据库；静态复核任务/文案/内容资产/风格卡/前端工作流，并更新五份知识与审计文档 | 源码与现有交互静态核对；文档 `git diff --check` 和 Git 差异检查在本轮更新后执行；代码测试未运行 | 第 32.18、33 节及知识手册、面试话术、情景题、对话收件箱 | 产品架构设计已完成；状态拆分、反馈 API、风格快照和记忆闭环待实现与验证 |
+| 2026-08-21 | 按演进方案落地记忆系统核心优化 | 新增租户安全检索、Outbox/租约索引、偏好与反馈 API、版本化记忆/风格卡、混合检索、上下文与 checkpoint 预算、检索评测及回归测试 | 最终 pytest：`187 passed, 8 warnings in 18.58s`；`compileall` 退出码 0；覆盖率工具缺失，覆盖率未测；另有各阶段 RED/GREEN 结果见第 32.19 节 | 第 32.19、33 节及知识手册、面试话术、情景题、对话收件箱 | 仓库内核心链路已完成；生产迁移、共享向量服务、真实反馈 UI、并发压测与线上质量收益待验证 |
+| 2026-08-21 | 修复 MySQL、Chroma、Embedding 与真实文案生成链路 | 修复两条本地 Embedding 路径及并发加载、拒绝不安全 Chroma 降级、重建派生索引、锁定兼容 PostHog、脱敏数据库日志、归一化 LLM 写作规律字段；接入可重入 MySQL 租约迁移 | MySQL 8.0.46 实际连接，迁移连续执行两次成功；启动热榜 40 条向量化成功；真实任务 6 完成并保存 2 版/1 终稿；pytest `192 passed, 8 warnings`；前端 7 tests、类型检查和构建通过；149 个依赖兼容；HTTP 健康/Swagger/前端均 200 | 第 32.20、33 节及知识手册、面试话术、情景题、对话收件箱 | 本地完整链路已完成；旧 880 向量迁移、生产多 Worker/共享向量库、并发与质量收益待验证 |
+| 2026-08-21 | 恢复无法访问的本地开发服务 | 未修改代码或配置；重新以隐藏后台进程启动 Vite 与 Uvicorn，日志放入系统临时目录 | `netstat` 确认 5173/8000 监听；前端 HTTP 200；后端 `/health` HTTP 200 且 `healthy` | 第 32.21、33 节及对话收件箱 | 已完成；本地进程不具备系统重启后的自动恢复能力 |
+| 2026-08-21 | 详细解释幂等并补充多份知识文档 | 未修改业务代码或配置；补充幂等边界、数据库/消息/外部副作用实现、面试话术和并发场景题 | 关键词检索、`git diff --check`、相关文档差异与 Git 跟踪检查；代码测试未运行 | 第 32.22、33 节及知识手册、面试话术、情景题、对话收件箱 | 文档补充已完成；创建任务入口幂等和持久 Worker 仍待实现 |
+| 2026-08-21 | 完成真实内容生产 P0/P1/P2 与前端工作台 | 新增三轴状态、Brief、版本编辑与反馈、受治理知识库、分层风格快照、知识向量 Outbox、发布指标、偏好证据晋升、洞察 API、知识/记忆页及三份迁移 | TDD RED/GREEN；完整 pytest `213 passed, 9 warnings in 82.77s`；审查后 P0/P1 `16 passed`；迁移 helper `2 passed`；前端 `9 passed`；TypeScript/Vite 构建 62 modules；真实新迁移、真实模型、压测和线上 A/B 未运行 | 第 32.23、33 节及知识手册、面试话术、情景题、对话收件箱 | 仓库内全阶段已完成；生产 Worker、真实迁移与业务效果待验证 |
