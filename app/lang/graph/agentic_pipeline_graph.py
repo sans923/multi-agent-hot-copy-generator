@@ -21,6 +21,8 @@ LangGraph：Agentic 增强流水线
 
 from __future__ import annotations
 
+from app.services.task_lifecycle_service import set_task_execution_status
+
 import time
 from typing import Callable, Literal
 
@@ -440,7 +442,7 @@ def build_durable_agentic_pipeline_graph(
 
             task = db.query(Task).filter(Task.id == runtime["task_id"]).first()
             if task:
-                task.status = TaskStatus.FAILED
+                set_task_execution_status(task, TaskStatus.FAILED, reason="用户取消任务")
                 task.error_message = "用户取消任务"
                 db.commit()
             return {

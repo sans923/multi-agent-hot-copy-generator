@@ -18,20 +18,24 @@ from app.database import engine, create_tables
 
 def apply_schema_migrations() -> None:
     """执行可重入的轻量 MySQL 迁移；正式生产应迁移到 Alembic。"""
-    migration_path = Path(__file__).with_name("migrate_memory_index_lock.sql")
-    sql = "\n".join(
-        line
-        for line in migration_path.read_text(encoding="utf-8").splitlines()
-        if not line.lstrip().startswith("--")
-    )
-    statements = [
-        statement.strip()
-        for statement in sql.split(";")
-        if statement.strip()
-    ]
     with engine.begin() as connection:
-        for statement in statements:
-            connection.exec_driver_sql(statement)
+        for migration_name in (
+            "migrate_memory_index_lock.sql",
+            "migrate_content_production_p0.sql",
+        ):
+            migration_path = Path(__file__).with_name(migration_name)
+            sql = "\n".join(
+                line
+                for line in migration_path.read_text(encoding="utf-8").splitlines()
+                if not line.lstrip().startswith("--")
+            )
+            statements = [
+                statement.strip()
+                for statement in sql.split(";")
+                if statement.strip()
+            ]
+            for statement in statements:
+                connection.exec_driver_sql(statement)
 
 
 def main() -> None:

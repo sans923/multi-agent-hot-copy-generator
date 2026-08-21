@@ -21,6 +21,7 @@ from app.agents.base_agent import BaseAgent
 from app.models.task import Task, TaskStatus
 from app.skills import REQUIREMENT_AGENT_SKILLS
 from app.utils.logger import logger
+from app.services.task_lifecycle_service import set_task_execution_status
 
 
 class RequirementAgent(BaseAgent):
@@ -96,7 +97,7 @@ class RequirementAgent(BaseAgent):
         # 2. 更新任务状态为处理中
         task = db.query(Task).filter(Task.id == task_id).first()
         if task:
-            task.status = TaskStatus.PROCESSING
+            set_task_execution_status(task, TaskStatus.PROCESSING)
             db.commit()
 
         # 3. 构建给 Agent 的消息

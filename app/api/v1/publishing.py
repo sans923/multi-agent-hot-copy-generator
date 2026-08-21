@@ -125,6 +125,13 @@ def prepare_publication(
         status="success" if preparation.ready else "blocked",
     )
 
+    from datetime import datetime
+
+    task.publication_status = "ready" if preparation.ready else "not_prepared"
+    task.status_reason = None if preparation.ready else "; ".join(preparation.blockers)[:500]
+    task.status_updated_at = datetime.utcnow()
+    db.commit()
+
     return ApiResponse(
         success=True,
         message="发布准备已完成" if preparation.ready else "发布准备存在阻断项",

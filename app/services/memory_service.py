@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import difflib
 import hashlib
 import json
 from typing import Any
@@ -84,6 +85,8 @@ def record_copy_feedback(
     idempotency_key: str,
     comment: str = "",
     metrics: dict[str, Any] | None = None,
+    edited_title: str | None = None,
+    edited_content: str | None = None,
 ) -> MemoryFeedback:
     existing = (
         db.query(MemoryFeedback)
@@ -109,10 +112,80 @@ def record_copy_feedback(
         raise ValueError("无权为该任务或文案提交反馈")
     if rating not in (-1, 0, 1):
         raise ValueError("rating 只能是 -1、0 或 1")
+    task = db.query(Task).filter(Task.id == task_id).one()
+    result_copy_id = copy_id
+    if action == "edited":
+        if not (edited_content or "").strip():
+            raise ValueError("edited 反馈必须提供 edited_content")
+        next_version = (
+            db.query(Copy.version)
+            .filter(Copy.task_id == task_id)
+            .order_by(Copy.version.desc())
+            .limit(1)
+            .scalar()
+            or 0
+        ) + 1
+        changed_fields: list[str] = []
+        if (edited_title or "") != (owned.title or ""):
+            changed_fields.append("title")
+        cleaned_content = edited_content.strip()
+        if cleaned_content != owned.content:
+            changed_fields.append("content")
+        content_diff = "\n".join(
+            difflib.unified_diff(
+                owned.content.splitlines(),
+                cleaned_content.splitlines(),
+                fromfile=f"copy-{owned.id}",
+                tofile="user-revision",
+                lineterm="",
+            )
+        )[:10_000]
+        revision = Copy(
+            task_id=task_id,
+            parent_copy_id=owned.id,
+            version=next_version,
+            title=edited_title if edited_title is not None else owned.title,
+            content=cleaned_content,
+            hashtags=list(owned.hashtags or []),
+            platform=owned.platform,
+            tone=owned.tone,
+            hot_keywords=list(owned.hot_keywords or []),
+            is_final=False,
+            user_edited=True,
+            applied_style_snapshot=owned.applied_style_snapshot,
+            knowledge_citations=owned.knowledge_citations,
+            change_summary={
+                "changed_fields": changed_fields,
+                "content_char_delta": len(cleaned_content) - len(owned.content),
+                "content_diff": content_diff,
+            },
+        )
+        db.add(revision)
+        db.flush()
+        result_copy_id = revision.id
+        task.content_status = "in_review"
+        task.status_reason = comment.strip() or "用户提交了人工编辑版本"
+    elif action == "accepted":
+        db.query(Copy).filter(
+            Copy.task_id == task_id,
+            Copy.id != owned.id,
+        ).update({Copy.is_final: False}, synchronize_session=False)
+        owned.is_final = True
+        owned.adopted_at = datetime.utcnow()
+        task.content_status = "approved"
+        task.status_reason = None
+    elif action == "rejected":
+        task.content_status = "changes_requested"
+        task.status_reason = comment.strip() or "用户拒绝了当前版本"
+    elif action == "published":
+        task.publication_status = "published"
+        task.status_reason = None
+    task.status_updated_at = datetime.utcnow()
     row = MemoryFeedback(
         user_id=user_id,
         task_id=task_id,
         copy_id=copy_id,
+        result_copy_id=result_copy_id,
         action=action,
         rating=rating,
         comment=comment.strip() or None,

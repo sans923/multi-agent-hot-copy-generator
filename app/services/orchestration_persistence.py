@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.agents.pipeline_state import PipelineState
 from app.models.task import Task, TaskStatus
 from app.utils.logger import logger
+from app.services.task_lifecycle_service import set_task_execution_status
 
 # PipelineState 中不可 JSON 序列化的字段
 _NON_SERIALIZABLE_KEYS = frozenset({"db", "result"})
@@ -142,7 +143,7 @@ def load_checkpoint(db: Session, task_id: int) -> dict[str, Any] | None:
 def mark_task_processing(db: Session, task_id: int) -> None:
     task = db.query(Task).filter(Task.id == task_id).first()
     if task and task.status == TaskStatus.PENDING:
-        task.status = TaskStatus.PROCESSING
+        set_task_execution_status(task, TaskStatus.PROCESSING)
         db.commit()
 
 
@@ -151,7 +152,7 @@ def mark_task_awaiting_human(db: Session, task_id: int, state: PipelineState) ->
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         return
-    task.status = TaskStatus.AWAITING_HUMAN
+    set_task_execution_status(task, TaskStatus.AWAITING_HUMAN, reason=state.get("error") or "需人工介入")
     task.error_message = (state.get("error") or "需人工介入")[:500]
     save_orchestration_meta(db, task_id, state, save_checkpoint=True)
 
@@ -164,7 +165,7 @@ def mark_task_completed_from_meta(
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         return
-    task.status = TaskStatus.COMPLETED
+    set_task_execution_status(task, TaskStatus.COMPLETED, reason=None)
     task.error_message = None
     save_orchestration_meta(db, task_id, state, save_checkpoint=False)
 
@@ -196,13 +197,13 @@ def apply_result_meta_to_task(
         task.orchestration_meta = existing
 
     if result.get("awaiting_human"):
-        task.status = TaskStatus.AWAITING_HUMAN
+        set_task_execution_status(task, TaskStatus.AWAITING_HUMAN, reason=result.get("error") or "需人工介入")
         task.error_message = (result.get("error") or "需人工介入")[:500]
     elif result.get("success"):
-        task.status = TaskStatus.COMPLETED
+        set_task_execution_status(task, TaskStatus.COMPLETED, reason=None)
         task.error_message = None
     elif not result.get("success"):
-        task.status = TaskStatus.FAILED
+        set_task_execution_status(task, TaskStatus.FAILED, reason=result.get("error") or "任务失败")
         task.error_message = (result.get("error") or "任务失败")[:500]
 
     db.commit()

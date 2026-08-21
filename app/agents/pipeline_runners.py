@@ -22,6 +22,7 @@ from app.models.copy import Copy
 from app.models.task import Task, TaskStatus
 from app.services.audit_service import write_audit_log
 from app.services.longform_mvp_service import build_content_brief, build_outline
+from app.services.task_lifecycle_service import set_task_execution_status
 from app.utils.logger import logger
 
 
@@ -39,7 +40,7 @@ def mark_task_failed(db: Session, task_id: int, error_message: str) -> None:
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         return
-    task.status = TaskStatus.FAILED
+    set_task_execution_status(task, TaskStatus.FAILED, reason=error_message)
     task.error_message = error_message[:500]
     db.commit()
     logger.error(f"任务失败: task_id={task.id}, error={error_message}")
@@ -172,13 +173,18 @@ def run_copywriter_stage(
 
             selected_card = db.query(StyleCard).filter(StyleCard.id == selected_style_card_id).first()
             if selected_card:
+                task = db.query(Task).filter(Task.id == task_id).first()
+                task_meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
+                style_snapshot = task_meta.get("applied_style_snapshot") or {}
+                effective_pattern = style_snapshot.get("pattern") or selected_card.pattern_json
                 parsed_requirement["selected_style_card"] = {
                     "id": selected_card.id,
                     "topic_cluster": selected_card.topic_cluster,
-                    "pattern": selected_card.pattern_json,
-                    "confidence": float(selected_card.confidence or 0),
+                    "version": style_snapshot.get("version", 0),
+                    "pattern": effective_pattern,
+                    "confidence": float(style_snapshot.get("confidence", selected_card.confidence or 0)),
                 }
-                parsed_requirement["writing_pattern"] = selected_card.pattern_json
+                parsed_requirement["writing_pattern"] = effective_pattern
                 write_audit_log(
                     db,
                     task_id,

@@ -30,6 +30,14 @@ class Copy(Base):
         comment="所属任务ID"
     )
 
+    parent_copy_id = Column(
+        Integer,
+        ForeignKey("copies.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+        comment="用户编辑或重写所基于的上一版本",
+    )
+
     # 版本号：1=初稿，2=优化稿
     version = Column(
         Integer,
@@ -76,6 +84,12 @@ class Copy(Base):
 
     # Token 消耗量（用于统计 API 成本）
     tokens_used = Column(Integer, default=0, comment="生成此文案消耗的token数")
+
+    applied_style_snapshot = Column(JSON, nullable=True, comment="生成时生效的风格规则快照")
+    knowledge_citations = Column(JSON, nullable=True, comment="生成时使用的知识来源引用")
+    change_summary = Column(JSON, nullable=True, comment="相对父版本的变化摘要")
+    user_edited = Column(Boolean, default=False, nullable=False, comment="是否为用户编辑版本")
+    adopted_at = Column(DateTime, nullable=True, comment="用户明确采用时间")
 
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, comment="生成时间")
 

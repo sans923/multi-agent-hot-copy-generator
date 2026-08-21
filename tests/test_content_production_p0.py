@@ -1,6 +1,7 @@
 """真实内容生产 P0：三域状态、生成快照和用户反馈版本。"""
 
 import pytest
+from fastapi import BackgroundTasks
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,8 +11,12 @@ from app.core.deps import get_current_active_user
 from app.database import Base, get_db
 from app.main import app
 from app.models.copy import Copy
+from app.models.memory import StyleCardVersion
+from app.models.style_card import StyleCard
 from app.models.task import Task, TaskPlatform
 from app.models.user import User
+from app.api.v1.tasks import create_task
+from app.schemas.task import TaskCreate
 from app.skills.copy_skills import SaveFinalCopySkill
 
 
@@ -100,6 +105,39 @@ def test_task_detail_exposes_independent_execution_content_and_publication_statu
     assert data["status_reason"] is None
 
 
+@pytest.mark.parametrize(
+    ("legacy_status", "execution_status"),
+    [
+        ("pending", "queued"),
+        ("processing", "running"),
+        ("awaiting_human", "waiting_human"),
+        ("completed", "succeeded"),
+        ("failed", "failed"),
+    ],
+)
+def test_legacy_pipeline_status_updates_the_execution_axis(
+    legacy_status: str,
+    execution_status: str,
+):
+    from app.services.task_lifecycle_service import set_task_execution_status
+
+    db = Session()
+    task = Task(
+        user_id=1,
+        raw_requirement="同步旧流水线状态",
+        platform=TaskPlatform.WEIBO,
+    )
+    db.add(task)
+    db.commit()
+
+    set_task_execution_status(task, legacy_status)
+
+    assert task.status.value == legacy_status
+    assert task.execution_status == execution_status
+    assert task.status_updated_at is not None
+    db.close()
+
+
 def test_saved_copy_freezes_task_style_and_citation_snapshots():
     db = Session()
     task = Task(
@@ -136,6 +174,48 @@ def test_saved_copy_freezes_task_style_and_citation_snapshots():
     assert saved.knowledge_citations == [
         {"source_id": "brand-guide", "chunk_id": "brand-guide-4"}
     ]
+    db.close()
+
+
+def test_task_creation_freezes_the_active_style_card_version():
+    db = Session()
+    card = StyleCard(
+        topic_cluster="品牌增长",
+        platform="toutiao",
+        pattern_json={"hook": {"type": "旧规则"}},
+        confidence=0.8,
+    )
+    db.add(card)
+    db.commit()
+    db.refresh(card)
+    version = StyleCardVersion(
+        style_card_id=card.id,
+        version=4,
+        pattern_json={"hook": {"type": "反常识"}, "cta_pattern": "评论互动"},
+        status="active",
+        source_article_ids=["article-1"],
+        confidence=0.92,
+    )
+    db.add(version)
+    db.commit()
+
+    result = create_task(
+        TaskCreate(
+            raw_requirement="写一篇品牌增长的头条深度文章",
+            platform=TaskPlatform.TOUTIAO,
+            style_card_id=card.id,
+        ),
+        BackgroundTasks(),
+        current_user=_current_user(),
+        db=db,
+    )
+
+    created = db.query(Task).filter(Task.id == result.data.id).one()
+    snapshot = created.orchestration_meta["applied_style_snapshot"]
+    assert snapshot["style_card_id"] == card.id
+    assert snapshot["version"] == 4
+    assert snapshot["pattern"]["hook"]["type"] == "反常识"
+    assert snapshot["source_article_ids"] == ["article-1"]
     db.close()
 
 

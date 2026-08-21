@@ -7,9 +7,11 @@ Agentic 流水线执行器
 from __future__ import annotations
 
 import time
+from datetime import datetime
 from typing import Any, Literal
 
 from sqlalchemy.orm import Session
+from app.services.task_lifecycle_service import set_task_execution_status
 
 from app.agents.pipeline_runners import (
     PipelineAgents,
@@ -60,6 +62,8 @@ def _claim_retry_execution(db: Session, task_id: int) -> bool:
         .update(
             {
                 Task.status: TaskStatus.PROCESSING,
+                Task.execution_status: "running",
+                Task.status_updated_at: datetime.utcnow(),
                 Task.error_message: None,
             },
             synchronize_session=False,
@@ -577,7 +581,7 @@ def resume_agentic_pipeline(
 
     if action == "cancel":
         write_audit_log(db, task_id, "human", "resume_cancel", status="failed")
-        task.status = TaskStatus.FAILED
+        set_task_execution_status(task, TaskStatus.FAILED, reason="用户取消任务")
         task.error_message = "用户取消任务"
         db.commit()
         return {
@@ -603,7 +607,7 @@ def resume_agentic_pipeline(
             return {"success": False, "error": error, "task_id": task_id}
 
         write_audit_log(db, task_id, "human", "resume_accept_draft")
-        task.status = TaskStatus.COMPLETED
+        set_task_execution_status(task, TaskStatus.COMPLETED, reason=None)
         task.error_message = None
         meta = dict(task.orchestration_meta or {})
         meta["awaiting_human"] = False

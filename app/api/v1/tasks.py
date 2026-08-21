@@ -24,6 +24,7 @@ from app.models.task import Task, TaskStatus, TaskPlatform
 from app.models.copy import Copy
 from app.models.user import User
 from app.models.style_card import StyleCard
+from app.models.memory import StyleCardVersion
 from app.schemas.task import (
     TaskCreate,
     TaskResponse,
@@ -36,6 +37,7 @@ from app.schemas.common import ApiResponse, PaginationResponse
 from app.core.deps import get_current_active_user
 from app.utils.log_writer import write_log
 from app.utils.logger import logger
+from app.services.task_lifecycle_service import set_task_execution_status
 
 
 router = APIRouter(prefix="/tasks", tags=["文案生成任务"])
@@ -83,7 +85,7 @@ def _run_agents_background(task_id: int) -> None:
         # 更新任务状态为失败
         task = db.query(Task).filter(Task.id == task_id).first()
         if task:
-            task.status = TaskStatus.FAILED
+            set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
             task.error_message = str(e)[:500]
             db.commit()
     finally:
@@ -116,12 +118,43 @@ def create_task(
     直到 status 变为 completed 或 failed
     """
     selected_style_card = None
+    style_snapshot = None
     if task_data.style_card_id is not None:
         selected_style_card = db.query(StyleCard).filter(StyleCard.id == task_data.style_card_id).first()
         if selected_style_card is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="指定的风格卡不存在")
         if task_data.platform != TaskPlatform.TOUTIAO:
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="风格卡当前仅支持今日头条长文")
+        active_version = (
+            db.query(StyleCardVersion)
+            .filter(
+                StyleCardVersion.style_card_id == selected_style_card.id,
+                StyleCardVersion.status == "active",
+            )
+            .order_by(StyleCardVersion.version.desc())
+            .first()
+        )
+        style_snapshot = {
+            "style_card_id": selected_style_card.id,
+            "topic_cluster": selected_style_card.topic_cluster,
+            "version": active_version.version if active_version else 0,
+            "schema_version": active_version.schema_version if active_version else 1,
+            "pattern": dict(
+                active_version.pattern_json
+                if active_version
+                else selected_style_card.pattern_json
+            ),
+            "source_article_ids": list(
+                active_version.source_article_ids
+                if active_version
+                else (selected_style_card.source_article_ids or [])
+            ),
+            "confidence": float(
+                active_version.confidence
+                if active_version
+                else (selected_style_card.confidence or 0)
+            ),
+        }
 
     # 创建任务记录
     from app.services.orchestration_policy import resolve_execution_mode
@@ -137,6 +170,7 @@ def create_task(
             "resolved_mode": resolve_execution_mode(task_data.execution_mode),
             "selected_style_card_id": selected_style_card.id if selected_style_card else None,
             "selected_style_card_topic": selected_style_card.topic_cluster if selected_style_card else None,
+            "applied_style_snapshot": style_snapshot,
         },
     )
     db.add(task)
@@ -340,7 +374,7 @@ def _resume_task_background(task_id: int, action: str) -> None:
         if mode != "agentic":
             task = db.query(Task).filter(Task.id == task_id).first()
             if task:
-                task.status = TaskStatus.FAILED
+                set_task_execution_status(task, TaskStatus.FAILED, reason="仅 agentic 模式支持恢复")
                 task.error_message = "仅 agentic 模式支持恢复"
                 db.commit()
             return
@@ -353,7 +387,7 @@ def _resume_task_background(task_id: int, action: str) -> None:
         task = db.query(Task).filter(Task.id == task_id).first()
         meta = task.orchestration_meta if task and isinstance(task.orchestration_meta, dict) else {}
         if task and meta.get("durability_mode") != "langgraph_sqlite_v1":
-            task.status = TaskStatus.FAILED
+            set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
             task.error_message = str(e)[:500]
             db.commit()
     finally:

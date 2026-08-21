@@ -85,6 +85,24 @@ class Task(Base):
         comment="任务状态"
     )
 
+    # 技术执行、内容交付和渠道发布是三条正交状态轴；status 保留用于兼容旧编排。
+    execution_status = Column(
+        String(30), nullable=False, default="queued", index=True,
+        comment="机器执行状态",
+    )
+    content_status = Column(
+        String(30), nullable=False, default="brief_missing", index=True,
+        comment="内容交付状态",
+    )
+    publication_status = Column(
+        String(30), nullable=False, default="not_prepared", index=True,
+        comment="渠道发布状态",
+    )
+    status_reason = Column(Text, nullable=True, comment="当前状态阻塞或变化原因")
+    status_updated_at = Column(
+        DateTime, default=datetime.utcnow, nullable=False, comment="三域状态最后更新时间",
+    )
+
     # JSON 字段：存储需求理解Agent解析出的结构化需求
     # 例如：{"topic": "AI技术", "style": "幽默", "keywords": ["创新", "颠覆"]}
     # JSON 字段灵活，不需要固定结构，适合存储半结构化数据

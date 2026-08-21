@@ -35,11 +35,19 @@ class FeedbackCreateRequest(BaseModel):
     comment: str = Field(default="", max_length=1000)
     metrics: dict[str, Any] = Field(default_factory=dict)
     idempotency_key: str = Field(min_length=8, max_length=100)
+    edited_title: str | None = Field(default=None, max_length=200)
+    edited_content: str | None = Field(default=None, min_length=1, max_length=100_000)
 
     @model_validator(mode="after")
     def validate_metrics_size(self):
         if len(json.dumps(self.metrics, ensure_ascii=False)) > 10_000:
             raise ValueError("指标数据不能超过 10000 个 JSON 字符")
+        if self.action == "edited" and not (self.edited_content or "").strip():
+            raise ValueError("edited 反馈必须提供 edited_content")
+        if self.action != "edited" and (
+            self.edited_title is not None or self.edited_content is not None
+        ):
+            raise ValueError("只有 edited 反馈可以提交编辑后的标题或正文")
         return self
 
 
@@ -53,6 +61,7 @@ class FeedbackResponse(BaseModel):
     metrics: dict[str, Any]
     idempotency_key: str
     created_at: datetime
+    result_copy_id: int | None = None
 
     class Config:
         from_attributes = True

@@ -63,6 +63,13 @@ class MemoryFeedback(Base):
         nullable=False,
         index=True,
     )
+    result_copy_id = Column(
+        Integer,
+        ForeignKey("copies.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+        comment="编辑反馈产生的新版本；其他反馈通常等于 copy_id",
+    )
     action = Column(String(30), nullable=False)
     rating = Column(Integer, nullable=False, default=0)
     comment = Column(Text, nullable=True)

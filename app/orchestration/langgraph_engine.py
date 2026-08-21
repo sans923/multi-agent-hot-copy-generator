@@ -9,6 +9,7 @@ LangGraph 编排引擎（第二个实现）
 from __future__ import annotations
 
 from pathlib import Path
+from datetime import datetime
 from typing import Callable
 from uuid import uuid4
 
@@ -19,6 +20,7 @@ from app.config import settings
 from app.database import SessionLocal
 from app.orchestration.base import OrchestrationEngine
 from app.models.task import Task, TaskStatus
+from app.services.task_lifecycle_service import set_task_execution_status
 from app.agents.pipeline_state import (
     build_awaiting_human_result,
     build_failure_result,
@@ -131,7 +133,7 @@ class LangGraphOrchestrationEngine(OrchestrationEngine):
             meta["interrupt"] = payload
             meta.pop("checkpoint", None)
             task.orchestration_meta = meta
-            task.status = TaskStatus.AWAITING_HUMAN
+            set_task_execution_status(task, TaskStatus.AWAITING_HUMAN, reason=state.get("error") or "需人工介入")
             task.error_message = (state.get("error") or "需人工介入")[:500]
             db.commit()
             return build_awaiting_human_result(state)
@@ -214,7 +216,12 @@ class LangGraphOrchestrationEngine(OrchestrationEngine):
             db.query(Task)
             .filter(Task.id == task_id, Task.status == TaskStatus.AWAITING_HUMAN)
             .update(
-                {Task.status: TaskStatus.PROCESSING, Task.error_message: None},
+                {
+                    Task.status: TaskStatus.PROCESSING,
+                    Task.execution_status: "running",
+                    Task.status_updated_at: datetime.utcnow(),
+                    Task.error_message: None,
+                },
                 synchronize_session=False,
             )
         )
@@ -259,6 +266,8 @@ class LangGraphOrchestrationEngine(OrchestrationEngine):
                 .update(
                     {
                         Task.status: TaskStatus.FAILED,
+                        Task.execution_status: "failed",
+                        Task.status_updated_at: datetime.utcnow(),
                         Task.error_message: f"恢复执行失败: {exc}"[:500],
                     },
                     synchronize_session=False,

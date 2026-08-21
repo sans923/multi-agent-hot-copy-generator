@@ -694,6 +694,8 @@ class SaveFinalCopySkill(BaseSkill):
         if task is None:
             return {"success": False, "error": "任务不存在，无法保存文案"}
 
+        task_meta = task.orchestration_meta if isinstance(task.orchestration_meta, dict) else {}
+
         # 创建文案记录
         copy = Copy(
             task_id=task_id,
@@ -706,6 +708,8 @@ class SaveFinalCopySkill(BaseSkill):
             version=version,
             is_final=is_final,
             tokens_used=tokens_used,
+            applied_style_snapshot=task_meta.get("applied_style_snapshot"),
+            knowledge_citations=task_meta.get("knowledge_citations"),
         )
 
         db.add(copy)

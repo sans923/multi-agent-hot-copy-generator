@@ -90,6 +90,8 @@ def create_feedback(
             comment=body.comment,
             metrics=body.metrics,
             idempotency_key=body.idempotency_key,
+            edited_title=body.edited_title,
+            edited_content=body.edited_content,
         )
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc

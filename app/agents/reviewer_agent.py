@@ -13,6 +13,7 @@ from app.models.copy import Copy
 from app.models.task import Task, TaskStatus
 from app.skills import REVIEWER_AGENT_SKILLS
 from app.utils.logger import logger
+from app.services.task_lifecycle_service import set_task_execution_status
 
 
 class ReviewerAgent(BaseAgent):
@@ -190,7 +191,7 @@ class ReviewerAgent(BaseAgent):
 
         task = db.query(Task).filter(Task.id == task_id).first()
         if task:
-            task.status = TaskStatus.COMPLETED
+            set_task_execution_status(task, TaskStatus.COMPLETED, reason=None)
             db.commit()
 
         logger.info(

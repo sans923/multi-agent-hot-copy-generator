@@ -50,6 +50,11 @@ class TaskResponse(BaseModel):
     raw_requirement: str
     platform: str
     status: str
+    execution_status: str
+    content_status: str
+    publication_status: str
+    status_reason: Optional[str] = None
+    status_updated_at: datetime
     parsed_requirement: Optional[Any] = None
     orchestration_meta: Optional[Any] = None
     error_message: Optional[str] = None
@@ -76,6 +81,11 @@ class TaskCopySummary(BaseModel):
     hashtags: Optional[list] = None
     review_score: Optional[float] = None
     is_final: bool
+    parent_copy_id: Optional[int] = None
+    user_edited: bool = False
+    applied_style_snapshot: Optional[dict[str, Any]] = None
+    knowledge_citations: Optional[list[dict[str, Any]]] = None
+    change_summary: Optional[dict[str, Any]] = None
 
     class Config:
         from_attributes = True
@@ -101,6 +111,12 @@ class CopyResponse(BaseModel):
     tone: Optional[str] = None
     tokens_used: int
     created_at: datetime
+    parent_copy_id: Optional[int] = None
+    user_edited: bool = False
+    adopted_at: Optional[datetime] = None
+    applied_style_snapshot: Optional[dict[str, Any]] = None
+    knowledge_citations: Optional[list[dict[str, Any]]] = None
+    change_summary: Optional[dict[str, Any]] = None
 
     class Config:
         from_attributes = True
