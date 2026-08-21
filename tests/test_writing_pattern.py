@@ -268,3 +268,19 @@ def test_generate_outline_accepts_plain_text_pattern_fields():
     assert outline["sections"][0]["name"] == "标题"
     assert outline["sections"][1]["hook_type"] == pattern["hook"]
     assert outline["sections"][-1]["instruction"] == "CTA 模式：提问式结尾"
+
+
+@pytest.mark.parametrize("beats", [42, {"step": "冲击"}, ["冲击", 2, None]])
+def test_generate_outline_normalizes_invalid_hook_beats(beats):
+    outline = GenerateOutlineSkill()._build_outline_from_pattern(
+        topic="AI 办公",
+        platform="weibo",
+        style="专业简洁",
+        hot_topics=[],
+        key_points=[],
+        writing_pattern={"hook": {"type": "痛点式", "beats": beats}},
+    )
+
+    hook_instruction = outline["sections"][0]["instruction"]
+    assert isinstance(hook_instruction, str)
+    assert "痛点式" in hook_instruction

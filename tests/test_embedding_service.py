@@ -3,11 +3,41 @@ import os
 import sqlite3
 import sys
 import types
+import time
+from concurrent.futures import ThreadPoolExecutor
 
 import huggingface_hub
 import pytest
 
 from app.services import embedding_service
+
+
+def test_embedding_model_initialization_is_single_flight(monkeypatch):
+    created_models = []
+    cached_model = object()
+
+    def slow_sentence_transformer(_model_name, **_kwargs):
+        time.sleep(0.05)
+        created_models.append(cached_model)
+        return cached_model
+
+    monkeypatch.setitem(
+        sys.modules,
+        "sentence_transformers",
+        types.SimpleNamespace(SentenceTransformer=slow_sentence_transformer),
+    )
+    monkeypatch.setattr(
+        huggingface_hub,
+        "snapshot_download",
+        lambda **_kwargs: "C:/model-cache/snapshot",
+    )
+    monkeypatch.setattr(embedding_service, "_st_model", None)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        models = list(executor.map(lambda _index: embedding_service._get_st_model(), range(2)))
+
+    assert models == [cached_model, cached_model]
+    assert created_models == [cached_model]
 
 
 def test_embedding_model_prefers_local_cache(monkeypatch):
