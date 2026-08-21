@@ -83,3 +83,43 @@ def process_pending_memory_index_jobs(
         db.commit()
 
     return {"processed": len(jobs), "completed": completed, "failed": failed}
+
+
+def rebuild_copy_memory_index(
+    db: Session,
+    *,
+    user_id: int | None = None,
+) -> dict[str, int]:
+    """从关系数据库真源重建终稿索引任务，可按用户缩小维护范围。"""
+    from app.models.copy import Copy
+    from app.models.task import Task
+
+    query = (
+        db.query(Copy, Task.user_id)
+        .join(Task, Task.id == Copy.task_id)
+        .filter(Copy.is_final.is_(True))
+    )
+    if user_id is not None:
+        query = query.filter(Task.user_id == user_id)
+    rows = query.order_by(Copy.id).all()
+    queued = 0
+    for copy, owner_id in rows:
+        enqueue_copy_index(
+            db,
+            copy_id=copy.id,
+            user_id=owner_id,
+            payload={
+                "copy_id": copy.id,
+                "task_id": copy.task_id,
+                "content": copy.content,
+                "title": copy.title or "",
+                "platform": copy.platform or "",
+                "tone": copy.tone or "",
+                "version": copy.version,
+                "is_final": copy.is_final,
+                "hot_keywords": copy.hot_keywords or [],
+                "review_score": float(copy.review_score or 0),
+            },
+        )
+        queued += 1
+    return {"eligible": len(rows), "queued": queued}

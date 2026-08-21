@@ -110,6 +110,12 @@ class SearchSimilarCopiesSkill(BaseSkill):
             vector_results = []
             retrieval_source = "database_fallback"
 
+        self._attach_feedback_scores(
+            db,
+            user_id=user_id,
+            items=[*vector_results, *lexical_results],
+        )
+
         similar_copies = self._merge_and_budget_results(
             vector_results,
             lexical_results,
@@ -265,8 +271,9 @@ class SearchSimilarCopiesSkill(BaseSkill):
         ranked = sorted(
             merged.values(),
             key=lambda item: (
-                0.65 * float(item.get("similarity", 0.5) or 0)
-                + 0.35 * min(float(item.get("review_score", 0) or 0) / 100, 1.0)
+                0.40 * float(item.get("similarity", 0.5) or 0)
+                + 0.25 * min(float(item.get("review_score", 0) or 0) / 100, 1.0)
+                + 0.35 * float(item.get("feedback_score", 0.5) or 0)
             ),
             reverse=True,
         )
@@ -283,3 +290,40 @@ class SearchSimilarCopiesSkill(BaseSkill):
             used += len(compact["content"])
             output.append(compact)
         return output
+
+    @staticmethod
+    def _attach_feedback_scores(
+        db: Session,
+        *,
+        user_id: int,
+        items: list[dict],
+    ) -> None:
+        from sqlalchemy import func
+        from app.models.memory import MemoryFeedback
+
+        copy_ids = sorted({
+            int(item["copy_id"])
+            for item in items
+            if item.get("copy_id") is not None
+        })
+        scores: dict[int, float] = {}
+        if copy_ids:
+            rows = (
+                db.query(
+                    MemoryFeedback.copy_id,
+                    func.avg(MemoryFeedback.rating),
+                )
+                .filter(
+                    MemoryFeedback.user_id == user_id,
+                    MemoryFeedback.copy_id.in_(copy_ids),
+                )
+                .group_by(MemoryFeedback.copy_id)
+                .all()
+            )
+            scores = {
+                int(copy_id): (float(average or 0) + 1.0) / 2.0
+                for copy_id, average in rows
+            }
+        for item in items:
+            copy_id = item.get("copy_id")
+            item["feedback_score"] = scores.get(int(copy_id), 0.5) if copy_id else 0.5
