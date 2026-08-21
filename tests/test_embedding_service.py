@@ -1,7 +1,60 @@
 import json
 import sqlite3
+import sys
+import types
 
 from app.services import embedding_service
+
+
+def test_embedding_model_prefers_local_cache(monkeypatch):
+    calls = []
+    cached_model = object()
+
+    def fake_sentence_transformer(model_name, **kwargs):
+        calls.append((model_name, kwargs))
+        return cached_model
+
+    monkeypatch.setitem(
+        sys.modules,
+        "sentence_transformers",
+        types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
+    )
+    monkeypatch.setattr(embedding_service, "_st_model", None)
+
+    assert embedding_service._get_st_model() is cached_model
+    assert calls == [
+        (
+            embedding_service.EMBEDDING_MODEL_NAME,
+            {"local_files_only": True},
+        )
+    ]
+
+
+def test_embedding_model_downloads_only_when_local_cache_is_missing(monkeypatch):
+    calls = []
+    downloaded_model = object()
+
+    def fake_sentence_transformer(model_name, **kwargs):
+        calls.append((model_name, kwargs))
+        if kwargs.get("local_files_only"):
+            raise OSError("model is not cached")
+        return downloaded_model
+
+    monkeypatch.setitem(
+        sys.modules,
+        "sentence_transformers",
+        types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
+    )
+    monkeypatch.setattr(embedding_service, "_st_model", None)
+
+    assert embedding_service._get_st_model() is downloaded_model
+    assert calls == [
+        (
+            embedding_service.EMBEDDING_MODEL_NAME,
+            {"local_files_only": True},
+        ),
+        (embedding_service.EMBEDDING_MODEL_NAME, {}),
+    ]
 
 
 def test_migrate_chroma_collection_configs_repairs_old_schema_and_is_idempotent(
