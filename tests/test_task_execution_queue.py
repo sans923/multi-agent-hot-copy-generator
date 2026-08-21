@@ -7,14 +7,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database import Base
+from app.api.v1.tasks import create_task
 from app.models.task import Task, TaskPlatform
 from app.models.task_execution_job import TaskExecutionJob
 from app.models.user import User
+from app.schemas.task import TaskCreate
 from app.services.task_execution_queue import (
     claim_task_execution_job,
     enqueue_task_execution,
     mark_task_execution_completed,
     mark_task_execution_failed,
+    process_one_task_execution_job,
 )
 
 
@@ -130,3 +133,38 @@ def test_completed_job_releases_its_lease(db):
     assert claimed.status == "completed"
     assert claimed.worker_id is None
     assert claimed.locked_at is None
+
+
+def test_worker_processes_one_persisted_job(db):
+    session, task = db
+    enqueue_task_execution(
+        session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
+    )
+    seen: list[tuple[str, int]] = []
+
+    processed = process_one_task_execution_job(
+        session,
+        worker_id="worker-a",
+        execute=lambda job: seen.append((job.job_type, job.task_id)),
+    )
+
+    assert processed is True
+    assert seen == [("start", task.id)]
+    job = session.query(TaskExecutionJob).one()
+    assert job.status == "completed"
+
+
+def test_create_task_persists_job_without_fastapi_background_task(db):
+    session, existing_task = db
+    user = session.query(User).filter_by(id=existing_task.user_id).one()
+
+    response = create_task(
+        TaskCreate(raw_requirement="新的持久任务", platform=TaskPlatform.WEIBO),
+        current_user=user,
+        db=session,
+    )
+
+    job = session.query(TaskExecutionJob).filter_by(task_id=response.data.id).one()
+    assert job.job_type == "start"
+    assert job.status == "pending"
+    assert job.dedupe_key == f"start:{response.data.id}"
