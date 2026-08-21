@@ -24,7 +24,6 @@ from app.models.task import Task, TaskStatus, TaskPlatform
 from app.models.copy import Copy
 from app.models.user import User
 from app.models.style_card import StyleCard
-from app.models.memory import StyleCardVersion
 from app.schemas.task import (
     TaskCreate,
     TaskResponse,
@@ -164,36 +163,6 @@ def create_task(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="指定的风格卡不存在")
         if task_data.platform != TaskPlatform.TOUTIAO:
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="风格卡当前仅支持今日头条长文")
-        active_version = (
-            db.query(StyleCardVersion)
-            .filter(
-                StyleCardVersion.style_card_id == selected_style_card.id,
-                StyleCardVersion.status == "active",
-            )
-            .order_by(StyleCardVersion.version.desc())
-            .first()
-        )
-        style_snapshot = {
-            "style_card_id": selected_style_card.id,
-            "topic_cluster": selected_style_card.topic_cluster,
-            "version": active_version.version if active_version else 0,
-            "schema_version": active_version.schema_version if active_version else 1,
-            "pattern": dict(
-                active_version.pattern_json
-                if active_version
-                else selected_style_card.pattern_json
-            ),
-            "source_article_ids": list(
-                active_version.source_article_ids
-                if active_version
-                else (selected_style_card.source_article_ids or [])
-            ),
-            "confidence": float(
-                active_version.confidence
-                if active_version
-                else (selected_style_card.confidence or 0)
-            ),
-        }
         from app.services.style_resolution_service import resolve_style_snapshot
 
         style_snapshot = resolve_style_snapshot(
