@@ -245,3 +245,26 @@ def test_generate_outline_from_pattern():
     assert outline["writing_pattern_applied"] is True
     assert len(outline["sections"]) >= 3
     assert outline["title_formula"] == "[数字]+[结果]"
+
+
+def test_generate_outline_accepts_plain_text_pattern_fields():
+    pattern = {
+        "title_formula": "痛点 + 收益",
+        "hook": "前20字用痛点直击抓住注意力",
+        "structure": ["点出重复劳动痛点", "给出可执行建议"],
+        "rhythm": "多用短句",
+        "cta": "提问式结尾",
+    }
+
+    outline = GenerateOutlineSkill()._build_outline_from_pattern(
+        topic="AI 办公",
+        platform="weibo",
+        style="专业简洁",
+        hot_topics=[],
+        key_points=["会议纪要"],
+        writing_pattern=pattern,
+    )
+
+    assert outline["sections"][0]["name"] == "标题"
+    assert outline["sections"][1]["hook_type"] == pattern["hook"]
+    assert outline["sections"][-1]["instruction"] == "CTA 模式：提问式结尾"
