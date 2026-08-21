@@ -150,7 +150,7 @@ def create_tables() -> None:
     注意：这里必须先 import 所有模型，否则 Base.metadata 不知道有哪些表
     顺序很重要：被外键引用的表要先建（users 先于 tasks）
     """
-    from app.models import user, task, document, copy, agent_log, hotlist_sync, toutiao_reference, orchestration_audit_log, system_log, memory_index_job  # noqa: F401
+    from app.models import user, task, document, copy, agent_log, hotlist_sync, toutiao_reference, orchestration_audit_log, system_log, memory_index_job, memory  # noqa: F401
 
     logger.info("开始创建数据库表...")
     Base.metadata.create_all(bind=engine)

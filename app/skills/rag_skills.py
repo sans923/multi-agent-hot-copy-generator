@@ -79,6 +79,8 @@ class SearchSimilarCopiesSkill(BaseSkill):
         query_text: str = kwargs.get("query_text", "")
         platform: str = kwargs.get("platform", "all")
         limit: int = min(kwargs.get("limit", 3), 5)
+        similarity_threshold = max(0.0, min(float(kwargs.get("similarity_threshold", 0.35)), 1.0))
+        max_context_chars = max(100, min(int(kwargs.get("max_context_chars", 1800)), 10_000))
         trusted_task_id = kwargs.get("_task_id") or kwargs.get("task_id")
 
         if not query_text:
@@ -95,18 +97,26 @@ class SearchSimilarCopiesSkill(BaseSkill):
             }
         user_id = task.user_id
 
-        # 尝试从 ChromaDB 检索
-        retrieval_source = "chroma"
+        lexical_results = self._search_from_db(
+            db, query_text, platform, limit * 2, user_id=user_id
+        )
+        retrieval_source = "hybrid"
         try:
-            similar_copies = self._search_from_chromadb(
-                query_text, platform, limit, user_id=user_id
+            vector_results = self._search_from_chromadb(
+                query_text, platform, limit * 2, user_id=user_id
             )
         except Exception as e:
             logger.warning(f"ChromaDB 检索失败，降级到数据库检索: {e}")
-            similar_copies = self._search_from_db(
-                db, query_text, platform, limit, user_id=user_id
-            )
+            vector_results = []
             retrieval_source = "database_fallback"
+
+        similar_copies = self._merge_and_budget_results(
+            vector_results,
+            lexical_results,
+            limit=limit,
+            similarity_threshold=similarity_threshold,
+            max_context_chars=max_context_chars,
+        )
 
         logger.info(f"相似文案检索: query='{query_text[:30]}...', 找到 {len(similar_copies)} 条")
 
@@ -114,6 +124,7 @@ class SearchSimilarCopiesSkill(BaseSkill):
             return {
                 "success": True,
                 "similar_copies": [],
+                "retrieval_source": retrieval_source,
                 "message": "暂无相似历史文案，请根据需求和热点自主创作"
             }
 
@@ -173,6 +184,7 @@ class SearchSimilarCopiesSkill(BaseSkill):
                 similarity = round(1 - distance, 3)  # 距离转相似度
 
                 copies.append({
+                    "copy_id": metadata.get("copy_id"),
                     "content": doc,
                     "title": metadata.get("title", ""),
                     "platform": metadata.get("platform", ""),
@@ -220,6 +232,7 @@ class SearchSimilarCopiesSkill(BaseSkill):
 
         return [
             {
+                "copy_id": c.id,
                 "content": c.content[:200] + "..." if len(c.content) > 200 else c.content,
                 "title": c.title or "",
                 "platform": c.platform or "",
@@ -228,3 +241,45 @@ class SearchSimilarCopiesSkill(BaseSkill):
             }
             for c in copies
         ]
+
+    @staticmethod
+    def _merge_and_budget_results(
+        vector_results: list[dict],
+        lexical_results: list[dict],
+        *,
+        limit: int,
+        similarity_threshold: float,
+        max_context_chars: int,
+    ) -> list[dict]:
+        merged: dict[str, dict] = {}
+        for item in vector_results:
+            similarity = float(item.get("similarity", 0) or 0)
+            if similarity < similarity_threshold:
+                continue
+            key = str(item.get("copy_id") or f"text:{item.get('content', '')}")
+            merged[key] = dict(item)
+        for item in lexical_results:
+            key = str(item.get("copy_id") or f"text:{item.get('content', '')}")
+            if key not in merged:
+                merged[key] = dict(item)
+        ranked = sorted(
+            merged.values(),
+            key=lambda item: (
+                0.65 * float(item.get("similarity", 0.5) or 0)
+                + 0.35 * min(float(item.get("review_score", 0) or 0) / 100, 1.0)
+            ),
+            reverse=True,
+        )
+        output: list[dict] = []
+        used = 0
+        for item in ranked[:limit]:
+            remaining = max_context_chars - used
+            if remaining <= 0:
+                break
+            compact = dict(item)
+            compact["content"] = str(compact.get("content", ""))[:remaining]
+            if not compact["content"]:
+                continue
+            used += len(compact["content"])
+            output.append(compact)
+        return output

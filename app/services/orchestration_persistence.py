@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from typing import Any
+from datetime import datetime
 
 from sqlalchemy.orm import Session
 
@@ -16,15 +17,41 @@ from app.utils.logger import logger
 
 # PipelineState 中不可 JSON 序列化的字段
 _NON_SERIALIZABLE_KEYS = frozenset({"db", "result"})
+_CHECKPOINT_SCHEMA_VERSION = 2
+_MAX_CONTEXT_MESSAGES = 20
+_MAX_MESSAGE_CHARS = 2000
+_MAX_DECISION_LOG = 50
+_MAX_REFLECT_NOTES = 20
+
+
+def _prune_checkpoint_value(key: str, value: Any) -> Any:
+    if key == "context_messages" and isinstance(value, list):
+        pruned = []
+        for item in value[-_MAX_CONTEXT_MESSAGES:]:
+            if not isinstance(item, dict):
+                continue
+            compact = dict(item)
+            if isinstance(compact.get("content"), str):
+                compact["content"] = compact["content"][:_MAX_MESSAGE_CHARS]
+            pruned.append(compact)
+        return pruned
+    if key == "decision_log" and isinstance(value, list):
+        return value[-_MAX_DECISION_LOG:]
+    if key == "reflect_notes" and isinstance(value, list):
+        return [str(item)[:_MAX_MESSAGE_CHARS] for item in value[-_MAX_REFLECT_NOTES:]]
+    return value
 
 
 def state_to_checkpoint(state: PipelineState) -> dict[str, Any]:
     """将 PipelineState 转为可持久化的 checkpoint（去除 db）。"""
-    checkpoint: dict[str, Any] = {}
+    checkpoint: dict[str, Any] = {
+        "_schema_version": _CHECKPOINT_SCHEMA_VERSION,
+        "_saved_at": datetime.utcnow().isoformat(),
+    }
     for key, value in state.items():
         if key in _NON_SERIALIZABLE_KEYS:
             continue
-        checkpoint[key] = value
+        checkpoint[key] = _prune_checkpoint_value(key, value)
     return checkpoint
 
 
@@ -34,7 +61,13 @@ def checkpoint_to_state(
     task_id: int,
 ) -> PipelineState:
     """从 checkpoint 恢复 PipelineState，注入 db 与 task_id。"""
-    state: PipelineState = dict(checkpoint)  # type: ignore[assignment]
+    version = int(checkpoint.get("_schema_version", 1) or 1)
+    if version > _CHECKPOINT_SCHEMA_VERSION:
+        raise ValueError(f"不支持的 checkpoint 版本: {version}")
+    payload = dict(checkpoint)
+    payload.pop("_schema_version", None)
+    payload.pop("_saved_at", None)
+    state: PipelineState = payload  # type: ignore[assignment]
     state["db"] = db
     state["task_id"] = task_id
     state["awaiting_human"] = False
