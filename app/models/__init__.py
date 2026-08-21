@@ -9,6 +9,7 @@ import 这些模型类，所以这里做了统一导出
 
 from app.models.user import User
 from app.models.task import Task
+from app.models.task_execution_job import TaskExecutionJob
 from app.models.document import Document
 from app.models.copy import Copy
 from app.models.agent_log import AgentLog
@@ -24,6 +25,7 @@ from app.models.knowledge import KnowledgeChunk, KnowledgeSource
 __all__ = [
     "User",
     "Task",
+    "TaskExecutionJob",
     "Document",
     "Copy",
     "AgentLog",
