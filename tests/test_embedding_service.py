@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 import sys
 import types
@@ -11,7 +12,7 @@ def test_embedding_model_prefers_local_cache(monkeypatch):
     cached_model = object()
 
     def fake_sentence_transformer(model_name, **kwargs):
-        calls.append((model_name, kwargs))
+        calls.append((model_name, kwargs, os.environ.get("HF_HUB_OFFLINE")))
         return cached_model
 
     monkeypatch.setitem(
@@ -19,6 +20,7 @@ def test_embedding_model_prefers_local_cache(monkeypatch):
         "sentence_transformers",
         types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
     )
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
     monkeypatch.setattr(embedding_service, "_st_model", None)
 
     assert embedding_service._get_st_model() is cached_model
@@ -26,6 +28,7 @@ def test_embedding_model_prefers_local_cache(monkeypatch):
         (
             embedding_service.EMBEDDING_MODEL_NAME,
             {"local_files_only": True},
+            "1",
         )
     ]
 
@@ -35,7 +38,7 @@ def test_embedding_model_downloads_only_when_local_cache_is_missing(monkeypatch)
     downloaded_model = object()
 
     def fake_sentence_transformer(model_name, **kwargs):
-        calls.append((model_name, kwargs))
+        calls.append((model_name, kwargs, os.environ.get("HF_HUB_OFFLINE")))
         if kwargs.get("local_files_only"):
             raise OSError("model is not cached")
         return downloaded_model
@@ -45,6 +48,7 @@ def test_embedding_model_downloads_only_when_local_cache_is_missing(monkeypatch)
         "sentence_transformers",
         types.SimpleNamespace(SentenceTransformer=fake_sentence_transformer),
     )
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
     monkeypatch.setattr(embedding_service, "_st_model", None)
 
     assert embedding_service._get_st_model() is downloaded_model
@@ -52,8 +56,9 @@ def test_embedding_model_downloads_only_when_local_cache_is_missing(monkeypatch)
         (
             embedding_service.EMBEDDING_MODEL_NAME,
             {"local_files_only": True},
+            "1",
         ),
-        (embedding_service.EMBEDDING_MODEL_NAME, {}),
+        (embedding_service.EMBEDDING_MODEL_NAME, {}, None),
     ]
 
 
