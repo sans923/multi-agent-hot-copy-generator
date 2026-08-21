@@ -12,13 +12,17 @@ from app.core.deps import get_current_active_user
 from app.database import Base, get_db
 from app.main import app
 from app.models.copy import Copy
-from app.models.memory import MemoryItem, StyleCardVersion, UserPreference
+from app.models.memory import MemoryFeedback, MemoryItem, StyleCardVersion, UserPreference
 from app.models.memory_index_job import MemoryIndexJob
 from app.models.task import Task, TaskPlatform
 from app.models.toutiao_reference import ToutiaoReference
 from app.models.user import User
 from app.services.content_asset_service import build_style_card
-from app.services.memory_index_service import enqueue_copy_index
+from app.services.memory_index_service import (
+    enqueue_copy_index,
+    process_pending_memory_index_jobs,
+)
+from app.services.memory_service import record_copy_feedback
 
 
 engine = create_engine(
@@ -199,6 +203,89 @@ def test_index_scheduler_processes_outbox_without_model_side_effects():
     assert row.attempts == 1
     db.close()
     upsert.assert_called_once()
+
+
+def test_index_worker_claims_job_before_external_vector_write():
+    task_id, copy_id, copy_content = _owned_task_and_copy()
+    db = Session()
+    enqueue_copy_index(
+        db,
+        copy_id=copy_id,
+        user_id=1,
+        payload={
+            "copy_id": copy_id,
+            "task_id": task_id,
+            "content": copy_content,
+            "platform": "weibo",
+        },
+    )
+    db.close()
+
+    calls = 0
+
+    def competing_upsert(**_kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            competitor = Session()
+            process_pending_memory_index_jobs(competitor)
+            competitor.close()
+
+    worker = Session()
+    with patch(
+        "app.services.embedding_service.upsert_copy_to_chroma",
+        side_effect=competing_upsert,
+    ):
+        process_pending_memory_index_jobs(worker)
+    worker.close()
+
+    assert calls == 1
+
+
+def test_feedback_idempotency_key_is_scoped_to_user():
+    task_id, copy_id, _ = _owned_task_and_copy()
+    db = Session()
+    stranger = User(
+        id=2,
+        username="memory-feedback-stranger",
+        email="memory-feedback-stranger@example.com",
+        hashed_password="unused",
+    )
+    db.add(stranger)
+    stranger_task = Task(
+        user_id=2,
+        raw_requirement="另一个用户的反馈任务",
+        platform=TaskPlatform.WEIBO,
+    )
+    db.add(stranger_task)
+    db.commit()
+    db.refresh(stranger_task)
+    stranger_copy = Copy(
+        task_id=stranger_task.id,
+        content="另一个用户的文案",
+        platform="weibo",
+        is_final=True,
+    )
+    db.add(stranger_copy)
+    db.commit()
+    db.refresh(stranger_copy)
+
+    for user_id, owned_task_id, owned_copy_id in (
+        (1, task_id, copy_id),
+        (2, stranger_task.id, stranger_copy.id),
+    ):
+        record_copy_feedback(
+            db,
+            user_id=user_id,
+            task_id=owned_task_id,
+            copy_id=owned_copy_id,
+            action="accepted",
+            rating=1,
+            idempotency_key="shared-request-key",
+        )
+
+    assert db.query(MemoryFeedback).count() == 2
+    db.close()
 
 
 def test_content_asset_build_creates_active_style_card_version(monkeypatch):
