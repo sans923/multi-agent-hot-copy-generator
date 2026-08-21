@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from datetime import datetime
+import hashlib
+import json
 from typing import Any
 
 from sqlalchemy import or_
@@ -36,6 +38,38 @@ def upsert_user_preferences(
         row.version += 1
     db.commit()
     db.refresh(row)
+    for key, value in patch.items():
+        serialized = json.dumps(value, ensure_ascii=False, sort_keys=True)
+        latest = (
+            db.query(MemoryItem)
+            .filter(
+                MemoryItem.user_id == user_id,
+                MemoryItem.memory_type == "user_preference",
+                MemoryItem.scope_id == "default",
+                MemoryItem.source_type == "explicit_preference",
+                MemoryItem.source_id == str(key),
+            )
+            .order_by(MemoryItem.version.desc())
+            .first()
+        )
+        memory = MemoryItem(
+            user_id=user_id,
+            memory_type="user_preference",
+            scope_id="default",
+            source_type="explicit_preference",
+            source_id=str(key),
+            content=f"{key}: {serialized}",
+            content_json={"key": key, "value": value},
+            content_hash=hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
+            version=(latest.version + 1) if latest else 1,
+            status="candidate",
+            confidence=1.0,
+            quality_score=1.0,
+        )
+        db.add(memory)
+        db.commit()
+        db.refresh(memory)
+        activate_memory_version(db, memory.id)
     return row
 
 
@@ -87,6 +121,34 @@ def record_copy_feedback(
     db.add(row)
     db.commit()
     db.refresh(row)
+    feedback_content = comment.strip() or f"用户对文案执行了 {action}，rating={rating}"
+    memory = MemoryItem(
+        user_id=user_id,
+        memory_type="copy_feedback",
+        scope_id="default",
+        source_type="explicit_feedback",
+        source_id=str(copy_id),
+        content=feedback_content,
+        content_json={"action": action, "rating": rating, "metrics": dict(metrics or {})},
+        content_hash=hashlib.sha256(
+            f"{action}|{rating}|{feedback_content}".encode("utf-8")
+        ).hexdigest(),
+        version=(
+            db.query(MemoryItem)
+            .filter(
+                MemoryItem.user_id == user_id,
+                MemoryItem.memory_type == "copy_feedback",
+                MemoryItem.source_id == str(copy_id),
+            )
+            .count()
+            + 1
+        ),
+        status="active",
+        confidence=1.0,
+        quality_score=float((rating + 1) / 2),
+    )
+    db.add(memory)
+    db.commit()
     return row
 
 

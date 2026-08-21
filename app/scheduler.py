@@ -214,6 +214,22 @@ async def job_cleanup_expired_data():
         db.close()
 
 
+def job_index_copy_memory(session_factory=None):
+    """消费历史文案索引 Outbox；同步函数由 APScheduler 在线程池中执行。"""
+    from app.database import SessionLocal
+    from app.services.memory_index_service import process_pending_memory_index_jobs
+
+    factory = session_factory or SessionLocal
+    db = factory()
+    try:
+        result = process_pending_memory_index_jobs(db, limit=50, max_attempts=3)
+        if result["processed"]:
+            logger.info(f"[定时任务] 历史文案索引: {result}")
+        return result
+    finally:
+        db.close()
+
+
 # ====================================================
 # 调度器事件监听（用于日志记录）
 # ====================================================
@@ -263,11 +279,20 @@ def start_scheduler():
         replace_existing=True,
     )
 
+    scheduler.add_job(
+        func=job_index_copy_memory,
+        trigger=IntervalTrigger(seconds=60),
+        id="index_copy_memory",
+        name="历史文案记忆索引",
+        replace_existing=True,
+    )
+
     scheduler.start()
     logger.info(
         f"[调度器] 启动成功，共 {len(scheduler.get_jobs())} 个任务\n"
         f"  - 热榜同步：每 {settings.HOTLIST_SYNC_INTERVAL // 60} 分钟\n"
-        f"  - 过期清理：每天 02:00"
+        f"  - 过期清理：每天 02:00\n"
+        f"  - 历史文案索引：每 60 秒"
     )
 
     # 启动后立即执行一次热榜同步（不用等第一个间隔）

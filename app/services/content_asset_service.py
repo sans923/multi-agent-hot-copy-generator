@@ -12,6 +12,7 @@ from app.lang.toutiao_fetcher import fetch_toutiao_article
 from app.models.style_card import StyleCard
 from app.models.toutiao_reference import ToutiaoReference
 from app.services.writing_pattern_service import extract_writing_pattern_from_articles
+from app.services.memory_service import save_style_card_version
 
 
 def reference_to_dict(row: ToutiaoReference) -> dict[str, Any]:
@@ -155,4 +156,11 @@ def build_style_card(
     card.confidence = float(pattern.get("confidence", 0) or 0)
     db.commit()
     db.refresh(card)
+    save_style_card_version(
+        db,
+        style_card=card,
+        pattern=pattern,
+        status="active",
+        source_article_ids=[row.article_id for row in rows],
+    )
     return card

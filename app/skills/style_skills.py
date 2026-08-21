@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from app.models.style_card import StyleCard
 from app.models.toutiao_reference import ToutiaoReference
 from app.services.writing_pattern_service import extract_writing_pattern_from_articles
+from app.services.memory_service import save_style_card_version
 from app.skills.base import BaseSkill
 from app.utils.logger import logger
 
@@ -344,4 +345,12 @@ class SaveStyleCardSkill(BaseSkill):
             card_id = card.id
 
         logger.info(f"风格卡已保存: id={card_id}, topic={topic_cluster}")
+        persisted_card = db.query(StyleCard).filter(StyleCard.id == card_id).one()
+        save_style_card_version(
+            db,
+            style_card=persisted_card,
+            pattern=pattern,
+            status="active",
+            source_article_ids=list(source_ids or []),
+        )
         return {"success": True, "style_card_id": card_id, "topic_cluster": topic_cluster}
