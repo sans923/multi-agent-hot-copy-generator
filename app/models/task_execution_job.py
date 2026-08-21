@@ -35,6 +35,7 @@ class TaskExecutionJob(Base):
     available_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
     locked_at = Column(DateTime, nullable=True, index=True)
     worker_id = Column(String(120), nullable=True)
+    lease_token = Column(String(36), nullable=True)
     last_error = Column(Text, nullable=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(

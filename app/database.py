@@ -143,7 +143,7 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def create_tables() -> None:
+def create_tables(bind=None) -> None:
     """
     创建所有数据库表（开发时使用）
     
@@ -153,5 +153,5 @@ def create_tables() -> None:
     from app.models import user, task, task_execution_job, document, copy, agent_log, hotlist_sync, toutiao_reference, orchestration_audit_log, system_log, memory_index_job, memory, knowledge  # noqa: F401
 
     logger.info("开始创建数据库表...")
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=bind or engine)
     logger.info("数据库表创建完成")

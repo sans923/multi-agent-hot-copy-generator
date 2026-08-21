@@ -17,6 +17,10 @@ from app.services.task_execution_queue import process_one_task_execution_job
 from app.utils.logger import logger, setup_logger
 
 
+class RetryableTaskExecutionError(RuntimeError):
+    """编排未成功，交由持久队列执行有限重试。"""
+
+
 def _configure_utf8_streams(*streams: object) -> None:
     """避免 Windows 默认 GBK 控制台因日志中的 Unicode 字符而报错。"""
     for stream in streams:
@@ -34,13 +38,19 @@ def execute_job(job: TaskExecutionJob) -> None:
     from app.api.v1.tasks import _resume_task_background, _run_agents_background
 
     if job.job_type == "start":
-        _run_agents_background(job.task_id)
-        return
-    if job.job_type == "resume":
+        result = _run_agents_background(job.task_id)
+    elif job.job_type == "resume":
         action = str(dict(job.payload or {}).get("action") or "retry")
-        _resume_task_background(job.task_id, action)
+        result = _resume_task_background(job.task_id, action)
+    else:
+        raise ValueError(f"不支持的任务执行类型: {job.job_type}")
+
+    if result.get("success") or result.get("awaiting_human"):
         return
-    raise ValueError(f"不支持的任务执行类型: {job.job_type}")
+    if result.get("retryable") is False:
+        return
+    message = str(result.get("error") or result.get("message") or "编排执行失败")
+    raise RetryableTaskExecutionError(message)
 
 
 def run_once(*, worker_id: str, lease_seconds: int, max_attempts: int) -> bool:
@@ -53,6 +63,8 @@ def run_once(*, worker_id: str, lease_seconds: int, max_attempts: int) -> bool:
             lease_seconds=lease_seconds,
             max_attempts=max_attempts,
             retry_delay_seconds=5,
+            heartbeat_session_factory=SessionLocal,
+            heartbeat_interval_seconds=max(5.0, lease_seconds / 3),
         )
     finally:
         db.close()

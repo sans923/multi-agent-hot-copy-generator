@@ -106,12 +106,24 @@ def test_failed_job_retries_then_becomes_dead(db):
     assert claimed is not None
 
     mark_task_execution_failed(
-        session, claimed.id, RuntimeError("temporary"), max_attempts=2, retry_delay_seconds=0
+        session,
+        claimed.id,
+        claimed.lease_token,
+        claimed.attempts,
+        RuntimeError("temporary"),
+        max_attempts=2,
+        retry_delay_seconds=0,
     )
     retried = claim_task_execution_job(session, worker_id="worker-b", max_attempts=2)
     assert retried is not None
     mark_task_execution_failed(
-        session, retried.id, RuntimeError("permanent"), max_attempts=2, retry_delay_seconds=0
+        session,
+        retried.id,
+        retried.lease_token,
+        retried.attempts,
+        RuntimeError("permanent"),
+        max_attempts=2,
+        retry_delay_seconds=0,
     )
 
     session.refresh(retried)

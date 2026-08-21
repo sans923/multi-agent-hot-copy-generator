@@ -93,37 +93,53 @@ def _mysql_migration_lock(connection, timeout_seconds: int = 60):
         )
 
 
+def _apply_schema_migrations(connection) -> None:
+    for migration_name in (
+        "migrate_memory_index_lock.sql",
+        "migrate_content_production_p0.sql",
+        "migrate_content_production_p1.sql",
+        "migrate_content_production_p2.sql",
+        "migrate_task_execution_queue.sql",
+    ):
+        migration_path = Path(__file__).with_name(migration_name)
+        sql = "\n".join(
+            line
+            for line in migration_path.read_text(encoding="utf-8").splitlines()
+            if not line.lstrip().startswith("--")
+        )
+        statements = [
+            statement.strip()
+            for statement in sql.split(";")
+            if statement.strip()
+        ]
+        for statement in statements:
+            expanded_statements = _expand_guarded_add_columns(
+                statement,
+                column_exists=lambda table_name, column_name: _mysql_column_exists(
+                    connection, table_name, column_name
+                ),
+            )
+            for expanded_statement in expanded_statements:
+                connection.exec_driver_sql(expanded_statement)
+
+
+def _initialize_schema(
+    connection,
+    *,
+    create_all: Callable = create_tables,
+    apply_migrations: Callable = _apply_schema_migrations,
+) -> None:
+    """同一 MySQL 会话锁住首次建表和全部增量迁移。"""
+    with _mysql_migration_lock(connection):
+        create_all(connection)
+        apply_migrations(connection)
+
+
 def apply_schema_migrations() -> None:
     """执行可重入的轻量 MySQL 迁移；正式生产应迁移到 Alembic。"""
     with engine.begin() as connection:
         with _mysql_migration_lock(connection):
-            for migration_name in (
-                "migrate_memory_index_lock.sql",
-                "migrate_content_production_p0.sql",
-                "migrate_content_production_p1.sql",
-                "migrate_content_production_p2.sql",
-                "migrate_task_execution_queue.sql",
-            ):
-                migration_path = Path(__file__).with_name(migration_name)
-                sql = "\n".join(
-                    line
-                    for line in migration_path.read_text(encoding="utf-8").splitlines()
-                    if not line.lstrip().startswith("--")
-                )
-                statements = [
-                    statement.strip()
-                    for statement in sql.split(";")
-                    if statement.strip()
-                ]
-                for statement in statements:
-                    expanded_statements = _expand_guarded_add_columns(
-                        statement,
-                        column_exists=lambda table_name, column_name: _mysql_column_exists(
-                            connection, table_name, column_name
-                        ),
-                    )
-                    for expanded_statement in expanded_statements:
-                        connection.exec_driver_sql(expanded_statement)
+            _apply_schema_migrations(connection)
 
 
 def main() -> None:
@@ -154,9 +170,9 @@ def main() -> None:
         print("  3. .env 中 MYSQL_* 或 DATABASE_URL 配置正确")
         sys.exit(1)
 
-    create_tables()
+    with engine.begin() as connection:
+        _initialize_schema(connection)
     print("[OK] 数据表创建完成")
-    apply_schema_migrations()
     print("[OK] 数据库增量迁移完成")
     print("\n可运行 python run.py 启动后端。")
 

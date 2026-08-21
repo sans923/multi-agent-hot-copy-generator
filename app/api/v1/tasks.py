@@ -17,6 +17,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import Any
 
 from app.database import get_db, SessionLocal
 from app.models.task import Task, TaskStatus, TaskPlatform
@@ -75,7 +76,7 @@ def update_content_brief(
     ))
 
 
-def _run_agents_background(task_id: int) -> None:
+def _run_agents_background(task_id: int) -> dict[str, Any]:
     db = SessionLocal()
     engine = None
     try:
@@ -103,6 +104,7 @@ def _run_agents_background(task_id: int) -> None:
             },
             is_success=bool(result.get("success")),
         )
+        return result
     except Exception as e:
         logger.exception(f"后台任务执行异常: task_id={task_id}")
         write_log(
@@ -120,6 +122,7 @@ def _run_agents_background(task_id: int) -> None:
             set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
             task.error_message = str(e)[:500]
             db.commit()
+        raise
     finally:
         close = getattr(engine, "close", None)
         if close:
@@ -360,7 +363,7 @@ def get_task_copies(
     )
 
 
-def _resume_task_background(task_id: int, action: str) -> None:
+def _resume_task_background(task_id: int, action: str) -> dict[str, Any]:
     """后台恢复 awaiting_human 任务。"""
     db = SessionLocal()
     try:
@@ -387,7 +390,7 @@ def _resume_task_background(task_id: int, action: str) -> None:
                 f"Durable 任务恢复完成: task_id={task_id}, "
                 f"action={action}, success={result.get('success')}"
             )
-            return
+            return result
         mode = meta.get("resolved_mode") or (settings.ORCHESTRATION_MODE or "fixed").strip().lower()
         if mode != "agentic":
             task = db.query(Task).filter(Task.id == task_id).first()
@@ -395,10 +398,15 @@ def _resume_task_background(task_id: int, action: str) -> None:
                 set_task_execution_status(task, TaskStatus.FAILED, reason="仅 agentic 模式支持恢复")
                 task.error_message = "仅 agentic 模式支持恢复"
                 db.commit()
-            return
+            return {
+                "success": False,
+                "retryable": False,
+                "error": "仅 agentic 模式支持恢复",
+            }
 
         result = resume_agentic_pipeline(db, task_id, action=action)  # type: ignore[arg-type]
         logger.info(f"任务恢复完成: task_id={task_id}, action={action}, success={result.get('success')}")
+        return result
     except Exception as e:
         logger.exception(f"任务恢复异常: task_id={task_id}")
         db.rollback()
@@ -408,6 +416,7 @@ def _resume_task_background(task_id: int, action: str) -> None:
             set_task_execution_status(task, TaskStatus.FAILED, reason=str(e))
             task.error_message = str(e)[:500]
             db.commit()
+        raise
     finally:
         db.close()
 
@@ -454,6 +463,7 @@ def resume_task(
                     f"{task.status_updated_at.isoformat() if task.status_updated_at else 'unknown'}"
                 ),
                 payload={"action": "retry"},
+                revive_terminal=True,
             )
             return ApiResponse(
                 success=True,
@@ -514,6 +524,7 @@ def resume_task(
             f"{task.status_updated_at.isoformat() if task.status_updated_at else 'unknown'}"
         ),
         payload={"action": "retry"},
+        revive_terminal=True,
     )
     db.refresh(task)
     return ApiResponse(

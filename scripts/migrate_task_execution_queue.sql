@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS task_execution_jobs (
   available_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   locked_at DATETIME NULL,
   worker_id VARCHAR(120) NULL,
+  lease_token VARCHAR(36) NULL,
   last_error TEXT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -21,3 +22,6 @@ CREATE TABLE IF NOT EXISTS task_execution_jobs (
   INDEX ix_task_execution_jobs_locked_at (locked_at),
   INDEX ix_task_execution_ready (status, available_at, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE task_execution_jobs
+  ADD COLUMN IF NOT EXISTS lease_token VARCHAR(36) NULL;

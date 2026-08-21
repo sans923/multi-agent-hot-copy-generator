@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 from collections.abc import Callable
+from datetime import datetime, timedelta
+from threading import Event, Thread
 from typing import Any
+from uuid import uuid4
 
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.task_execution_job import TaskExecutionJob
@@ -20,14 +23,29 @@ def enqueue_task_execution(
     dedupe_key: str,
     payload: dict[str, Any] | None = None,
     commit: bool = True,
+    revive_terminal: bool = False,
 ) -> TaskExecutionJob:
-    """按稳定业务键幂等入队；commit=False 可与 Task 创建同事务提交。"""
+    """按稳定业务键幂等入队；唯一键冲突通过 savepoint 安全收敛。"""
     existing = (
         db.query(TaskExecutionJob)
         .filter(TaskExecutionJob.dedupe_key == dedupe_key)
         .first()
     )
     if existing is not None:
+        if revive_terminal and existing.status == "dead":
+            existing.status = "pending"
+            existing.attempts = 0
+            existing.available_at = datetime.utcnow()
+            existing.locked_at = None
+            existing.worker_id = None
+            existing.lease_token = None
+            existing.last_error = None
+            existing.payload = payload or {}
+            if commit:
+                db.commit()
+                db.refresh(existing)
+            else:
+                db.flush()
         return existing
 
     job = TaskExecutionJob(
@@ -38,12 +56,28 @@ def enqueue_task_execution(
         status="pending",
         available_at=datetime.utcnow(),
     )
-    db.add(job)
+    try:
+        with db.begin_nested():
+            db.add(job)
+            db.flush()
+    except IntegrityError:
+        # MySQL 默认 REPEATABLE READ 下，首次查询建立的快照看不到并发事务
+        # 刚提交的唯一键记录；结束外层事务后再查才能稳定收敛到现有 Job。
+        if not commit:
+            raise
+        db.rollback()
+        existing = (
+            db.query(TaskExecutionJob)
+            .filter(TaskExecutionJob.dedupe_key == dedupe_key)
+            .one_or_none()
+        )
+        if existing is None:
+            raise
+        return existing
+
     if commit:
         db.commit()
         db.refresh(job)
-    else:
-        db.flush()
     return job
 
 
@@ -58,6 +92,23 @@ def claim_task_execution_job(
     """条件更新认领一个 Job；并发 Worker 中只有一个能更新成功。"""
     claim_time = now or datetime.utcnow()
     lease_expired_before = claim_time - timedelta(seconds=max(1, lease_seconds))
+
+    # 最后一次尝试的 Worker 崩溃后，过期 Job 不应永久卡在 processing。
+    db.query(TaskExecutionJob).filter(
+        TaskExecutionJob.status == "processing",
+        TaskExecutionJob.attempts >= max_attempts,
+        TaskExecutionJob.locked_at < lease_expired_before,
+    ).update(
+        {
+            TaskExecutionJob.status: "dead",
+            TaskExecutionJob.locked_at: None,
+            TaskExecutionJob.worker_id: None,
+            TaskExecutionJob.lease_token: None,
+            TaskExecutionJob.last_error: "最终尝试的 Worker 租约过期",
+        },
+        synchronize_session=False,
+    )
+    db.commit()
 
     while True:
         candidate = (
@@ -96,6 +147,7 @@ def claim_task_execution_job(
                     TaskExecutionJob.attempts: prior_attempts + 1,
                     TaskExecutionJob.locked_at: claim_time,
                     TaskExecutionJob.worker_id: worker_id,
+                    TaskExecutionJob.lease_token: str(uuid4()),
                     TaskExecutionJob.last_error: None,
                 },
                 synchronize_session=False,
@@ -107,32 +159,82 @@ def claim_task_execution_job(
         db.expire_all()
 
 
-def mark_task_execution_completed(db: Session, job_id: int) -> None:
-    job = db.query(TaskExecutionJob).filter_by(id=job_id).one()
-    job.status = "completed"
-    job.locked_at = None
-    job.worker_id = None
-    job.last_error = None
+def renew_task_execution_lease(
+    db: Session,
+    job_id: int,
+    lease_token: str,
+    attempt: int,
+    *,
+    now: datetime | None = None,
+) -> bool:
+    """只允许当前认领者续租；token + attempt 共同充当 fencing token。"""
+    updated = db.query(TaskExecutionJob).filter(
+        TaskExecutionJob.id == job_id,
+        TaskExecutionJob.status == "processing",
+        TaskExecutionJob.lease_token == lease_token,
+        TaskExecutionJob.attempts == attempt,
+    ).update(
+        {TaskExecutionJob.locked_at: now or datetime.utcnow()},
+        synchronize_session=False,
+    )
     db.commit()
+    return updated == 1
+
+
+def mark_task_execution_completed(
+    db: Session,
+    job_id: int,
+    lease_token: str,
+    attempt: int,
+) -> bool:
+    updated = db.query(TaskExecutionJob).filter(
+        TaskExecutionJob.id == job_id,
+        TaskExecutionJob.status == "processing",
+        TaskExecutionJob.lease_token == lease_token,
+        TaskExecutionJob.attempts == attempt,
+    ).update(
+        {
+            TaskExecutionJob.status: "completed",
+            TaskExecutionJob.locked_at: None,
+            TaskExecutionJob.worker_id: None,
+            TaskExecutionJob.lease_token: None,
+            TaskExecutionJob.last_error: None,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return updated == 1
 
 
 def mark_task_execution_failed(
     db: Session,
     job_id: int,
+    lease_token: str,
+    attempt: int,
     error: Exception,
     *,
     max_attempts: int = 3,
     retry_delay_seconds: int = 5,
-) -> None:
-    job = db.query(TaskExecutionJob).filter_by(id=job_id).one()
-    job.status = "dead" if int(job.attempts or 0) >= max_attempts else "pending"
-    job.available_at = datetime.utcnow() + timedelta(
-        seconds=max(0, retry_delay_seconds)
+) -> bool:
+    updated = db.query(TaskExecutionJob).filter(
+        TaskExecutionJob.id == job_id,
+        TaskExecutionJob.status == "processing",
+        TaskExecutionJob.lease_token == lease_token,
+        TaskExecutionJob.attempts == attempt,
+    ).update(
+        {
+            TaskExecutionJob.status: "dead" if attempt >= max_attempts else "pending",
+            TaskExecutionJob.available_at: datetime.utcnow()
+            + timedelta(seconds=max(0, retry_delay_seconds)),
+            TaskExecutionJob.locked_at: None,
+            TaskExecutionJob.worker_id: None,
+            TaskExecutionJob.lease_token: None,
+            TaskExecutionJob.last_error: str(error)[:1000],
+        },
+        synchronize_session=False,
     )
-    job.locked_at = None
-    job.worker_id = None
-    job.last_error = str(error)[:1000]
     db.commit()
+    return updated == 1
 
 
 def process_one_task_execution_job(
@@ -143,6 +245,8 @@ def process_one_task_execution_job(
     lease_seconds: int = 300,
     max_attempts: int = 3,
     retry_delay_seconds: int = 5,
+    heartbeat_session_factory: Callable[[], Session] | None = None,
+    heartbeat_interval_seconds: float | None = None,
 ) -> bool:
     """认领并执行一个 Job；业务异常进入有限重试而不会退出 Worker。"""
     job = claim_task_execution_job(
@@ -153,16 +257,42 @@ def process_one_task_execution_job(
     )
     if job is None:
         return False
+    lease_token = str(job.lease_token)
+    attempt = int(job.attempts)
+    stop_heartbeat = Event()
+    heartbeat_thread = None
+    if heartbeat_session_factory is not None:
+        interval = heartbeat_interval_seconds or max(1.0, lease_seconds / 3)
+
+        def heartbeat() -> None:
+            while not stop_heartbeat.wait(interval):
+                heartbeat_db = heartbeat_session_factory()
+                try:
+                    if not renew_task_execution_lease(
+                        heartbeat_db, job.id, lease_token, attempt
+                    ):
+                        return
+                finally:
+                    heartbeat_db.close()
+
+        heartbeat_thread = Thread(target=heartbeat, daemon=True)
+        heartbeat_thread.start()
     try:
         execute(job)
     except Exception as exc:
         mark_task_execution_failed(
             db,
             job.id,
+            lease_token,
+            attempt,
             exc,
             max_attempts=max_attempts,
             retry_delay_seconds=retry_delay_seconds,
         )
     else:
-        mark_task_execution_completed(db, job.id)
+        mark_task_execution_completed(db, job.id, lease_token, attempt)
+    finally:
+        stop_heartbeat.set()
+        if heartbeat_thread is not None:
+            heartbeat_thread.join(timeout=1)
     return True

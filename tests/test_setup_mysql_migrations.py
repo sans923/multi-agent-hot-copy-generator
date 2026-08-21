@@ -73,6 +73,7 @@ def test_expand_guarded_add_columns_preserves_regular_statements():
 
 def test_schema_initialization_locks_create_all_and_migrations():
     connection = MagicMock()
+    connection.execute.side_effect = [_ScalarResult(1), _ScalarResult(1)]
     events = []
 
     _initialize_schema(

@@ -13,17 +13,17 @@ services:
     container_name: copy_generator_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: copy_generator
-      MYSQL_USER: copygen
-      MYSQL_PASSWORD: copygen123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-copy_generator}
+      MYSQL_USER: ${MYSQL_USER:-copygen}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ucopygen", "-pcopygen123"]
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$${MYSQL_PASSWORD}\" mysqladmin ping -h localhost -u \"$${MYSQL_USER}\" --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -41,9 +41,9 @@ services:
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-      MYSQL_USER: copygen
-      MYSQL_PASSWORD: copygen123
-      MYSQL_DATABASE: copy_generator
+      MYSQL_USER: ${MYSQL_USER:-copygen}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-copy_generator}
       DATABASE_URL: ""
       CHROMA_PERSIST_PATH: /app/data/chroma
       LOG_FILE_PATH: /app/logs/app.log
@@ -75,9 +75,9 @@ services:
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-      MYSQL_USER: copygen
-      MYSQL_PASSWORD: copygen123
-      MYSQL_DATABASE: copy_generator
+      MYSQL_USER: ${MYSQL_USER:-copygen}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-copy_generator}
       DATABASE_URL: ""
       CHROMA_PERSIST_PATH: /app/data/chroma
       LOG_FILE_PATH: /app/logs/worker.log
