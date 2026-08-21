@@ -24,6 +24,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from sqlalchemy.engine import make_url
 import time
 
 from app.config import settings
@@ -34,6 +35,14 @@ from app.database import create_tables
 # ====================================================
 # 应用生命周期管理
 # ====================================================
+
+
+def _database_url_for_log(database_url: str) -> str:
+    """Render a database URL without exposing credentials in logs."""
+    try:
+        return make_url(database_url).render_as_string(hide_password=True)
+    except Exception:
+        return "<invalid database URL>"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,7 +61,7 @@ async def lifespan(app: FastAPI):
     logger.info(f"{'='*50}")
     logger.info(f"  {settings.APP_NAME} v{settings.APP_VERSION} 启动中...")
     logger.info(f"  DEBUG 模式: {settings.DEBUG}")
-    logger.info(f"  数据库: {settings.DATABASE_URL}")
+    logger.info(f"  数据库: {_database_url_for_log(settings.DATABASE_URL)}")
     logger.info(f"{'='*50}")
 
     # 创建所有数据库表（如果不存在）
@@ -218,7 +227,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # 注册路由
 # ====================================================
 
-from app.api.v1 import auth, users, hotlist, tasks, logs, content_assets, publishing  # noqa: E402
+from app.api.v1 import auth, users, hotlist, tasks, logs, content_assets, publishing, memory  # noqa: E402
 
 # include_router 将路由注册到应用
 # prefix="/api/v1"：所有 v1 接口都以这个开头
@@ -231,6 +240,7 @@ app.include_router(tasks.router, prefix="/api/v1")
 app.include_router(logs.router, prefix="/api/v1")
 app.include_router(content_assets.router, prefix="/api/v1")
 app.include_router(publishing.router, prefix="/api/v1")
+app.include_router(memory.router, prefix="/api/v1")
 
 
 # ====================================================
