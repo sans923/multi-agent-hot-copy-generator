@@ -43,7 +43,7 @@ def test_embedding_model_prefers_local_cache(monkeypatch):
     assert snapshot_calls == [
         (
             {
-                "repo_id": embedding_service.EMBEDDING_MODEL_NAME,
+                "repo_id": embedding_service.EMBEDDING_MODEL_REPO_ID,
                 "local_files_only": True,
             },
             "1",
