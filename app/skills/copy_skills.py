@@ -164,7 +164,15 @@ class GenerateOutlineSkill(BaseSkill):
                 "avoid": title_formula.get("avoid", []),
             })
 
-        beats = hook.get("beats") or ["冲击句", "共情", "核心问题"]
+        raw_beats = hook.get("beats")
+        if isinstance(raw_beats, str):
+            beats = [raw_beats]
+        elif isinstance(raw_beats, list):
+            beats = [str(beat) for beat in raw_beats if beat is not None]
+        else:
+            beats = []
+        if not beats:
+            beats = ["冲击句", "共情", "核心问题"]
         sections.append({
             "name": "开头钩子",
             "type": "hook",

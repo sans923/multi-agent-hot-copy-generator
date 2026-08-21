@@ -14,15 +14,17 @@ LangChain Embedding 封装（入库与检索共用的向量化模型）
     模型名相同：paraphrase-multilingual-MiniLM-L12-v2
 """
 
-from functools import lru_cache
-
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.config import settings
 from app.services.embedding_service import (
     EMBEDDING_MODEL_REPO_ID,
+    _embedding_init_lock,
     _huggingface_offline_mode,
 )
+
+
+_embeddings_instance = None
 
 
 def _resolve_embedding_model() -> tuple[str, bool]:
@@ -42,7 +44,6 @@ def _resolve_embedding_model() -> tuple[str, bool]:
         return settings.RAG_EMBEDDING_MODEL, False
 
 
-@lru_cache()
 def get_embeddings() -> HuggingFaceEmbeddings:
     """
     获取 Embedding 模型单例（进程内只加载一次，约 500MB）。
@@ -53,13 +54,29 @@ def get_embeddings() -> HuggingFaceEmbeddings:
     在整体流程中：
         被 get_toutiao_vectorstore() 注入到 Chroma，所有头条 RAG 向量操作都经此模型。
     """
-    model_name, local_files_only = _resolve_embedding_model()
-    model_kwargs = {"device": "cpu"}
-    if local_files_only:
-        model_kwargs["local_files_only"] = True
+    global _embeddings_instance
+    if _embeddings_instance is not None:
+        return _embeddings_instance
 
-    return HuggingFaceEmbeddings(
-        model_name=model_name,
-        model_kwargs=model_kwargs,
-        encode_kwargs={"normalize_embeddings": True},
-    )
+    with _embedding_init_lock:
+        if _embeddings_instance is None:
+            model_name, local_files_only = _resolve_embedding_model()
+            model_kwargs = {"device": "cpu"}
+            if local_files_only:
+                model_kwargs["local_files_only"] = True
+
+            _embeddings_instance = HuggingFaceEmbeddings(
+                model_name=model_name,
+                model_kwargs=model_kwargs,
+                encode_kwargs={"normalize_embeddings": True},
+            )
+        return _embeddings_instance
+
+
+def _clear_embeddings_cache() -> None:
+    global _embeddings_instance
+    with _embedding_init_lock:
+        _embeddings_instance = None
+
+
+get_embeddings.cache_clear = _clear_embeddings_cache

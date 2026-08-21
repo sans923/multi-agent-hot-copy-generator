@@ -6,6 +6,7 @@ MySQL 初始化：测试连接并创建所有表
 """
 import sys
 import os
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -13,6 +14,24 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.database import engine, create_tables
+
+
+def apply_schema_migrations() -> None:
+    """执行可重入的轻量 MySQL 迁移；正式生产应迁移到 Alembic。"""
+    migration_path = Path(__file__).with_name("migrate_memory_index_lock.sql")
+    sql = "\n".join(
+        line
+        for line in migration_path.read_text(encoding="utf-8").splitlines()
+        if not line.lstrip().startswith("--")
+    )
+    statements = [
+        statement.strip()
+        for statement in sql.split(";")
+        if statement.strip()
+    ]
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.exec_driver_sql(statement)
 
 
 def main() -> None:
@@ -45,6 +64,8 @@ def main() -> None:
 
     create_tables()
     print("[OK] 数据表创建完成")
+    apply_schema_migrations()
+    print("[OK] 数据库增量迁移完成")
     print("\n可运行 python run.py 启动后端。")
 
 

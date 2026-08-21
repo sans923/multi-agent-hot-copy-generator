@@ -46,6 +46,7 @@ import os
 from contextlib import contextmanager
 from pathlib import Path
 import sqlite3
+import threading
 from typing import Optional
 import chromadb
 
@@ -58,6 +59,7 @@ from app.utils.logger import logger
 # ====================================================
 
 _st_model = None  # 延迟加载，首次调用时初始化
+_embedding_init_lock = threading.RLock()
 
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 EMBEDDING_MODEL_REPO_ID = f"sentence-transformers/{EMBEDDING_MODEL_NAME}"
@@ -70,19 +72,20 @@ def _huggingface_offline_mode():
     import huggingface_hub.constants as hf_constants
     from huggingface_hub.utils._http import reset_sessions
 
-    previous_env = os.environ.get("HF_HUB_OFFLINE")
-    previous_constant = hf_constants.HF_HUB_OFFLINE
-    os.environ["HF_HUB_OFFLINE"] = "1"
-    hf_constants.HF_HUB_OFFLINE = True
-    try:
-        yield
-    finally:
-        hf_constants.HF_HUB_OFFLINE = previous_constant
-        if previous_env is None:
-            os.environ.pop("HF_HUB_OFFLINE", None)
-        else:
-            os.environ["HF_HUB_OFFLINE"] = previous_env
-        reset_sessions()
+    with _embedding_init_lock:
+        previous_env = os.environ.get("HF_HUB_OFFLINE")
+        previous_constant = hf_constants.HF_HUB_OFFLINE
+        os.environ["HF_HUB_OFFLINE"] = "1"
+        hf_constants.HF_HUB_OFFLINE = True
+        try:
+            yield
+        finally:
+            hf_constants.HF_HUB_OFFLINE = previous_constant
+            if previous_env is None:
+                os.environ.pop("HF_HUB_OFFLINE", None)
+            else:
+                os.environ["HF_HUB_OFFLINE"] = previous_env
+            reset_sessions()
 
 
 class IncompatibleChromaStoreError(RuntimeError):
@@ -113,7 +116,12 @@ def _get_st_model():
     模型缓存路径：~/.cache/huggingface/
     """
     global _st_model
-    if _st_model is None:
+    if _st_model is not None:
+        return _st_model
+
+    with _embedding_init_lock:
+        if _st_model is not None:
+            return _st_model
         try:
             from sentence_transformers import SentenceTransformer
             from huggingface_hub import snapshot_download
@@ -138,7 +146,7 @@ def _get_st_model():
             raise RuntimeError(
                 "sentence-transformers 未安装，请运行: pip install sentence-transformers"
             )
-    return _st_model
+        return _st_model
 
 
 def _create_chroma_client() -> chromadb.PersistentClient:
