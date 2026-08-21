@@ -2,7 +2,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -28,8 +30,16 @@ let toastId = 0;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
+  const removalTimers = useRef(
+    new Map<number, ReturnType<typeof setTimeout>>()
+  );
 
   const remove = useCallback((id: number) => {
+    const timer = removalTimers.current.get(id);
+    if (timer !== undefined) {
+      clearTimeout(timer);
+      removalTimers.current.delete(id);
+    }
     setItems((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
@@ -37,9 +47,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (message: string, type: ToastType = "info") => {
       const id = ++toastId;
       setItems((prev) => [...prev, { id, message, type }]);
-      setTimeout(() => remove(id), 3200);
+      const timer = setTimeout(() => remove(id), 3200);
+      removalTimers.current.set(id, timer);
     },
     [remove]
+  );
+
+  useEffect(
+    () => () => {
+      removalTimers.current.forEach((timer) => clearTimeout(timer));
+      removalTimers.current.clear();
+    },
+    []
   );
 
   const value = useMemo<ToastContextValue>(
