@@ -3713,3 +3713,11 @@ LLM Tool Calling 的 JSON Schema 只是约束提示和校验基础，实际返�
 偏好学习应使用最小样本量和 provenance。本项目把 `metrics.style_signals` 作为显式结构化证据，同一 key/value 至少出现 3 次正向采用才晋升为 active `inferred_preference`；单条反馈不写长期偏好。这个固定阈值便于解释和测试，但生产中还应增加负向证据、时间衰减、置信区间、冲突消解和用户撤销。
 
 验收要分层：实现正确性看租户隔离、状态转换、幂等、版本和故障降级；检索质量看 Recall@K、nDCG、引用命中和事实冲突；生成质量看盲评、采用率和平均改稿轮次；业务效果看平台曝光、点击与转化。后两层需要真实用户或平台数据，不能用单元测试或 Reviewer 自评分替代。
+
+## 56. ORM 模型升级与 MySQL Schema 迁移
+
+给 SQLAlchemy Model 新增字段，只改变应用期望的 Schema；`MetaData.create_all()` 通常只创建不存在的表，不会 ALTER 已有表。因此“代码有 `execution_status`、旧 MySQL 没有”会在任何读取整个实体的查询中报 1054，即使业务只想执行 `count()`，因为 ORM 生成的子查询仍选择实体全部列。
+
+增量迁移至少要同时解决方言兼容、可重入和并发。不要假设 `ADD COLUMN IF NOT EXISTS` 在目标 MySQL 版本可用；可先查询 `information_schema.columns`，再对缺列执行标准 ALTER。但单独的“先查再改”有竞态，两个启动者都可能看到列不存在。轻量方案可让检查与 DDL 在同一个 MySQL Connection 内，并用 `GET_LOCK` 串行化整个迁移序列；DDL 隐式提交不会释放 named lock，连接结束则由服务端回收。
+
+这种脚本仍不是完整迁移框架：多条 DDL 没有事务原子性，也没有版本表、依赖关系和标准回滚。生产系统应由单一迁移 Job 执行 Alembic 等版本化迁移，应用实例只做 Schema 版本兼容检查。测试应覆盖旧表升级、重复运行、锁获取失败和原始 ORM 查询；真实目标版本数据库验证不能被 SQLite 单测替代。
