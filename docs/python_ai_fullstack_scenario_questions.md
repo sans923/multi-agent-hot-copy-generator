@@ -164,7 +164,7 @@ Multi-Agent 系统已经按角色只把部分 Tool Schema 发给模型。团队�
 
 ### 项目落地状态
 
-当前项目已经拆分 `execution_status/content_status/publication_status`，并实现 Content Brief、采用/拒绝/编辑反馈、父子 Copy 版本和 diff、冻结风格快照、知识引用、幂等发布记录、指标回填及三条同类正向证据后的偏好晋升。后端完整回归为 213 项，前端为 9 项且构建通过。尚未验证三份新迁移在生产 MySQL 的实际执行、真实平台回调、业务语料离线评测、人工盲评和线上效果。
+当前项目已经拆分 `execution_status/content_status/publication_status`，并实现 Content Brief、采用/拒绝/编辑反馈、父子 Copy 版本和 diff、冻结风格快照、知识引用、幂等发布记录、指标回填及三条同类正向证据后的偏好晋升。后端完整回归为 215 项，前端为 9 项且构建通过。尚未验证三份新迁移在生产 MySQL 的实际执行、真实平台回调、业务语料离线评测、人工盲评和线上效果。
 
 ## 9. 热榜写库成功，但向量化报 `_type`，是否直接改 SQLite 配置？
 
