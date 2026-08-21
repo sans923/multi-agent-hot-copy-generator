@@ -164,8 +164,17 @@ def _get_st_model():
     if _st_model is None:
         try:
             from sentence_transformers import SentenceTransformer
-            logger.info(f"加载 Embedding 模型: {EMBEDDING_MODEL_NAME}（首次运行需下载）")
-            _st_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+            logger.info(f"从本地缓存加载 Embedding 模型: {EMBEDDING_MODEL_NAME}")
+            try:
+                _st_model = SentenceTransformer(
+                    EMBEDDING_MODEL_NAME,
+                    local_files_only=True,
+                )
+            except OSError:
+                logger.info(
+                    f"本地无可用模型缓存，开始下载: {EMBEDDING_MODEL_NAME}"
+                )
+                _st_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
             logger.info("Embedding 模型加载完成")
         except ImportError:
             raise RuntimeError(
