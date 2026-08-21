@@ -280,3 +280,64 @@ def test_dead_human_retry_job_can_be_revived(db):
     assert revived.status == "pending"
     assert revived.attempts == 0
     assert revived.last_error is None
+
+
+def test_stale_dead_reviver_cannot_overwrite_a_new_claim(db):
+    session, task = db
+    job = enqueue_task_execution(
+        session,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=f"resume:{task.id}:retry:race",
+    )
+    job.status = "dead"
+    job.attempts = 3
+    session.commit()
+
+    second_session = sessionmaker(bind=session.get_bind(), autoflush=False)()
+    second_session.query(TaskExecutionJob).filter_by(id=job.id).one()
+    enqueue_task_execution(
+        session,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=job.dedupe_key,
+        revive_terminal=True,
+    )
+    claimed = claim_task_execution_job(session, worker_id="new-owner")
+    assert claimed is not None
+
+    observed = enqueue_task_execution(
+        second_session,
+        task_id=task.id,
+        job_type="resume",
+        dedupe_key=job.dedupe_key,
+        revive_terminal=True,
+    )
+
+    assert observed.status == "processing"
+    assert observed.worker_id == "new-owner"
+    assert observed.lease_token == claimed.lease_token
+    second_session.close()
+
+
+def test_heartbeat_failure_prevents_successful_ack(db):
+    session, task = db
+    enqueue_task_execution(
+        session, task_id=task.id, job_type="start", dedupe_key=f"start:{task.id}"
+    )
+
+    def broken_session_factory():
+        raise RuntimeError("database unavailable")
+
+    processed = process_one_task_execution_job(
+        session,
+        worker_id="worker-a",
+        execute=lambda _job: __import__("time").sleep(0.03),
+        heartbeat_session_factory=broken_session_factory,
+        heartbeat_interval_seconds=0.01,
+    )
+
+    assert processed is True
+    session.expire_all()
+    job = session.query(TaskExecutionJob).one()
+    assert job.status == "processing"
