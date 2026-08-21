@@ -1,4 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "../api/client";
@@ -40,5 +41,19 @@ describe("KnowledgeBase loading", () => {
     expect(await screen.findByText("Not Found")).toBeInTheDocument();
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(getMemoryInsights).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops after the expected StrictMode mount calls", async () => {
+    render(
+      <StrictMode>
+        <ToastProvider>
+          <KnowledgeBase />
+        </ToastProvider>
+      </StrictMode>
+    );
+
+    expect(await screen.findAllByText("Not Found")).toHaveLength(2);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(getMemoryInsights).toHaveBeenCalledTimes(2);
   });
 });
