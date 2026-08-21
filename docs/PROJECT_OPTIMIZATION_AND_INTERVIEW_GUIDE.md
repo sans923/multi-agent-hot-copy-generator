@@ -1405,9 +1405,13 @@ Agent 执行失败
 
 **运行环境确认：** 源码 `app/api/v1/memory.py` 已声明 `/insights`，`app/main.py` 也已挂载 memory router；但当前 8000 端口进程返回的 `/api/openapi.json` 只有 `/memory/preferences`、`/memory/feedback` 和 `/memory/items`，没有 `/memory/insights`。直接访问 8000 和经 Vite 5173 代理访问均返回相同 404，说明代理正常，当前后端进程没有加载最新路由，通常需要重启。
 
-**本轮范围与待处理方案：** 用户本轮询问原因，因此只做只读诊断，未修改代码、未重启服务、未运行测试。修复应先稳定 `ToastContext` value（用 `useCallback`/`useMemo`），并让页面 Effect 依赖稳定函数；随后重启后端并验证 insights 端点从未认证请求返回 401/403 而非 404，再补一个“接口失败只请求一次”的 React 回归测试。
+**解决方案与修改文件：** `frontend/src/contexts/ToastContext.tsx` 使用 `useMemo([add])` 固定 Context value；其中 `add` 依赖稳定的 `remove`，因此 Toast 列表增删不再改变消费者看到的 Context 引用。`frontend/src/pages/KnowledgeBase.test.tsx` 先以 RED 证明 50ms 内请求 33 次，再验证普通渲染失败后只请求 1 次；审查后补真实入口 `StrictMode` 契约，允许开发模式首次挂载执行 2 次，但之后调用次数必须稳定。
 
-**[下一个最值得处理的 P1]** 修复 Toast Context 引用稳定性并增加失败路径回归测试；业务架构层的长期 P1 仍是持久任务队列与独立 Worker。
+**实际验证：** 后端旧进程已停止并用当前工作树重新后台启动。运行中 OpenAPI 已出现 `/api/v1/memory/insights`；未认证时直连 8000 和经 5173 代理均返回预期 401，不再是 404；使用仓库 seed 用户实际登录后，经 5173 代理访问 insights 返回 HTTP 200 和完整统计结构。前端定向测试 `2 passed`，完整前端 `11 passed`，TypeScript 与 Vite 生产构建成功（62 modules）；完整后端 pytest `215 passed, 9 warnings in 45.50s`。覆盖率命令因未安装 `@vitest/coverage-v8` 未运行成功，因此覆盖率未知，不能声称达到 80%。代码审查 APPROVE，另记录 Toast 3.2 秒自动移除定时器在 Provider 卸载时未显式清理的低优先级资源问题，不会恢复本次无限请求。
+
+**缺点、代价和预期效果：** memoized value 要求后续新增 Context 字段时正确维护依赖；StrictMode 开发环境首次请求仍会执行两次，这是 React 18 开发检查行为，不是无限循环。失败路径不会再形成请求风暴已经由组件测试确认；真实浏览器长时间运行时的网络请求曲线和 Toast 定时器资源优化尚未单独压测。
+
+**[下一个最值得处理的 P1]** 业务架构层仍是把长时生成迁到持久任务队列与独立 Worker；前端低优先级后续项是集中清理 Toast timeout handles。
 
 ## 33. 活文档更新日志
 
@@ -1458,3 +1462,4 @@ Agent 执行失败
 | 2026-08-21 | 修复 MySQL 旧表缺列与并发迁移竞态 | 初始化脚本增加受保护列展开和 MySQL named lock；新增缺列、跳过、锁顺序与竞争失败测试 | 迁移测试 `4 passed`；完整 pytest `215 passed, 9 warnings`；真实 MySQL 8.0.46 连续迁移及本轮再次可重入执行均退出 0；原 ORM 查询和健康检查成功；真实双进程故障注入未运行 | 第 32.24、33 节 | 已完成旧库升级与同类迁移串行化；Alembic 和统一初始化锁待处理 |
 | 2026-08-22 | 补全数据库基础知识、面试话术与情景题 | 未修改业务代码或配置；增量更新知识手册第 12～15 章、数据库面试问答、慢查询/并发认领情景题和对话收件箱 | UTF-8、章节与关键词、Markdown 差异及 `git diff --check`；代码测试、真实 SQL、MySQL 基准和恢复演练未运行 | 第 32.25、33 节及三份知识/面试文档、对话收件箱 | 文档补充已完成；大数据量索引效果、连接池容量、备份恢复与性能收益待实际验证 |
 | 2026-08-22 | 诊断知识页 insights 404 无限请求 | 未修改业务代码或配置；只读定位旧后端路由版本与 Toast Context 引用反馈环，增量更新诊断、知识、话术、情景题和对话归档 | 直接请求 8000 与经 5173 代理均为 404；运行中 OpenAPI 无 insights、当前源码有该路由；源码调用链检查；代码测试未运行 | 第 32.26、33 节及三份知识/面试文档、对话收件箱 | 诊断已完成；代码修复、后端重启和回归验证待执行 |
+| 2026-08-22 | 修复 insights 404 与 Toast 请求反馈循环 | `ToastContext` memoize Context value；新增普通渲染和 StrictMode 失败路径回归测试；重启后端加载最新路由 | RED：50ms 内 33 次；GREEN 定向 `2 passed`；前端 `11 passed`、构建 62 modules；后端 `215 passed, 9 warnings`；OpenAPI 路由存在，未认证 401，登录后经 5173 代理返回 200；覆盖率插件缺失 | 第 32.26、33 节及对话收件箱 | 已完成；覆盖率未知，Toast timeout cleanup 为低优先级后续项 |
